@@ -1,4 +1,4 @@
 package transaction
 
-type Repository struct {
+type Repository interface {
 }

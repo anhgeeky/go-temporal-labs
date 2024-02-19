@@ -7,26 +7,14 @@ import (
 	"os"
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/api/routes"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"
-)
-
-type (
-	ErrorResponse struct {
-		Message string
-	}
-
-	UpdateEmailRequest struct {
-		Email string
-	}
-
-	CheckoutRequest struct {
-		Email string
-	}
 )
 
 var (
@@ -69,13 +57,10 @@ func main() {
 		Output:       os.Stdout,
 	}))
 
-	app.Get("/accounts", controllers.GetAccountsHandler)
-	app.Post("/transfers", CreateTransferHandler)
-	app.Get("/transfers/:workflowID", GetTransferHandler)
-	app.Put("/transfers/:workflowID/add", AddToTransferHandler)
-	app.Put("/transfers/:workflowID/remove", RemoveFromTransferHandler)
-	app.Put("/transfers/:workflowID/checkout", CheckoutHandler)
-	app.Put("/transfers/:workflowID/email", UpdateEmailHandler)
+	services := modules.SetupServices()
+
+	routes.StartAccountRoute(app, temporal, services)
+	routes.StartTransferRoute(app, temporal, services)
 
 	log.Println("App is running and listening on port", PORT)
 	app.Listen(fmt.Sprintf(":%d", PORT))
