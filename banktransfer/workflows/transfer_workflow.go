@@ -1,38 +1,23 @@
-package banktransfer
+package workflows
 
 import (
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/workflow"
-)
-
-type (
-	TransferItem struct {
-		ProductId int
-		Quantity  int
-	}
-
-	TransferState struct {
-		Items []TransferItem
-		Email string
-	}
-
-	UpdateTransferMessage struct {
-		Remove bool
-		Item   TransferItem
-	}
 )
 
 var (
 	abandonedTransferTimeout = 10 * time.Second
 )
 
-func TransferWorkflow(ctx workflow.Context, state TransferState) error {
+func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
 
-	err := workflow.SetQueryHandler(ctx, "getTransfer", func(input []byte) (TransferState, error) {
+	err := workflow.SetQueryHandler(ctx, "getTransfer", func(input []byte) (messages.TransferState, error) {
 		return state, nil
 	})
 	if err != nil {
@@ -40,14 +25,14 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 		return err
 	}
 
-	addToTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.ADD_TO_TRANSFER_CHANNEL)
-	removeFromTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL)
-	updateEmailChannel := workflow.GetSignalChannel(ctx, SignalChannels.UPDATE_EMAIL_CHANNEL)
-	checkoutChannel := workflow.GetSignalChannel(ctx, SignalChannels.CHECKOUT_CHANNEL)
+	addToTransferChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.ADD_TO_TRANSFER_CHANNEL)
+	removeFromTransferChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL)
+	updateEmailChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.UPDATE_EMAIL_CHANNEL)
+	checkoutChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.CHECKOUT_CHANNEL)
 	checkedOut := false
 	sentAbandonedTransferEmail := false
 
-	var a *Activities
+	var a *activities.Activities
 
 	for {
 		selector := workflow.NewSelector(ctx)
@@ -56,7 +41,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
-			var message AddToTransferSignal
+			var message messages.AddToTransferSignal
 			err := mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
@@ -70,7 +55,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
-			var message RemoveFromTransferSignal
+			var message messages.RemoveFromTransferSignal
 			err := mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
@@ -84,7 +69,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
-			var message UpdateEmailSignal
+			var message messages.UpdateEmailSignal
 			err := mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
@@ -99,7 +84,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
-			var message CheckoutSignal
+			var message messages.CheckoutSignal
 			err := mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
@@ -148,31 +133,4 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 	}
 
 	return nil
-}
-
-func (state *TransferState) AddToTransfer(item TransferItem) {
-	for i := range state.Items {
-		if state.Items[i].ProductId != item.ProductId {
-			continue
-		}
-
-		state.Items[i].Quantity += item.Quantity
-		return
-	}
-
-	state.Items = append(state.Items, item)
-}
-
-func (state *TransferState) RemoveFromTransfer(item TransferItem) {
-	for i := range state.Items {
-		if state.Items[i].ProductId != item.ProductId {
-			continue
-		}
-
-		state.Items[i].Quantity -= item.Quantity
-		if state.Items[i].Quantity <= 0 {
-			state.Items = append(state.Items[:i], state.Items[i+1:]...)
-		}
-		break
-	}
 }

@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	app "github.com/anhgeeky/go-temporal-labs/banktransfer"
+	"github.com/anhgeeky/go-temporal-labs/bank-transfer/domain"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/domain"
+	app "github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/spf13/viper"
@@ -99,14 +99,14 @@ func CreateTransferHandler(c *fiber.Ctx) error {
 		TaskQueue: app.Workflows.BANK_TRANSFER,
 	}
 
-	cart := app.TransferState{Items: make([]app.TransferItem, 0)}
-	we, err := temporal.ExecuteWorkflow(context.Background(), options, app.TransferWorkflow, cart)
+	msg := app.TransferState{Items: make([]app.TransferItem, 0)}
+	we, err := temporal.ExecuteWorkflow(context.Background(), options, app.TransferWorkflow, msg)
 	if err != nil {
 		return WriteError(c, err)
 	}
 
 	res := make(map[string]interface{})
-	res["cart"] = cart
+	res["msg"] = msg
 	res["workflowID"] = we.GetID()
 
 	return c.Status(fiber.StatusCreated).JSON(res)

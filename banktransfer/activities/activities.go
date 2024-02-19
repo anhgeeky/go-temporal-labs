@@ -1,18 +1,19 @@
-package banktransfer
+package activities
 
 import (
 	"context"
 
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/account"
 )
 
 type Activities struct {
 }
 
-func (a *Activities) CreateTransfer(_ context.Context, cart TransferState) error {
+func (a *Activities) CreateTransfer(_ context.Context, msg messages.TransferState) error {
 	var amount float32 = 0
 	var description string = ""
-	for _, item := range cart.Items {
+	for _, item := range msg.Items {
 		var product account.Account
 		for _, _product := range account.Accounts {
 			if _product.Id == item.Id {

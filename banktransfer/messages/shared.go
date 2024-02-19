@@ -1,4 +1,4 @@
-package banktransfer
+package messages
 
 var Workflows = struct {
 	BANK_TRANSFER string
@@ -24,8 +24,8 @@ var RouteTypes = struct {
 	UPDATE_EMAIL         string
 	CHECKOUT             string
 }{
-	ADD_TO_TRANSFER:      "add_to_cart",
-	REMOVE_FROM_TRANSFER: "remove_from_cart",
+	ADD_TO_TRANSFER:      "add_to_msg",
+	REMOVE_FROM_TRANSFER: "remove_from_msg",
 	UPDATE_EMAIL:         "update_email",
 	CHECKOUT:             "checkout",
 }
