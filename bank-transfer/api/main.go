@@ -5,17 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
 	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
 	"github.com/anhgeeky/go-temporal-labs/bank-transfer/config"
 	"github.com/anhgeeky/go-temporal-labs/bank-transfer/domain"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 
-	"github.com/bojanz/httpx"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"go.temporal.io/sdk/client"
 )
 
@@ -49,40 +47,43 @@ func main() {
 	}
 	log.Println("Temporal client connected")
 
-	r := mux.NewRouter()
-	r.Handle("/accounts", http.HandlerFunc(GetAccountsHandler)).Methods("GET")
-	r.Handle("/bank-transfer", http.HandlerFunc(CreateCartHandler)).Methods("POST")
-	r.Handle("/bank-transfer/{workflowID}", http.HandlerFunc(GetCartHandler)).Methods("GET")
-	r.Handle("/bank-transfer/{workflowID}/add", http.HandlerFunc(AddToCartHandler)).Methods("PUT")
-	r.Handle("/bank-transfer/{workflowID}/remove", http.HandlerFunc(RemoveFromCartHandler)).Methods("PUT")
-	r.Handle("/bank-transfer/{workflowID}/checkout", http.HandlerFunc(CheckoutHandler)).Methods("PUT")
-	r.Handle("/bank-transfer/{workflowID}/email", http.HandlerFunc(UpdateEmailHandler)).Methods("PUT")
+	// middlewares
+	app := fiber.New(fiber.Config{
+		JSONDecoder: json.Unmarshal,
+		JSONEncoder: json.Marshal,
+	})
 
-	r.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
+	// fiber log
+	app.Use(logger.New(logger.Config{
+		Next:         nil,
+		Done:         nil,
+		Format:       "[${time}] ${status} - ${latency} ${method} ${path}\n",
+		TimeFormat:   "15:04:05",
+		TimeZone:     "Local",
+		TimeInterval: 500 * time.Millisecond,
+		Output:       os.Stdout,
+	}))
 
-	var cors = handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))
-
-	http.Handle("/", cors(r))
-	server := httpx.NewServer(":"+PORT, http.DefaultServeMux)
-	server.WriteTimeout = time.Second * 240
+	app.Get("/accounts", GetAccountsHandler)
+	app.Get("/bank-transfer", CreateTransferHandler)
+	app.Get("/bank-transfer/{workflowID}", GetTransferHandler)
+	app.Get("/bank-transfer/{workflowID}/add", AddToTransferHandler)
+	app.Get("/bank-transfer/{workflowID}/remove", RemoveFromTransferHandler)
+	app.Get("/bank-transfer/{workflowID}/checkout", CheckoutHandler)
+	app.Get("/bank-transfer/{workflowID}/email", UpdateEmailHandler)
 
 	log.Println("Starting server on port: " + PORT)
 
-	err = server.Start()
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
-func GetAccountsHandler(w http.ResponseWriter, r *http.Request) {
+func GetAccountsHandler(c *fiber.Ctx) error {
 	res := domain.AccountList{}
 	res.Accounts = domain.Accounts
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func CreateCartHandler(w http.ResponseWriter, r *http.Request) {
+func CreateTransferHandler(c *fiber.Ctx) error {
 	workflowID := "CART-" + fmt.Sprintf("%d", time.Now().Unix())
 
 	options := client.StartWorkflowOptions{
@@ -90,140 +91,107 @@ func CreateCartHandler(w http.ResponseWriter, r *http.Request) {
 		TaskQueue: app.Workflows.BANK_TRANSFER,
 	}
 
-	cart := app.TransferState{Items: make([]app.CartItem, 0)}
+	cart := app.TransferState{Items: make([]app.TransferItem, 0)}
 	we, err := temporal.ExecuteWorkflow(context.Background(), options, app.TransferWorkflow, cart)
 	if err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 
 	res := make(map[string]interface{})
 	res["cart"] = cart
 	res["workflowID"] = we.GetID()
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
-func GetCartHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	response, err := temporal.QueryWorkflow(context.Background(), vars["workflowID"], "", "getCart")
+func GetTransferHandler(c *fiber.Ctx) error {
+	workflowID := c.Params("workflowID")
+	response, err := temporal.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
 	if err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 	var res interface{}
 	if err := response.Get(&res); err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func AddToCartHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	var item app.CartItem
-	err := json.NewDecoder(r.Body).Decode(&item)
+func AddToTransferHandler(c *fiber.Ctx) error {
+	workflowID := c.Params("workflowID")
+	var item app.TransferItem
+	json.Unmarshal(c.Body(), &item)
+
+	update := app.AddToTransferSignal{Route: app.RouteTypes.ADD_TO_CART, Item: item}
+
+	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.ADD_TO_CART_CHANNEL, update)
 	if err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 
-	update := app.AddToCartSignal{Route: app.RouteTypes.ADD_TO_CART, Item: item}
-
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", app.SignalChannels.ADD_TO_CART_CHANNEL, update)
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
 	res := make(map[string]interface{})
 	res["ok"] = 1
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func RemoveFromCartHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	var item app.CartItem
-	err := json.NewDecoder(r.Body).Decode(&item)
+func RemoveFromTransferHandler(c *fiber.Ctx) error {
+	workflowID := c.Params("workflowID")
+	var item app.TransferItem
+	json.Unmarshal(c.Body(), &item)
+
+	update := app.RemoveFromTransferSignal{Route: app.RouteTypes.REMOVE_FROM_CART, Item: item}
+
+	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.REMOVE_FROM_CART_CHANNEL, update)
 	if err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 
-	update := app.RemoveFromCartSignal{Route: app.RouteTypes.REMOVE_FROM_CART, Item: item}
-
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", app.SignalChannels.REMOVE_FROM_CART_CHANNEL, update)
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
 	res := make(map[string]interface{})
 	res["ok"] = 1
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func UpdateEmailHandler(c *fiber.Ctx) error {
+	workflowID := c.Params("workflowID")
 
 	var body UpdateEmailRequest
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
-
+	json.Unmarshal(c.Body(), &body)
 	updateEmail := app.UpdateEmailSignal{Route: app.RouteTypes.UPDATE_EMAIL, Email: body.Email}
 
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", app.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
+	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
 	if err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 
-	w.WriteHeader(http.StatusOK)
 	res := make(map[string]interface{})
 	res["ok"] = 1
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func CheckoutHandler(c *fiber.Ctx) error {
+	workflowID := c.Params("workflowID")
 
 	var body CheckoutRequest
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
-
+	json.Unmarshal(c.Body(), &body)
 	checkout := app.CheckoutSignal{Route: app.RouteTypes.CHECKOUT, Email: body.Email}
 
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", app.SignalChannels.CHECKOUT_CHANNEL, checkout)
+	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.CHECKOUT_CHANNEL, checkout)
 	if err != nil {
-		WriteError(w, err)
-		return
+		return WriteError(c, err)
 	}
 
-	w.WriteHeader(http.StatusOK)
 	res := make(map[string]interface{})
 	res["sent"] = true
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
+func NotFoundHandler(c *fiber.Ctx) error {
 	res := ErrorResponse{Message: "Endpoint not found"}
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusNotFound).JSON(res)
 }
 
-func WriteError(w http.ResponseWriter, err error) {
-	w.WriteHeader(http.StatusInternalServerError)
+func WriteError(c *fiber.Ctx, err error) error {
 	res := ErrorResponse{Message: err.Error()}
-	json.NewEncoder(w).Encode(res)
+	return c.Status(fiber.StatusInternalServerError).JSON(res)
 }

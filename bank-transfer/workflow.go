@@ -8,32 +8,32 @@ import (
 )
 
 type (
-	CartItem struct {
+	TransferItem struct {
 		ProductId int
 		Quantity  int
 	}
 
 	TransferState struct {
-		Items []CartItem
+		Items []TransferItem
 		Email string
 	}
 
-	UpdateCartMessage struct {
+	UpdateTransferMessage struct {
 		Remove bool
-		Item   CartItem
+		Item   TransferItem
 	}
 )
 
 var (
 	// Short timeout to consider shopping cart abandoned for development purposes.
-	abandonedCartTimeout = 10 * time.Second
+	abandonedTransferTimeout = 10 * time.Second
 )
 
 func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
 
-	err := workflow.SetQueryHandler(ctx, "getCart", func(input []byte) (TransferState, error) {
+	err := workflow.SetQueryHandler(ctx, "getTransfer", func(input []byte) (TransferState, error) {
 		return state, nil
 	})
 	if err != nil {
@@ -41,43 +41,43 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 		return err
 	}
 
-	addToCartChannel := workflow.GetSignalChannel(ctx, SignalChannels.ADD_TO_CART_CHANNEL)
-	removeFromCartChannel := workflow.GetSignalChannel(ctx, SignalChannels.REMOVE_FROM_CART_CHANNEL)
+	addToTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.ADD_TO_CART_CHANNEL)
+	removeFromTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.REMOVE_FROM_CART_CHANNEL)
 	updateEmailChannel := workflow.GetSignalChannel(ctx, SignalChannels.UPDATE_EMAIL_CHANNEL)
 	checkoutChannel := workflow.GetSignalChannel(ctx, SignalChannels.CHECKOUT_CHANNEL)
 	checkedOut := false
-	sentAbandonedCartEmail := false
+	sentAbandonedTransferEmail := false
 
 	var a *Activities
 
 	for {
 		selector := workflow.NewSelector(ctx)
-		selector.AddReceive(addToCartChannel, func(c workflow.ReceiveChannel, _ bool) {
+		selector.AddReceive(addToTransferChannel, func(c workflow.ReceiveChannel, _ bool) {
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
-			var message AddToCartSignal
+			var message AddToTransferSignal
 			err := mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
 				return
 			}
 
-			state.AddToCart(message.Item)
+			state.AddToTransfer(message.Item)
 		})
 
-		selector.AddReceive(removeFromCartChannel, func(c workflow.ReceiveChannel, _ bool) {
+		selector.AddReceive(removeFromTransferChannel, func(c workflow.ReceiveChannel, _ bool) {
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
-			var message RemoveFromCartSignal
+			var message RemoveFromTransferSignal
 			err := mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
 				return
 			}
 
-			state.RemoveFromCart(message.Item)
+			state.RemoveFromTransfer(message.Item)
 		})
 
 		selector.AddReceive(updateEmailChannel, func(c workflow.ReceiveChannel, _ bool) {
@@ -92,7 +92,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 			}
 
 			state.Email = message.Email
-			sentAbandonedCartEmail = false
+			sentAbandonedTransferEmail = false
 		})
 
 		selector.AddReceive(checkoutChannel, func(c workflow.ReceiveChannel, _ bool) {
@@ -123,9 +123,9 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 			checkedOut = true
 		})
 
-		if !sentAbandonedCartEmail && len(state.Items) > 0 {
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedCartTimeout), func(f workflow.Future) {
-				sentAbandonedCartEmail = true
+		if !sentAbandonedTransferEmail && len(state.Items) > 0 {
+			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				sentAbandonedTransferEmail = true
 				ao := workflow.ActivityOptions{
 					StartToCloseTimeout: time.Minute,
 				}
@@ -150,7 +150,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 	return nil
 }
 
-func (state *TransferState) AddToCart(item CartItem) {
+func (state *TransferState) AddToTransfer(item TransferItem) {
 	for i := range state.Items {
 		if state.Items[i].ProductId != item.ProductId {
 			continue
@@ -163,7 +163,7 @@ func (state *TransferState) AddToCart(item CartItem) {
 	state.Items = append(state.Items, item)
 }
 
-func (state *TransferState) RemoveFromCart(item CartItem) {
+func (state *TransferState) RemoveFromTransfer(item TransferItem) {
 	for i := range state.Items {
 		if state.Items[i].ProductId != item.ProductId {
 			continue

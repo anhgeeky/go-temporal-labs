@@ -75,14 +75,14 @@ type RouteSignal struct {
 	Route string
 }
 
-type AddToCartSignal struct {
+type AddToTransferSignal struct {
 	Route string
-	Item  CartItem
+	Item  TransferItem
 }
 
-type RemoveFromCartSignal struct {
+type RemoveFromTransferSignal struct {
 	Route string
-	Item  CartItem
+	Item  TransferItem
 }
 
 type UpdateEmailSignal struct {

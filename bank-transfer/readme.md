@@ -21,6 +21,11 @@ go run worker/main.go
 go run api/main.go
 ```
 
+## Stack for Sample
+
+- `fiber`
+- `temporal`
+
 ## FAQ
 
 - <https://github.com/temporalio/temporal-ecommerce>
