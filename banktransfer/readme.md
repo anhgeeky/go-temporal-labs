@@ -1,5 +1,10 @@
 # Bank Transfer
 
+## To-do
+
+- [ ] Build cấu trúc cho Temporal (Api + Worker)
+- [ ] Xây dựng luồng **Chuyển tiền**
+
 ## Workflow
 
 ### Chuyển tiền
@@ -28,7 +33,7 @@ go run api/main.go
 
 ## Temporal
 
-<img src="https://github.com/anhgeeky/go-temporal-labs/banktransfer/docs/assets/bank-transfer-temporal-admin-log.png?raw=true" alt="Project Banner">
+![Screenshot](/banktransfer/docs/assets/bank-transfer-temporal-admin-log.png)
 
 ## Stack for Sample
 
