@@ -25,7 +25,6 @@ type (
 )
 
 var (
-	// Short timeout to consider shopping cart abandoned for development purposes.
 	abandonedTransferTimeout = 10 * time.Second
 )
 
@@ -52,6 +51,7 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 
 	for {
 		selector := workflow.NewSelector(ctx)
+
 		selector.AddReceive(addToTransferChannel, func(c workflow.ReceiveChannel, _ bool) {
 			var signal interface{}
 			c.Receive(ctx, &signal)

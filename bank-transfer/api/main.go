@@ -73,12 +73,12 @@ func main() {
 	}))
 
 	app.Get("/accounts", GetAccountsHandler)
-	app.Get("/bank-transfer", CreateTransferHandler)
-	app.Get("/bank-transfer/{workflowID}", GetTransferHandler)
-	app.Get("/bank-transfer/{workflowID}/add", AddToTransferHandler)
-	app.Get("/bank-transfer/{workflowID}/remove", RemoveFromTransferHandler)
-	app.Get("/bank-transfer/{workflowID}/checkout", CheckoutHandler)
-	app.Get("/bank-transfer/{workflowID}/email", UpdateEmailHandler)
+	app.Post("/bank-transfer", CreateTransferHandler)
+	app.Get("/bank-transfer/:workflowID", GetTransferHandler)
+	app.Put("/bank-transfer/:workflowID/add", AddToTransferHandler)
+	app.Put("/bank-transfer/:workflowID/remove", RemoveFromTransferHandler)
+	app.Put("/bank-transfer/:workflowID/checkout", CheckoutHandler)
+	app.Put("/bank-transfer/:workflowID/email", UpdateEmailHandler)
 
 	log.Println("App is running and listening on port", PORT)
 	app.Listen(fmt.Sprintf(":%d", PORT))

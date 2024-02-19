@@ -1,0 +1,55 @@
+@hostname = localhost
+@port = 3131
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+@workflowID = TRANSFER-1708327241
+
+### Create transfer
+
+POST http://{{host}}/bank-transfer
+Content-Type: {{contentType}}
+
+{
+  "ProductId": 1,
+  "Quantity": 1
+}
+
+
+### Add a item
+
+PUT http://{{host}}/bank-transfer/{{workflowID}}/add
+Content-Type: {{contentType}}
+
+{
+  "ProductId": 1,
+  "Quantity": 1
+}
+
+### Remove a item
+
+PUT http://{{host}}/bank-transfer/{{workflowID}}/remove
+Content-Type: {{contentType}}
+
+{
+  "ProductId": 1,
+  "Quantity": 1
+}
+
+### Checkout
+
+PUT http://{{host}}/bank-transfer/{{workflowID}}/checkout
+Content-Type: {{contentType}}
+
+{
+  "Email": "test@gmail.com"
+}
+
+### Send to email
+
+PUT http://{{host}}/bank-transfer/{{workflowID}}/email
+Content-Type: {{contentType}}
+
+{
+  "Email": "test@gmail.com"
+}

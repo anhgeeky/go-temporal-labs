@@ -25,10 +25,8 @@ func main() {
 
 	w.RegisterActivity(a.CreateTransfer)
 	w.RegisterActivity(a.SendTransferNotification)
-
 	w.RegisterWorkflow(app.TransferWorkflow)
 
-	// Start listening to the Task Queue
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
 		log.Fatalln("unable to start Worker", err)
