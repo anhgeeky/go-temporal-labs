@@ -1,4 +1,4 @@
-package utils
+package configs
 
 var Workflows = struct {
 	BANK_TRANSFER string

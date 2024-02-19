@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/utils"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/configs"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/workflows"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 
@@ -21,7 +21,7 @@ func main() {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, utils.Workflows.BANK_TRANSFER, worker.Options{})
+	w := worker.New(c, configs.Workflows.BANK_TRANSFER, worker.Options{})
 
 	a := &activities.TransferActivity{}
 
