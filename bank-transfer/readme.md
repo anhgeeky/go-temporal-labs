@@ -6,8 +6,13 @@
 
 1. Lấy thông tin session từ Session JWT (`Get session info`)
 2. Lấy ds tài khoản theo session (`Get accounts`)
-3. Kiểm tra số dư (`Check balance`)
-4. Tạo lệnh chuyển tiền (`Create bank transfer`)
+3. Tạo lệnh YC chuyển tiền (`Create bank transfer`)
+4. Kiểm tra số dư (`Check balance account`)
+5. Kiểm tra tra tài khoản đích (`Check target account`)
+6. Tạo giao dịch chuyển tiền (`Create new transaction`)
+7. Tạo giao dịch ghi nợ
+8. Tạo giao dịch ghi có
+9. Gửi thông báo đã chuyển tiền
 
 ## APIs
 
