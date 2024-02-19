@@ -1,0 +1,10 @@
+@hostname = localhost
+@port = 3001
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+### Register <https://keratin.github.io/authn-server/#/api?id=signup>
+
+GET http://{{host}}/accounts
+// Authorization: Basic {{username}}{{password}}
+Content-Type: {{contentType}}

@@ -1,9 +1,10 @@
-package worker
+package main
 
 import (
 	"log"
 
 	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
+	"github.com/anhgeeky/go-temporal-labs/bank-transfer/config"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -11,7 +12,9 @@ import (
 
 func main() {
 
-	c, err := client.NewLazyClient(client.Options{})
+	c, err := client.NewLazyClient(client.Options{
+		HostPort: config.TemporalHost,
+	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}

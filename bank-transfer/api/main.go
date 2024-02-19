@@ -1,4 +1,4 @@
-package api
+package main
 
 import (
 	"context"
@@ -10,6 +10,8 @@ import (
 	"time"
 
 	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
+	"github.com/anhgeeky/go-temporal-labs/bank-transfer/config"
+	"github.com/anhgeeky/go-temporal-labs/bank-transfer/domain"
 
 	"github.com/bojanz/httpx"
 	"github.com/gorilla/handlers"
@@ -32,20 +34,23 @@ type (
 )
 
 var (
-	HTTPPort = os.Getenv("PORT")
 	temporal client.Client
+	PORT     string
 )
 
 func main() {
+	PORT := os.Getenv("PORT")
 	var err error
-	temporal, err = client.NewLazyClient(client.Options{})
+	temporal, err = client.NewLazyClient(client.Options{
+		HostPort: config.TemporalHost,
+	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	log.Println("Temporal client connected")
 
 	r := mux.NewRouter()
-	r.Handle("/products", http.HandlerFunc(GetProductsHandler)).Methods("GET")
+	r.Handle("/accounts", http.HandlerFunc(GetAccountsHandler)).Methods("GET")
 	r.Handle("/bank-transfer", http.HandlerFunc(CreateCartHandler)).Methods("POST")
 	r.Handle("/bank-transfer/{workflowID}", http.HandlerFunc(GetCartHandler)).Methods("GET")
 	r.Handle("/bank-transfer/{workflowID}/add", http.HandlerFunc(AddToCartHandler)).Methods("PUT")
@@ -58,10 +63,10 @@ func main() {
 	var cors = handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))
 
 	http.Handle("/", cors(r))
-	server := httpx.NewServer(":"+HTTPPort, http.DefaultServeMux)
+	server := httpx.NewServer(":"+PORT, http.DefaultServeMux)
 	server.WriteTimeout = time.Second * 240
 
-	log.Println("Starting server on port: " + HTTPPort)
+	log.Println("Starting server on port: " + PORT)
 
 	err = server.Start()
 	if err != nil {
@@ -69,9 +74,9 @@ func main() {
 	}
 }
 
-func GetProductsHandler(w http.ResponseWriter, r *http.Request) {
-	res := make(map[string]interface{})
-	res["products"] = app.Products
+func GetAccountsHandler(w http.ResponseWriter, r *http.Request) {
+	res := domain.AccountList{}
+	res.Accounts = domain.Accounts
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(res)
