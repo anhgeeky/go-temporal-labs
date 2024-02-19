@@ -65,7 +65,7 @@ func main() {
 	app.Use(logger.New(logger.Config{
 		Next:         nil,
 		Done:         nil,
-		Format:       "[${time}] ${status} - ${latency} ${method} ${path}\n",
+		Format:       `${ip} - ${time} ${method} ${path} ${protocol} ${status} ${latency} "${ua}" "${error}"` + "\n",
 		TimeFormat:   "15:04:05",
 		TimeZone:     "Local",
 		TimeInterval: 500 * time.Millisecond,
@@ -92,7 +92,7 @@ func GetAccountsHandler(c *fiber.Ctx) error {
 }
 
 func CreateTransferHandler(c *fiber.Ctx) error {
-	workflowID := "CART-" + fmt.Sprintf("%d", time.Now().Unix())
+	workflowID := "TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
@@ -131,9 +131,9 @@ func AddToTransferHandler(c *fiber.Ctx) error {
 	var item app.TransferItem
 	json.Unmarshal(c.Body(), &item)
 
-	update := app.AddToTransferSignal{Route: app.RouteTypes.ADD_TO_CART, Item: item}
+	update := app.AddToTransferSignal{Route: app.RouteTypes.ADD_TO_TRANSFER, Item: item}
 
-	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.ADD_TO_CART_CHANNEL, update)
+	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.ADD_TO_TRANSFER_CHANNEL, update)
 	if err != nil {
 		return WriteError(c, err)
 	}
@@ -148,9 +148,9 @@ func RemoveFromTransferHandler(c *fiber.Ctx) error {
 	var item app.TransferItem
 	json.Unmarshal(c.Body(), &item)
 
-	update := app.RemoveFromTransferSignal{Route: app.RouteTypes.REMOVE_FROM_CART, Item: item}
+	update := app.RemoveFromTransferSignal{Route: app.RouteTypes.REMOVE_FROM_TRANSFER, Item: item}
 
-	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.REMOVE_FROM_CART_CHANNEL, update)
+	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL, update)
 	if err != nil {
 		return WriteError(c, err)
 	}

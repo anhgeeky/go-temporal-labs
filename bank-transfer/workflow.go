@@ -41,8 +41,8 @@ func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 		return err
 	}
 
-	addToTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.ADD_TO_CART_CHANNEL)
-	removeFromTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.REMOVE_FROM_CART_CHANNEL)
+	addToTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.ADD_TO_TRANSFER_CHANNEL)
+	removeFromTransferChannel := workflow.GetSignalChannel(ctx, SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL)
 	updateEmailChannel := workflow.GetSignalChannel(ctx, SignalChannels.UPDATE_EMAIL_CHANNEL)
 	checkoutChannel := workflow.GetSignalChannel(ctx, SignalChannels.CHECKOUT_CHANNEL)
 	checkedOut := false
