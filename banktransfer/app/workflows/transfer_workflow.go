@@ -33,7 +33,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error 
 	checkedOut := false
 	sentAbandonedTransferEmail := false
 
-	var a *activities.Activities
+	var a *activities.TransferActivity
 
 	for {
 		selector := workflow.NewSelector(ctx)

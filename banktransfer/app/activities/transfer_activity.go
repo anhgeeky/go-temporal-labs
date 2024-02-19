@@ -6,10 +6,10 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
 )
 
-type Activities struct {
+type TransferActivity struct {
 }
 
-func (a *Activities) CreateTransfer(_ context.Context, msg messages.TransferState) error {
+func (a *TransferActivity) CreateTransfer(_ context.Context, msg messages.TransferState) error {
 	// var amount float32 = 0
 	// var description string = ""
 	// for _, item := range msg.Items {
@@ -30,6 +30,6 @@ func (a *Activities) CreateTransfer(_ context.Context, msg messages.TransferStat
 	return nil
 }
 
-func (a *Activities) SendTransferNotification(_ context.Context, email string) error {
+func (a *TransferActivity) SendTransferNotification(_ context.Context, email string) error {
 	return nil
 }

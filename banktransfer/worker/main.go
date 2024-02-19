@@ -23,7 +23,7 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, utils.Workflows.BANK_TRANSFER, worker.Options{})
 
-	a := &activities.Activities{}
+	a := &activities.TransferActivity{}
 
 	w.RegisterActivity(a.CreateTransfer)
 	w.RegisterActivity(a.SendTransferNotification)
