@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	app "github.com/anhgeeky/labs-temporal/bank-transfer"
+	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
 
 	"go.temporal.io/sdk/client"
 )

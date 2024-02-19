@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	app "github.com/anhgeeky/labs-temporal/bank-transfer"
+	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
 
 	"github.com/bojanz/httpx"
 	"github.com/gorilla/handlers"

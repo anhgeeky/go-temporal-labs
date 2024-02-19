@@ -1,4 +1,4 @@
-module github.com/anhgeeky/labs-temporal
+module github.com/anhgeeky/go-temporal-labs
 
 go 1.21.6
 

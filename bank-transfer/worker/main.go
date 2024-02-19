@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	app "github.com/anhgeeky/labs-temporal/bank-transfer"
+	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -53,5 +53,3 @@ func main() {
 		log.Fatalln("unable to start Worker", err)
 	}
 }
-
-// @@@SNIPEND
