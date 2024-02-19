@@ -1,21 +1,19 @@
 package messages
 
-type (
-	TransferItem struct {
-		ProductId int
-		Quantity  int
-	}
+type TransferItem struct {
+	ProductId int
+	Quantity  int
+}
 
-	TransferState struct {
-		Items []TransferItem
-		Email string
-	}
+type UpdateTransferMessage struct {
+	Remove bool
+	Item   TransferItem
+}
 
-	UpdateTransferMessage struct {
-		Remove bool
-		Item   TransferItem
-	}
-)
+type TransferState struct {
+	Items []TransferItem
+	Email string
+}
 
 func (state *TransferState) AddToTransfer(item TransferItem) {
 	for i := range state.Items {

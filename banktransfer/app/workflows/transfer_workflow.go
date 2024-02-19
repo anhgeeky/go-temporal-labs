@@ -3,8 +3,9 @@ package workflows
 import (
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/utils"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/workflow"
 )
@@ -25,10 +26,10 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error 
 		return err
 	}
 
-	addToTransferChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.ADD_TO_TRANSFER_CHANNEL)
-	removeFromTransferChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL)
-	updateEmailChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.UPDATE_EMAIL_CHANNEL)
-	checkoutChannel := workflow.GetSignalChannel(ctx, messages.SignalChannels.CHECKOUT_CHANNEL)
+	addToTransferChannel := workflow.GetSignalChannel(ctx, utils.SignalChannels.ADD_TO_TRANSFER_CHANNEL)
+	removeFromTransferChannel := workflow.GetSignalChannel(ctx, utils.SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL)
+	updateEmailChannel := workflow.GetSignalChannel(ctx, utils.SignalChannels.UPDATE_EMAIL_CHANNEL)
+	checkoutChannel := workflow.GetSignalChannel(ctx, utils.SignalChannels.CHECKOUT_CHANNEL)
 	checkedOut := false
 	sentAbandonedTransferEmail := false
 

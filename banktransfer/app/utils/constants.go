@@ -1,4 +1,4 @@
-package messages
+package utils
 
 var Workflows = struct {
 	BANK_TRANSFER string
@@ -28,28 +28,4 @@ var RouteTypes = struct {
 	REMOVE_FROM_TRANSFER: "remove_from_msg",
 	UPDATE_EMAIL:         "update_email",
 	CHECKOUT:             "checkout",
-}
-
-type RouteSignal struct {
-	Route string
-}
-
-type AddToTransferSignal struct {
-	Route string
-	Item  TransferItem
-}
-
-type RemoveFromTransferSignal struct {
-	Route string
-	Item  TransferItem
-}
-
-type UpdateEmailSignal struct {
-	Route string
-	Email string
-}
-
-type CheckoutSignal struct {
-	Route string
-	Email string
 }

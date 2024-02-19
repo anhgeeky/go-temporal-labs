@@ -1,16 +1,13 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/bank-transfer/domain"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
-	app "github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/spf13/viper"
@@ -72,134 +69,14 @@ func main() {
 		Output:       os.Stdout,
 	}))
 
-	app.Get("/accounts", GetAccountsHandler)
-	app.Post("/banktransfer", CreateTransferHandler)
-	app.Get("/banktransfer/:workflowID", GetTransferHandler)
-	app.Put("/banktransfer/:workflowID/add", AddToTransferHandler)
-	app.Put("/banktransfer/:workflowID/remove", RemoveFromTransferHandler)
-	app.Put("/banktransfer/:workflowID/checkout", CheckoutHandler)
-	app.Put("/banktransfer/:workflowID/email", UpdateEmailHandler)
+	app.Get("/accounts", controllers.GetAccountsHandler)
+	app.Post("/transfers", CreateTransferHandler)
+	app.Get("/transfers/:workflowID", GetTransferHandler)
+	app.Put("/transfers/:workflowID/add", AddToTransferHandler)
+	app.Put("/transfers/:workflowID/remove", RemoveFromTransferHandler)
+	app.Put("/transfers/:workflowID/checkout", CheckoutHandler)
+	app.Put("/transfers/:workflowID/email", UpdateEmailHandler)
 
 	log.Println("App is running and listening on port", PORT)
 	app.Listen(fmt.Sprintf(":%d", PORT))
-}
-
-func GetAccountsHandler(c *fiber.Ctx) error {
-	res := domain.AccountList{}
-	res.Accounts = domain.Accounts
-
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func CreateTransferHandler(c *fiber.Ctx) error {
-	workflowID := "TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
-
-	options := client.StartWorkflowOptions{
-		ID:        workflowID,
-		TaskQueue: app.Workflows.BANK_TRANSFER,
-	}
-
-	msg := app.TransferState{Items: make([]app.TransferItem, 0)}
-	we, err := temporal.ExecuteWorkflow(context.Background(), options, app.TransferWorkflow, msg)
-	if err != nil {
-		return WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["msg"] = msg
-	res["workflowID"] = we.GetID()
-
-	return c.Status(fiber.StatusCreated).JSON(res)
-}
-
-func GetTransferHandler(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-	response, err := temporal.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
-	if err != nil {
-		return WriteError(c, err)
-	}
-	var res interface{}
-	if err := response.Get(&res); err != nil {
-		return WriteError(c, err)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func AddToTransferHandler(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-	var item app.TransferItem
-	json.Unmarshal(c.Body(), &item)
-
-	update := app.AddToTransferSignal{Route: app.RouteTypes.ADD_TO_TRANSFER, Item: item}
-
-	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.ADD_TO_TRANSFER_CHANNEL, update)
-	if err != nil {
-		return WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func RemoveFromTransferHandler(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-	var item app.TransferItem
-	json.Unmarshal(c.Body(), &item)
-
-	update := app.RemoveFromTransferSignal{Route: app.RouteTypes.REMOVE_FROM_TRANSFER, Item: item}
-
-	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL, update)
-	if err != nil {
-		return WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func UpdateEmailHandler(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-
-	var body UpdateEmailRequest
-	json.Unmarshal(c.Body(), &body)
-	updateEmail := app.UpdateEmailSignal{Route: app.RouteTypes.UPDATE_EMAIL, Email: body.Email}
-
-	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
-	if err != nil {
-		return WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func CheckoutHandler(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-
-	var body CheckoutRequest
-	json.Unmarshal(c.Body(), &body)
-	checkout := app.CheckoutSignal{Route: app.RouteTypes.CHECKOUT, Email: body.Email}
-
-	err := temporal.SignalWorkflow(context.Background(), workflowID, "", app.SignalChannels.CHECKOUT_CHANNEL, checkout)
-	if err != nil {
-		return WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["sent"] = true
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func NotFoundHandler(c *fiber.Ctx) error {
-	res := ErrorResponse{Message: "Endpoint not found"}
-	return c.Status(fiber.StatusNotFound).JSON(res)
-}
-
-func WriteError(c *fiber.Ctx, err error) error {
-	res := ErrorResponse{Message: err.Error()}
-	return c.Status(fiber.StatusInternalServerError).JSON(res)
 }
