@@ -3,11 +3,11 @@
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
-@workflowID = TRANSFER-1708327241
+@workflowID = TRANSFER-1708335220
 
 ### Create transfer
 
-POST http://{{host}}/banktransfer
+POST http://{{host}}/transfers
 Content-Type: {{contentType}}
 
 {
@@ -18,7 +18,7 @@ Content-Type: {{contentType}}
 
 ### Add a item
 
-PUT http://{{host}}/banktransfer/{{workflowID}}/add
+PUT http://{{host}}/transfers/{{workflowID}}/add
 Content-Type: {{contentType}}
 
 {
@@ -28,7 +28,7 @@ Content-Type: {{contentType}}
 
 ### Remove a item
 
-PUT http://{{host}}/banktransfer/{{workflowID}}/remove
+PUT http://{{host}}/transfers/{{workflowID}}/remove
 Content-Type: {{contentType}}
 
 {
@@ -38,7 +38,7 @@ Content-Type: {{contentType}}
 
 ### Checkout
 
-PUT http://{{host}}/banktransfer/{{workflowID}}/checkout
+PUT http://{{host}}/transfers/{{workflowID}}/checkout
 Content-Type: {{contentType}}
 
 {
@@ -47,7 +47,7 @@ Content-Type: {{contentType}}
 
 ### Send to email
 
-PUT http://{{host}}/banktransfer/{{workflowID}}/email
+PUT http://{{host}}/transfers/{{workflowID}}/email
 Content-Type: {{contentType}}
 
 {

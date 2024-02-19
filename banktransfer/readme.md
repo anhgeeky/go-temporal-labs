@@ -26,6 +26,10 @@ go run worker/main.go
 go run api/main.go
 ```
 
+## Temporal
+
+<img src="https://github.com/anhgeeky/go-temporal-labs/banktransfer/docs/assets/bank-transfer-temporal-admin-log.png?raw=true" alt="Project Banner">
+
 ## Stack for Sample
 
 - `fiber`

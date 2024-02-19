@@ -15,7 +15,7 @@ import (
 func main() {
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort: config.TemporalHost,
+		HostPort: config.TEMPORAL_HOST,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
