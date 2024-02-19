@@ -11,21 +11,20 @@ import (
 
 func main() {
 
-	// Create the client object just once per process
 	c, err := client.NewLazyClient(client.Options{})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	// This worker hosts both Worker and Activity functions
-	w := worker.New(c, "CART_TASK_QUEUE", worker.Options{})
+	w := worker.New(c, app.Workflows.BANK_TRANSFER, worker.Options{})
 
 	a := &app.Activities{}
 
-	w.RegisterActivity(a.CreateStripeCharge)
-	w.RegisterActivity(a.SendAbandonedCartEmail)
+	w.RegisterActivity(a.CreateTransfer)
+	w.RegisterActivity(a.SendTransferNotification)
 
-	w.RegisterWorkflow(app.CartWorkflow)
+	w.RegisterWorkflow(app.TransferWorkflow)
+
 	// Start listening to the Task Queue
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

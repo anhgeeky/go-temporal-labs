@@ -13,7 +13,7 @@ type (
 		Quantity  int
 	}
 
-	CartState struct {
+	TransferState struct {
 		Items []CartItem
 		Email string
 	}
@@ -29,11 +29,11 @@ var (
 	abandonedCartTimeout = 10 * time.Second
 )
 
-func CartWorkflow(ctx workflow.Context, state CartState) error {
+func TransferWorkflow(ctx workflow.Context, state TransferState) error {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
 
-	err := workflow.SetQueryHandler(ctx, "getCart", func(input []byte) (CartState, error) {
+	err := workflow.SetQueryHandler(ctx, "getCart", func(input []byte) (TransferState, error) {
 		return state, nil
 	})
 	if err != nil {
@@ -114,7 +114,7 @@ func CartWorkflow(ctx workflow.Context, state CartState) error {
 
 			ctx = workflow.WithActivityOptions(ctx, ao)
 
-			err = workflow.ExecuteActivity(ctx, a.CreateStripeCharge, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(ctx, a.CreateTransfer, state).Get(ctx, nil)
 			if err != nil {
 				logger.Error("Error creating stripe charge: %v", err)
 				return
@@ -132,7 +132,7 @@ func CartWorkflow(ctx workflow.Context, state CartState) error {
 
 				ctx = workflow.WithActivityOptions(ctx, ao)
 
-				err := workflow.ExecuteActivity(ctx, a.SendAbandonedCartEmail, state.Email).Get(ctx, nil)
+				err := workflow.ExecuteActivity(ctx, a.SendTransferNotification, state.Email).Get(ctx, nil)
 				if err != nil {
 					logger.Error("Error sending email %v", err)
 					return
@@ -150,7 +150,7 @@ func CartWorkflow(ctx workflow.Context, state CartState) error {
 	return nil
 }
 
-func (state *CartState) AddToCart(item CartItem) {
+func (state *TransferState) AddToCart(item CartItem) {
 	for i := range state.Items {
 		if state.Items[i].ProductId != item.ProductId {
 			continue
@@ -163,7 +163,7 @@ func (state *CartState) AddToCart(item CartItem) {
 	state.Items = append(state.Items, item)
 }
 
-func (state *CartState) RemoveFromCart(item CartItem) {
+func (state *TransferState) RemoveFromCart(item CartItem) {
 	for i := range state.Items {
 		if state.Items[i].ProductId != item.ProductId {
 			continue

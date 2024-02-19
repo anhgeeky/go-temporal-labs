@@ -82,11 +82,11 @@ func CreateCartHandler(w http.ResponseWriter, r *http.Request) {
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
-		TaskQueue: "CART_TASK_QUEUE",
+		TaskQueue: app.Workflows.BANK_TRANSFER,
 	}
 
-	cart := app.CartState{Items: make([]app.CartItem, 0)}
-	we, err := temporal.ExecuteWorkflow(context.Background(), options, app.CartWorkflow, cart)
+	cart := app.TransferState{Items: make([]app.CartItem, 0)}
+	we, err := temporal.ExecuteWorkflow(context.Background(), options, app.TransferWorkflow, cart)
 	if err != nil {
 		WriteError(w, err)
 		return

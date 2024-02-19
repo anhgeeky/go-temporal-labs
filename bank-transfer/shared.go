@@ -1,5 +1,11 @@
 package banktransfer
 
+var Workflows = struct {
+	BANK_TRANSFER string
+}{
+	BANK_TRANSFER: "BANK_TRANSFER",
+}
+
 type (
 	Product struct {
 		Id          int

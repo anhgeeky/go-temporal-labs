@@ -7,7 +7,7 @@ import (
 type Activities struct {
 }
 
-func (a *Activities) CreateStripeCharge(_ context.Context, cart CartState) error {
+func (a *Activities) CreateTransfer(_ context.Context, cart TransferState) error {
 	var amount float32 = 0
 	var description string = ""
 	for _, item := range cart.Items {
@@ -28,6 +28,6 @@ func (a *Activities) CreateStripeCharge(_ context.Context, cart CartState) error
 	return nil
 }
 
-func (a *Activities) SendAbandonedCartEmail(_ context.Context, email string) error {
+func (a *Activities) SendTransferNotification(_ context.Context, email string) error {
 	return nil
 }
