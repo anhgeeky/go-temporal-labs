@@ -16,7 +16,7 @@
 
 ## APIs
 
-- 1. Lấy DS giao dịch chuyển khoản: GET `/bank-transfer/transfers`
+- 1. Lấy DS giao dịch chuyển khoản: GET `/banktransfer/transfers`
 - 2. Kiểm tra số dư: GET `/accounts/:ID/balance`
 
 ## Quickstart

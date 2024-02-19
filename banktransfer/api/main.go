@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
-	"github.com/anhgeeky/go-temporal-labs/bank-transfer/config"
-	"github.com/anhgeeky/go-temporal-labs/bank-transfer/domain"
+	app "github.com/anhgeeky/go-temporal-labs/banktransfer"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/domain"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/spf13/viper"
@@ -73,12 +73,12 @@ func main() {
 	}))
 
 	app.Get("/accounts", GetAccountsHandler)
-	app.Post("/bank-transfer", CreateTransferHandler)
-	app.Get("/bank-transfer/:workflowID", GetTransferHandler)
-	app.Put("/bank-transfer/:workflowID/add", AddToTransferHandler)
-	app.Put("/bank-transfer/:workflowID/remove", RemoveFromTransferHandler)
-	app.Put("/bank-transfer/:workflowID/checkout", CheckoutHandler)
-	app.Put("/bank-transfer/:workflowID/email", UpdateEmailHandler)
+	app.Post("/banktransfer", CreateTransferHandler)
+	app.Get("/banktransfer/:workflowID", GetTransferHandler)
+	app.Put("/banktransfer/:workflowID/add", AddToTransferHandler)
+	app.Put("/banktransfer/:workflowID/remove", RemoveFromTransferHandler)
+	app.Put("/banktransfer/:workflowID/checkout", CheckoutHandler)
+	app.Put("/banktransfer/:workflowID/email", UpdateEmailHandler)
 
 	log.Println("App is running and listening on port", PORT)
 	app.Listen(fmt.Sprintf(":%d", PORT))

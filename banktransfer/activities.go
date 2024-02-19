@@ -2,6 +2,8 @@ package banktransfer
 
 import (
 	"context"
+
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/account"
 )
 
 type Activities struct {
@@ -11,9 +13,9 @@ func (a *Activities) CreateTransfer(_ context.Context, cart TransferState) error
 	var amount float32 = 0
 	var description string = ""
 	for _, item := range cart.Items {
-		var product Product
-		for _, _product := range Products {
-			if _product.Id == item.ProductId {
+		var product account.Account
+		for _, _product := range account.Accounts {
+			if _product.Id == item.Id {
 				product = _product
 				break
 			}

@@ -7,7 +7,7 @@
 
 ### Create transfer
 
-POST http://{{host}}/bank-transfer
+POST http://{{host}}/banktransfer
 Content-Type: {{contentType}}
 
 {
@@ -18,7 +18,7 @@ Content-Type: {{contentType}}
 
 ### Add a item
 
-PUT http://{{host}}/bank-transfer/{{workflowID}}/add
+PUT http://{{host}}/banktransfer/{{workflowID}}/add
 Content-Type: {{contentType}}
 
 {
@@ -28,7 +28,7 @@ Content-Type: {{contentType}}
 
 ### Remove a item
 
-PUT http://{{host}}/bank-transfer/{{workflowID}}/remove
+PUT http://{{host}}/banktransfer/{{workflowID}}/remove
 Content-Type: {{contentType}}
 
 {
@@ -38,7 +38,7 @@ Content-Type: {{contentType}}
 
 ### Checkout
 
-PUT http://{{host}}/bank-transfer/{{workflowID}}/checkout
+PUT http://{{host}}/banktransfer/{{workflowID}}/checkout
 Content-Type: {{contentType}}
 
 {
@@ -47,7 +47,7 @@ Content-Type: {{contentType}}
 
 ### Send to email
 
-PUT http://{{host}}/bank-transfer/{{workflowID}}/email
+PUT http://{{host}}/banktransfer/{{workflowID}}/email
 Content-Type: {{contentType}}
 
 {

@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
-	"github.com/anhgeeky/go-temporal-labs/bank-transfer/config"
+	app "github.com/anhgeeky/go-temporal-labs/banktransfer"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
