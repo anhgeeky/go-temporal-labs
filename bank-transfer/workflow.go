@@ -150,7 +150,6 @@ func CartWorkflow(ctx workflow.Context, state CartState) error {
 	return nil
 }
 
-// @@@SNIPSTART temporal-ecommerce-add-and-remove
 func (state *CartState) AddToCart(item CartItem) {
 	for i := range state.Items {
 		if state.Items[i].ProductId != item.ProductId {
@@ -177,5 +176,3 @@ func (state *CartState) RemoveFromCart(item CartItem) {
 		break
 	}
 }
-
-// @@@SNIPEND

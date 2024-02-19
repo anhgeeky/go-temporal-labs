@@ -2,18 +2,11 @@ package worker
 
 import (
 	"log"
-	"os"
 
 	app "github.com/anhgeeky/go-temporal-labs/bank-transfer"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
-)
-
-var (
-	stripeKey     = os.Getenv("STRIPE_PRIVATE_KEY")
-	mailgunDomain = os.Getenv("MAILGUN_DOMAIN")
-	mailgunKey    = os.Getenv("MAILGUN_PRIVATE_KEY")
 )
 
 func main() {
@@ -27,21 +20,7 @@ func main() {
 	// This worker hosts both Worker and Activity functions
 	w := worker.New(c, "CART_TASK_QUEUE", worker.Options{})
 
-	if stripeKey == "" {
-		log.Fatalln("Must set STRIPE_PRIVATE_KEY environment variable")
-	}
-	if mailgunDomain == "" {
-		log.Fatalln("Must set MAILGUN_DOMAIN environment variable")
-	}
-	if mailgunKey == "" {
-		log.Fatalln("Must set MAILGUN_PRIVATE_KEY environment variable")
-	}
-
-	a := &app.Activities{
-		StripeKey:     stripeKey,
-		MailgunDomain: mailgunDomain,
-		MailgunKey:    mailgunKey,
-	}
+	a := &app.Activities{}
 
 	w.RegisterActivity(a.CreateStripeCharge)
 	w.RegisterActivity(a.SendAbandonedCartEmail)
