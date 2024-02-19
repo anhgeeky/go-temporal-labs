@@ -1,5 +1,7 @@
 package config
 
-import "os"
+import (
+	"github.com/spf13/viper"
+)
 
-var TemporalHost = os.Getenv("TEMPORAL_CLUSTER_HOST")
+var TemporalHost = viper.GetString("TEMPORAL_CLUSTER_HOST")

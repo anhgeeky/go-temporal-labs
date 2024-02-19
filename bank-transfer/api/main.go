@@ -13,6 +13,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/bank-transfer/domain"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"
 )
@@ -37,8 +38,15 @@ var (
 )
 
 func main() {
-	PORT := os.Getenv("PORT")
-	var err error
+	viper.SetConfigFile(".env")
+	viper.SetConfigType("env")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+
+	err := viper.ReadInConfig()
+	PORT := viper.GetInt32("PORT")
+	log.Println("PORT", PORT)
+
 	temporal, err = client.NewLazyClient(client.Options{
 		HostPort: config.TemporalHost,
 	})
@@ -72,8 +80,8 @@ func main() {
 	app.Get("/bank-transfer/{workflowID}/checkout", CheckoutHandler)
 	app.Get("/bank-transfer/{workflowID}/email", UpdateEmailHandler)
 
-	log.Println("Starting server on port: " + PORT)
-
+	log.Println("App is running and listening on port", PORT)
+	app.Listen(fmt.Sprintf(":%d", PORT))
 }
 
 func GetAccountsHandler(c *fiber.Ctx) error {
