@@ -38,7 +38,7 @@ var (
 
 func main() {
 	var err error
-	temporal, err = client.NewClient(client.Options{})
+	temporal, err = client.NewLazyClient(client.Options{})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
@@ -46,12 +46,12 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Handle("/products", http.HandlerFunc(GetProductsHandler)).Methods("GET")
-	r.Handle("/cart", http.HandlerFunc(CreateCartHandler)).Methods("POST")
-	r.Handle("/cart/{workflowID}", http.HandlerFunc(GetCartHandler)).Methods("GET")
-	r.Handle("/cart/{workflowID}/add", http.HandlerFunc(AddToCartHandler)).Methods("PUT")
-	r.Handle("/cart/{workflowID}/remove", http.HandlerFunc(RemoveFromCartHandler)).Methods("PUT")
-	r.Handle("/cart/{workflowID}/checkout", http.HandlerFunc(CheckoutHandler)).Methods("PUT")
-	r.Handle("/cart/{workflowID}/email", http.HandlerFunc(UpdateEmailHandler)).Methods("PUT")
+	r.Handle("/bank-transfer", http.HandlerFunc(CreateCartHandler)).Methods("POST")
+	r.Handle("/bank-transfer/{workflowID}", http.HandlerFunc(GetCartHandler)).Methods("GET")
+	r.Handle("/bank-transfer/{workflowID}/add", http.HandlerFunc(AddToCartHandler)).Methods("PUT")
+	r.Handle("/bank-transfer/{workflowID}/remove", http.HandlerFunc(RemoveFromCartHandler)).Methods("PUT")
+	r.Handle("/bank-transfer/{workflowID}/checkout", http.HandlerFunc(CheckoutHandler)).Methods("PUT")
+	r.Handle("/bank-transfer/{workflowID}/email", http.HandlerFunc(UpdateEmailHandler)).Methods("PUT")
 
 	r.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
 
