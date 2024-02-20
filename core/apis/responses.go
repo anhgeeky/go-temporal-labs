@@ -6,7 +6,7 @@ type ErrorResponse struct {
 	Message string
 }
 
-func NotFoundHandler(c *fiber.Ctx) error {
+func NotFound(c *fiber.Ctx) error {
 	res := ErrorResponse{Message: "Endpoint not found"}
 	return c.Status(fiber.StatusNotFound).JSON(res)
 }

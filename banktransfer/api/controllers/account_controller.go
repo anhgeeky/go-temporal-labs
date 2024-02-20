@@ -11,7 +11,21 @@ type AccountController struct {
 	TemporalClient client.Client
 }
 
-func (r AccountController) GetAccountsHandler(c *fiber.Ctx) error {
+func (r AccountController) GetAccounts(c *fiber.Ctx) error {
+	res := account.AccountList{}
+
+	items, err := r.Service.GetAccounts()
+	if err != nil {
+		return err
+	}
+
+	res.Accounts = *items
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// TODO: Code
+func (r AccountController) GetBalance(c *fiber.Ctx) error {
 	res := account.AccountList{}
 
 	items, err := r.Service.GetAccounts()

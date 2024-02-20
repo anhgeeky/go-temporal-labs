@@ -13,5 +13,6 @@ func StartAccountRoute(app *fiber.App, temporal client.Client, services map[stri
 		TemporalClient: temporal,
 	}
 	group := app.Group("/accounts")
-	group.Get("/", controller.GetAccountsHandler)
+	group.Get("/", controller.GetAccounts)
+	group.Get("/:ID/balance", controller.GetBalance)
 }

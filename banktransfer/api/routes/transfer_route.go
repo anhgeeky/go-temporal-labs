@@ -14,10 +14,10 @@ func StartTransferRoute(app *fiber.App, temporal client.Client, services map[str
 	}
 	group := app.Group("/transfers")
 
-	group.Post("/", controller.CreateTransferHandler)
-	group.Get("/:workflowID", controller.GetTransferHandler)
-	group.Put("/:workflowID/add", controller.AddToTransferHandler)
-	group.Put("/:workflowID/remove", controller.RemoveFromTransferHandler)
-	group.Put("/:workflowID/checkout", controller.CheckoutHandler)
-	group.Put("/:workflowID/email", controller.UpdateEmailHandler)
+	group.Post("/", controller.CreateTransfer)
+	group.Get("/:workflowID", controller.GetTransfer)
+	group.Put("/:workflowID/add", controller.AddToTransfer)
+	group.Put("/:workflowID/remove", controller.RemoveFromTransfer)
+	group.Put("/:workflowID/checkout", controller.Checkout)
+	group.Put("/:workflowID/email", controller.UpdateEmail)
 }

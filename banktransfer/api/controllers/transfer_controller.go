@@ -20,7 +20,7 @@ type TransferController struct {
 	TemporalClient client.Client
 }
 
-func (r TransferController) CreateTransferHandler(c *fiber.Ctx) error {
+func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 	workflowID := "TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
 
 	options := client.StartWorkflowOptions{
@@ -41,7 +41,7 @@ func (r TransferController) CreateTransferHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
-func (r TransferController) GetTransferHandler(c *fiber.Ctx) error {
+func (r TransferController) GetTransfer(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
 	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
 	if err != nil {
@@ -55,7 +55,7 @@ func (r TransferController) GetTransferHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (r TransferController) AddToTransferHandler(c *fiber.Ctx) error {
+func (r TransferController) AddToTransfer(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
 	var item messages.TransferItem
 	json.Unmarshal(c.Body(), &item)
@@ -72,7 +72,7 @@ func (r TransferController) AddToTransferHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (r TransferController) RemoveFromTransferHandler(c *fiber.Ctx) error {
+func (r TransferController) RemoveFromTransfer(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
 	var item messages.TransferItem
 	json.Unmarshal(c.Body(), &item)
@@ -89,7 +89,7 @@ func (r TransferController) RemoveFromTransferHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (r TransferController) UpdateEmailHandler(c *fiber.Ctx) error {
+func (r TransferController) UpdateEmail(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
 
 	var body transaction.UpdateEmailRequest
@@ -106,7 +106,7 @@ func (r TransferController) UpdateEmailHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (r TransferController) CheckoutHandler(c *fiber.Ctx) error {
+func (r TransferController) Checkout(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
 
 	var body transaction.CheckoutRequest
