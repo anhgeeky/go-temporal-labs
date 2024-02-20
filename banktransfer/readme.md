@@ -25,8 +25,9 @@
   - 2.6. Transfer done  (`When step 2.4, 2.5 done -> Completed`) (`Trigger [Notification Flow]`)
   - 2.7 [**Notification Flow**] Gửi thông báo đã chuyển tiền
     - 2.7.1 Lấy thông tin `token` của các thiết bị theo tài khoản
-    - 2.7.2 Push message notification vào `firebase`
-    - 2.7.3 Push message internal app, reload lại màn hình hiện tại `Đang xử lý` -> `Thành công`
+    - 2.7.2 Push message SMS thông báo đã `Chuyển tiền Thành công`
+    - 2.7.3 Push message notification vào `firebase`
+    - 2.7.4 Push message internal app, reload lại màn hình hiện tại `Đang xử lý` -> `Thành công`
 
 ### End: Chuyển tiền
 
