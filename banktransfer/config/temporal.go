@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	TEMPORAL_HOST = viper.GetString("TEMPORAL_CLUSTER_HOST")
+	TEMPORAL_CLUSTER_HOST = viper.GetString("TEMPORAL_CLUSTER_HOST")
 )
