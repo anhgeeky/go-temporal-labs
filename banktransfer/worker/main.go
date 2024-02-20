@@ -23,11 +23,16 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, configs.Workflows.BANK_TRANSFER, worker.Options{})
 
-	a := &activities.TransferActivity{}
-
-	w.RegisterActivity(a.CreateTransfer)
-	w.RegisterActivity(a.SendTransferNotification)
+	// Transfer workflow
+	transferActivity := &activities.TransferActivity{}
+	w.RegisterActivity(transferActivity.CreateTransfer)
+	w.RegisterActivity(transferActivity.SendTransferNotification)
 	w.RegisterWorkflow(workflows.TransferWorkflow)
+
+	// Verify workflow
+	verifyActivity := &activities.VerifyActivity{}
+	w.RegisterActivity(verifyActivity.VerifyOtp)
+	w.RegisterWorkflow(workflows.VerifyOtpWorkflow)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
