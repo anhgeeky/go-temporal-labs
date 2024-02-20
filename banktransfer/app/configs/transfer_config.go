@@ -24,8 +24,8 @@ var RouteTypes = struct {
 	UPDATE_EMAIL         string
 	CHECKOUT             string
 }{
-	ADD_TO_TRANSFER:      "add_to_msg",
-	REMOVE_FROM_TRANSFER: "remove_from_msg",
+	ADD_TO_TRANSFER:      "add_to_transfer",
+	REMOVE_FROM_TRANSFER: "remove_from_transfer",
 	UPDATE_EMAIL:         "update_email",
 	CHECKOUT:             "checkout",
 }
