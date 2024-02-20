@@ -2,8 +2,10 @@
 
 ## To-do
 
-- [ ] Build cấu trúc cho Temporal (Api + Worker)
+- [x] Build cấu trúc cho Temporal (Api + Worker)
+- [ ] Xây dựng luồng **Xác thực**
 - [ ] Xây dựng luồng **Chuyển tiền**
+- [ ] Xây dựng luồng **Thông báo**
 
 ## Workflow
 
@@ -37,8 +39,8 @@
 
 ## APIs
 
-- 1. Lấy DS giao dịch chuyển khoản: GET `/transfers`
-- 2. Kiểm tra số dư: GET `/accounts/:ID/balance`
+- [x] Lấy DS giao dịch chuyển khoản: GET `/transfers`
+- [ ] Kiểm tra số dư: GET `/accounts/:ID/balance`
 
 ## Quickstart
 
@@ -55,6 +57,7 @@ go run api/main.go
 
 - `fiber`
 - `temporal`
+- `viper`
 
 ## FAQ
 
