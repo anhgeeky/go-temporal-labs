@@ -1,8 +1,14 @@
 package messages
 
-type VerifyOtp struct {
-	Token string `json:"token"`
-	Code  string `json:"code"`
-	// NextFlow string `json:"next_flow"`
+type VerifyOtpMessage struct {
+	Token   string `json:"token"`
+	Code    string `json:"code"`
 	Payload string `json:"payload"`
+}
+
+type VerifyOtpReq struct {
+	Token   string `json:"token"`
+	Code    string `json:"code"`
+	Payload string `json:"payload"`
+	Trace   string `json:"trace"`
 }

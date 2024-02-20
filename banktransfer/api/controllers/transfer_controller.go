@@ -28,7 +28,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
-		TaskQueue: configs.Workflows.BANK_TRANSFER,
+		TaskQueue: configs.Workflows.TRANSFER,
 	}
 
 	now := time.Now()

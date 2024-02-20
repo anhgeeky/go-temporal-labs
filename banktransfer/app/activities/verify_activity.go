@@ -11,7 +11,7 @@ import (
 type VerifyActivity struct {
 }
 
-func (a *VerifyActivity) VerifyOtp(ctx workflow.Context, msg messages.VerifyOtp) error {
+func (a *VerifyActivity) VerifyOtp(ctx workflow.Context, msg messages.VerifyOtpMessage) error {
 	logger := workflow.GetLogger(ctx)
 
 	logger.Info("VerifyActivity processing started.")

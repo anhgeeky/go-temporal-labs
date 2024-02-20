@@ -21,7 +21,7 @@ func main() {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, configs.Workflows.BANK_TRANSFER, worker.Options{})
+	w := worker.New(c, configs.Workflows.TRANSFER, worker.Options{})
 
 	// Transfer workflow
 	transferActivity := &activities.TransferActivity{}

@@ -15,10 +15,10 @@ import (
 // Xác thực trước khi chạy 1 luồng xử lý
 // ================================================
 
-func VerifyOtpWorkflow(ctx workflow.Context, state messages.VerifyOtp) error {
+func VerifyOtpWorkflow(ctx workflow.Context, state messages.VerifyOtpMessage) error {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
-	err := workflow.SetQueryHandler(ctx, "getVerifyOtp", func(input []byte) (messages.VerifyOtp, error) {
+	err := workflow.SetQueryHandler(ctx, "getVerifyOtp", func(input []byte) (messages.VerifyOtpMessage, error) {
 		return state, nil
 	})
 	if err != nil {
@@ -26,6 +26,7 @@ func VerifyOtpWorkflow(ctx workflow.Context, state messages.VerifyOtp) error {
 		return err
 	}
 
+	// ===============================================================================
 	var a *activities.VerifyActivity
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 2 * time.Minute,
@@ -44,9 +45,11 @@ func VerifyOtpWorkflow(ctx workflow.Context, state messages.VerifyOtp) error {
 		return err
 	}
 
+	// ===============================================================================
 	// Go to next flow
+	// ===============================================================================
 	execution := workflow.GetInfo(ctx).WorkflowExecution
-	childID := fmt.Sprintf("child_workflow:%v", execution.RunID)
+	childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
 	cwo := workflow.ChildWorkflowOptions{
 		WorkflowID: childID,
 	}
@@ -60,8 +63,8 @@ func VerifyOtpWorkflow(ctx workflow.Context, state messages.VerifyOtp) error {
 		logger.Error("Parent execution received child execution failure.", "Error", err)
 		return err
 	}
-
-	logger.Info("Workflow completed.")
+	// ===============================================================================
+	logger.Info("Parent execution completed.", "Result", result)
 
 	return nil
 }

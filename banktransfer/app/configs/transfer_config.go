@@ -1,11 +1,5 @@
 package configs
 
-var Workflows = struct {
-	BANK_TRANSFER string
-}{
-	BANK_TRANSFER: "BANK_TRANSFER",
-}
-
 var SignalChannels = struct {
 	ADD_TO_TRANSFER_CHANNEL      string
 	REMOVE_FROM_TRANSFER_CHANNEL string
