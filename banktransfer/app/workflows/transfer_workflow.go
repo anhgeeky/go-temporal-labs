@@ -130,8 +130,12 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 				}
 				ctx = workflow.WithChildOptions(ctx, cwo)
 
+				msgNotfication := messages.NotificationMessage{
+					// TODO: Bổ sung payload
+				}
+
 				var result string
-				err = workflow.ExecuteChildWorkflow(ctx, TransferWorkflow, state).Get(ctx, &result)
+				err = workflow.ExecuteChildWorkflow(ctx, NotificationWorkflow, msgNotfication).Get(ctx, &result)
 				if err != nil {
 					logger.Error("Parent execution received child execution failure.", "Error", err)
 					return
