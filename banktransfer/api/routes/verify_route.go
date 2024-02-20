@@ -13,5 +13,5 @@ func StartVerifyRoute(app *fiber.App, temporal client.Client, services map[strin
 		TemporalClient: temporal,
 	}
 	group := app.Group("/verifications")
-	group.Get("/otp", controller.VerifyOtp)
+	group.Post("/otp", controller.VerifyOtp)
 }

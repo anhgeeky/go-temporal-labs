@@ -50,74 +50,33 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 			verifiedOtp = true
 		})
 
-		if !verifiedOtp {
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				ao := workflow.ActivityOptions{
-					StartToCloseTimeout: time.Minute,
-				}
-
-				ctx = workflow.WithActivityOptions(ctx, ao)
-
-				err := workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
-				if err != nil {
-					logger.Error("Error CheckBalance %v", err)
-					return
+		if verifiedOtp {
+			selector.AddFuture(workflow.ExecuteActivity(ctx, a.CheckBalance, state), func(f workflow.Future) {
+				if err := f.Get(ctx, nil); err != nil {
+					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				ao := workflow.ActivityOptions{
-					StartToCloseTimeout: time.Minute,
-				}
-
-				ctx = workflow.WithActivityOptions(ctx, ao)
-
-				err := workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
-				if err != nil {
-					logger.Error("Error CheckTargetAccount %v", err)
-					return
+			selector.AddFuture(workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state), func(f workflow.Future) {
+				if err := f.Get(ctx, nil); err != nil {
+					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				ao := workflow.ActivityOptions{
-					StartToCloseTimeout: time.Minute,
-				}
-
-				ctx = workflow.WithActivityOptions(ctx, ao)
-
-				err := workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
-				if err != nil {
-					logger.Error("Error CreateTransferTransaction %v", err)
-					return
+			selector.AddFuture(workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state), func(f workflow.Future) {
+				if err := f.Get(ctx, nil); err != nil {
+					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				ao := workflow.ActivityOptions{
-					StartToCloseTimeout: time.Minute,
-				}
-
-				ctx = workflow.WithActivityOptions(ctx, ao)
-
-				err := workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
-				if err != nil {
-					logger.Error("Error WriteCreditAccount %v", err)
-					return
+			selector.AddFuture(workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state), func(f workflow.Future) {
+				if err := f.Get(ctx, nil); err != nil {
+					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
-
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				ao := workflow.ActivityOptions{
-					StartToCloseTimeout: time.Minute,
-				}
-
-				ctx = workflow.WithActivityOptions(ctx, ao)
-
-				err := workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
-				if err != nil {
-					logger.Error("Error WriteDebitAccount %v", err)
-					return
+			selector.AddFuture(workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state), func(f workflow.Future) {
+				if err := f.Get(ctx, nil); err != nil {
+					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 

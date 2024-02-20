@@ -1,8 +1,10 @@
 package activities
 
 import (
+	"context"
+
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
-	"go.temporal.io/sdk/workflow"
+	"go.temporal.io/sdk/activity"
 )
 
 type NotificationActivity struct {
@@ -12,8 +14,8 @@ type NotificationActivity struct {
 	// - 2.7.4 Push message internal app, reload lại màn hình hiện tại `Đang xử lý` -> `Thành công`
 }
 
-func (a *NotificationActivity) GetDeviceToken(ctx workflow.Context, msg interface{}) (*messages.DeviceToken, error) {
-	logger := workflow.GetLogger(ctx)
+func (a *NotificationActivity) GetDeviceToken(ctx context.Context, msg interface{}) (*messages.DeviceToken, error) {
+	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: GetDeviceToken", msg)
 
@@ -22,24 +24,24 @@ func (a *NotificationActivity) GetDeviceToken(ctx workflow.Context, msg interfac
 	return &token, nil
 }
 
-func (a *NotificationActivity) PushSMS(ctx workflow.Context, msg interface{}) error {
-	logger := workflow.GetLogger(ctx)
+func (a *NotificationActivity) PushSMS(ctx context.Context, msg interface{}) error {
+	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushSMS", msg)
 
 	return nil
 }
 
-func (a *NotificationActivity) PushNotification(ctx workflow.Context, msg interface{}) error {
-	logger := workflow.GetLogger(ctx)
+func (a *NotificationActivity) PushNotification(ctx context.Context, msg interface{}) error {
+	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushNotification", msg)
 
 	return nil
 }
 
-func (a *NotificationActivity) PushInternalApp(ctx workflow.Context, msg interface{}) error {
-	logger := workflow.GetLogger(ctx)
+func (a *NotificationActivity) PushInternalApp(ctx context.Context, msg interface{}) error {
+	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushInternalApp", msg)
 
