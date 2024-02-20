@@ -1,6 +1,7 @@
 package workflows
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
@@ -51,18 +52,94 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 
 		if !verifiedOtp {
 			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				completed = true
 				ao := workflow.ActivityOptions{
 					StartToCloseTimeout: time.Minute,
 				}
 
 				ctx = workflow.WithActivityOptions(ctx, ao)
 
-				err := workflow.ExecuteActivity(ctx, a.SendTransferNotification, state).Get(ctx, nil)
+				err := workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
 				if err != nil {
-					logger.Error("Error sending email %v", err)
+					logger.Error("Error CheckBalance %v", err)
 					return
 				}
+			})
+
+			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				ao := workflow.ActivityOptions{
+					StartToCloseTimeout: time.Minute,
+				}
+
+				ctx = workflow.WithActivityOptions(ctx, ao)
+
+				err := workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
+				if err != nil {
+					logger.Error("Error CheckTargetAccount %v", err)
+					return
+				}
+			})
+
+			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				ao := workflow.ActivityOptions{
+					StartToCloseTimeout: time.Minute,
+				}
+
+				ctx = workflow.WithActivityOptions(ctx, ao)
+
+				err := workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
+				if err != nil {
+					logger.Error("Error CreateTransferTransaction %v", err)
+					return
+				}
+			})
+
+			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				ao := workflow.ActivityOptions{
+					StartToCloseTimeout: time.Minute,
+				}
+
+				ctx = workflow.WithActivityOptions(ctx, ao)
+
+				err := workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
+				if err != nil {
+					logger.Error("Error WriteCreditAccount %v", err)
+					return
+				}
+			})
+
+			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				ao := workflow.ActivityOptions{
+					StartToCloseTimeout: time.Minute,
+				}
+
+				ctx = workflow.WithActivityOptions(ctx, ao)
+
+				err := workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
+				if err != nil {
+					logger.Error("Error WriteDebitAccount %v", err)
+					return
+				}
+			})
+
+			// Call subflow -> Gửi notification
+			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				execution := workflow.GetInfo(ctx).WorkflowExecution
+				childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
+				cwo := workflow.ChildWorkflowOptions{
+					WorkflowID: childID,
+				}
+				ctx = workflow.WithChildOptions(ctx, cwo)
+
+				var result string
+				err = workflow.ExecuteChildWorkflow(ctx, TransferWorkflow, state).Get(ctx, &result)
+				if err != nil {
+					logger.Error("Parent execution received child execution failure.", "Error", err)
+					return
+				}
+				// ===============================================================================
+				logger.Info("Parent execution completed.", "Result", result)
+
+				completed = true
 			})
 		}
 
@@ -74,5 +151,6 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 		}
 	}
 
+	logger.Info("Workflow completed.")
 	return nil
 }

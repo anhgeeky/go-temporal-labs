@@ -23,13 +23,13 @@ type TransferController struct {
 
 // Done
 func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
-	workflowID := "TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
+	workflowID := "BANK_TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
 	var req messages.TransferReq
 	json.Unmarshal(c.Body(), &req)
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
-		TaskQueue: configs.Workflows.TRANSFER,
+		TaskQueue: configs.TaskQueues.BANK_TRANSFER,
 	}
 
 	now := time.Now()
