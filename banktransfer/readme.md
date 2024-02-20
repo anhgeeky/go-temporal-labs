@@ -11,13 +11,16 @@
 
 1. Lấy thông tin session từ Session JWT (`Get session info`)
 2. Lấy ds tài khoản theo session (`Get accounts`)
-3. Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
-4. Kiểm tra số dư (`Check balance account`) (`Parallel`)
-5. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
-6. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 4,5 done -> Continue`)
-7. Tạo giao dịch ghi nợ (`Parallel`)
-8. Tạo giao dịch ghi có (`Parallel`)
-9. Gửi thông báo đã chuyển tiền (`Completed`)
+3. Xác thực OTP
+4. Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
+  - **`Run workflow`**
+  - 4.1. Kiểm tra số dư (`Check balance account`) (`Parallel`)
+  - 4.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
+  - 4.3. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 4.1, 4.2 done -> Continue`)
+  - 4.4. Tạo giao dịch ghi nợ (`Parallel`)
+  - 4.5. Tạo giao dịch ghi có (`Parallel`)
+  - Gửi thông báo đã chuyển tiền (`When step 4.4, 4.5 done -> Completed`)
+5. Lấy thông tin kết quả chuyển tiền (Nhận thông báo trên App, reload lại show kết quả `Chuyển tiền`)
 
 ## APIs
 
