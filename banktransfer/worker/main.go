@@ -30,9 +30,9 @@ func main() {
 	w.RegisterWorkflow(workflows.TransferWorkflow)
 
 	// Verify workflow
-	verifyActivity := &activities.VerifyActivity{}
-	w.RegisterActivity(verifyActivity.VerifyOtp)
-	w.RegisterWorkflow(workflows.VerifyOtpWorkflow)
+	// verifyActivity := &activities.VerifyActivity{}
+	// w.RegisterActivity(verifyActivity.VerifyOtp)
+	// w.RegisterWorkflow(workflows.VerifyOtpWorkflow)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

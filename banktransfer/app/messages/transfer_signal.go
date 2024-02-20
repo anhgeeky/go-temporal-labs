@@ -1,25 +1,13 @@
 package messages
 
-type RouteSignal struct {
-	Route string
+type VerifyOtpReq struct {
+	Token  string `json:"token"`
+	Code   string `json:"code"`
+	FlowId string `json:"flow_id"`
+	Trace  string `json:"trace"`
 }
 
-type AddToTransferSignal struct {
+type VerifiedOtpSignal struct {
 	Route string
-	Item  TransferItem
-}
-
-type RemoveFromTransferSignal struct {
-	Route string
-	Item  TransferItem
-}
-
-type UpdateEmailSignal struct {
-	Route string
-	Email string
-}
-
-type CheckoutSignal struct {
-	Route string
-	Email string
+	Item  VerifyOtpReq
 }

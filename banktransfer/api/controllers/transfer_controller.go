@@ -21,6 +21,7 @@ type TransferController struct {
 	TemporalClient client.Client
 }
 
+// Done
 func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 	workflowID := "TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
 	var req messages.TransferReq
@@ -63,73 +64,5 @@ func (r TransferController) GetTransfer(c *fiber.Ctx) error {
 		return apis.WriteError(c, err)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func (r TransferController) AddToTransfer(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-	var item messages.TransferItem
-	json.Unmarshal(c.Body(), &item)
-
-	update := messages.AddToTransferSignal{Route: configs.RouteTypes.ADD_TO_TRANSFER, Item: item}
-
-	err := r.TemporalClient.SignalWorkflow(context.Background(), workflowID, "", configs.SignalChannels.ADD_TO_TRANSFER_CHANNEL, update)
-	if err != nil {
-		return apis.WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func (r TransferController) RemoveFromTransfer(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-	var item messages.TransferItem
-	json.Unmarshal(c.Body(), &item)
-
-	update := messages.RemoveFromTransferSignal{Route: configs.RouteTypes.REMOVE_FROM_TRANSFER, Item: item}
-
-	err := r.TemporalClient.SignalWorkflow(context.Background(), workflowID, "", configs.SignalChannels.REMOVE_FROM_TRANSFER_CHANNEL, update)
-	if err != nil {
-		return apis.WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func (r TransferController) UpdateEmail(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-
-	var body transaction.UpdateEmailRequest
-	json.Unmarshal(c.Body(), &body)
-	updateEmail := messages.UpdateEmailSignal{Route: configs.RouteTypes.UPDATE_EMAIL, Email: body.Email}
-
-	err := r.TemporalClient.SignalWorkflow(context.Background(), workflowID, "", configs.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
-	if err != nil {
-		return apis.WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	return c.Status(fiber.StatusOK).JSON(res)
-}
-
-func (r TransferController) Checkout(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-
-	var body transaction.CheckoutRequest
-	json.Unmarshal(c.Body(), &body)
-	checkout := messages.CheckoutSignal{Route: configs.RouteTypes.CHECKOUT, Email: body.Email}
-
-	err := r.TemporalClient.SignalWorkflow(context.Background(), workflowID, "", configs.SignalChannels.CHECKOUT_CHANNEL, checkout)
-	if err != nil {
-		return apis.WriteError(c, err)
-	}
-
-	res := make(map[string]interface{})
-	res["sent"] = true
 	return c.Status(fiber.StatusOK).JSON(res)
 }

@@ -1,0 +1,18 @@
+@hostname = localhost
+@port = 3131
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+@workflowID = TRANSFER-1708335220
+
+### Create transfer
+
+POST http://{{host}}/verifications/otp
+Content-Type: {{contentType}}
+
+{
+  "token": "token",
+  "code": "code",
+  "flow_id": "{{workflowID}}",
+  "trace": "trace"
+}

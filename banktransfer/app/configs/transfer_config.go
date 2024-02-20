@@ -1,25 +1,13 @@
 package configs
 
 var SignalChannels = struct {
-	ADD_TO_TRANSFER_CHANNEL      string
-	REMOVE_FROM_TRANSFER_CHANNEL string
-	UPDATE_EMAIL_CHANNEL         string
-	CHECKOUT_CHANNEL             string
+	VERIFY_OTP_CHANNEL string
 }{
-	ADD_TO_TRANSFER_CHANNEL:      "ADD_TO_TRANSFER_CHANNEL",
-	REMOVE_FROM_TRANSFER_CHANNEL: "REMOVE_FROM_TRANSFER_CHANNEL",
-	UPDATE_EMAIL_CHANNEL:         "UPDATE_EMAIL_CHANNEL",
-	CHECKOUT_CHANNEL:             "CHECKOUT_CHANNEL",
+	VERIFY_OTP_CHANNEL: "VERIFY_OTP_CHANNEL",
 }
 
 var RouteTypes = struct {
-	ADD_TO_TRANSFER      string
-	REMOVE_FROM_TRANSFER string
-	UPDATE_EMAIL         string
-	CHECKOUT             string
+	VERIFY_OTP string
 }{
-	ADD_TO_TRANSFER:      "add_to_transfer",
-	REMOVE_FROM_TRANSFER: "remove_from_transfer",
-	UPDATE_EMAIL:         "update_email",
-	CHECKOUT:             "checkout",
+	VERIFY_OTP: "verify_otp",
 }

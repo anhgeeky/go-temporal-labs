@@ -18,7 +18,7 @@
 
 1. [**Transfer Flow**] Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
   - Run [**Notification Flow**] send OTP
-2. [**Verify Flow**] Xác thực OTP (`Trigger Signal [Transfer Flow]`)
+2. [**Transfer Flow**] Xác thực OTP (`Trigger Signal`)
   - 2.1. Kiểm tra số dư (`Check balance account`) (`Parallel`)
   - 2.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
   - 2.3. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 2.1, 2.2 done -> Continue`)

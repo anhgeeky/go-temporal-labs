@@ -2,30 +2,12 @@ package messages
 
 import "time"
 
-type TransferItem struct {
-	ProductId int
-	Quantity  int
-}
-
-type UpdateTransferMessage struct {
-	Remove bool
-	Item   TransferItem
-}
-
 type Transfer struct {
 	Id                   string     `json:"id"`
 	AccountOriginId      string     `json:"account_origin_id"`
 	AccountDestinationId string     `json:"account_destination_id"`
 	Amount               float64    `json:"amount"`
 	CreatedAt            *time.Time `json:"created_at"`
-}
-
-func (state *Transfer) AddToTransfer(item TransferItem) {
-
-}
-
-func (state *Transfer) RemoveFromTransfer(item TransferItem) {
-
 }
 
 type TransferReq struct {
