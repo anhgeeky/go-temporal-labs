@@ -7,20 +7,32 @@
 
 ## Workflow
 
-### Chuyển tiền
+### Before: Chuyển tiền
 
 1. Lấy thông tin session từ Session JWT (`Get session info`)
 2. Lấy ds tài khoản theo session (`Get accounts`)
-3. Xác thực OTP
-4. Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
-  - **`Run workflow`**
-  - 4.1. Kiểm tra số dư (`Check balance account`) (`Parallel`)
-  - 4.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
-  - 4.3. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 4.1, 4.2 done -> Continue`)
-  - 4.4. Tạo giao dịch ghi nợ (`Parallel`)
-  - 4.5. Tạo giao dịch ghi có (`Parallel`)
-  - Gửi thông báo đã chuyển tiền (`When step 4.4, 4.5 done -> Completed`)
-5. Lấy thông tin kết quả chuyển tiền (Nhận thông báo trên App, reload lại show kết quả `Chuyển tiền`)
+
+### Start: Chuyển tiền
+
+1. [**Verify Flow**] Xác thực OTP (`Trigger [Transfer Flow]`)
+2. [**Transfer Flow**] Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
+  - **Run workflow**
+  - 2.1. Kiểm tra số dư (`Check balance account`) (`Parallel`)
+  - 2.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
+  - 2.3. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 2.1, 2.2 done -> Continue`)
+  - 2.4. Tạo giao dịch ghi nợ (`Parallel`)
+  - 2.5. Tạo giao dịch ghi có (`Parallel`)
+  - 2.6. Transfer done  (`When step 2.4, 2.5 done -> Completed`) (`Trigger [Notification Flow]`)
+  - 2.7 [**Notification Flow**] Gửi thông báo đã chuyển tiền
+    - 2.7.1 Lấy thông tin `token` của các thiết bị theo tài khoản
+    - 2.7.2 Push message notification vào `firebase`
+    - 2.7.3 Push message internal app, reload lại màn hình hiện tại `Đang xử lý` -> `Thành công`
+
+### End: Chuyển tiền
+
+1. Nhận message internal app
+2. Lấy thông tin kết quả chuyển tiền
+3. Reload lại show kết quả `Chuyển tiền Thành công`
 
 ## APIs
 

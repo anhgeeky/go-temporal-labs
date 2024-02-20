@@ -20,4 +20,3 @@ func StartTransferRoute(app *fiber.App, temporal client.Client, services map[str
 	group.Put("/:workflowID/remove", controller.RemoveFromTransfer)
 	group.Put("/:workflowID/checkout", controller.Checkout)
 	group.Put("/:workflowID/email", controller.UpdateEmail)
-}
