@@ -14,11 +14,11 @@ var (
 	abandonedTransferTimeout = 10 * time.Second
 )
 
-func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error {
+func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
 
-	err := workflow.SetQueryHandler(ctx, "getTransfer", func(input []byte) (messages.TransferState, error) {
+	err := workflow.SetQueryHandler(ctx, "getTransfer", func(input []byte) (messages.Transfer, error) {
 		return state, nil
 	})
 	if err != nil {
@@ -77,7 +77,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error 
 				return
 			}
 
-			state.Email = message.Email
+			// state.Email = message.Email
 			sentAbandonedTransferEmail = false
 		})
 
@@ -92,7 +92,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error 
 				return
 			}
 
-			state.Email = message.Email
+			// state.Email = message.Email
 
 			ao := workflow.ActivityOptions{
 				StartToCloseTimeout: time.Minute,
@@ -109,7 +109,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error 
 			checkedOut = true
 		})
 
-		if !sentAbandonedTransferEmail && len(state.Items) > 0 {
+		if !sentAbandonedTransferEmail {
 			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
 				sentAbandonedTransferEmail = true
 				ao := workflow.ActivityOptions{
@@ -118,7 +118,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferState) error 
 
 				ctx = workflow.WithActivityOptions(ctx, ao)
 
-				err := workflow.ExecuteActivity(ctx, a.SendTransferNotification, state.Email).Get(ctx, nil)
+				err := workflow.ExecuteActivity(ctx, a.SendTransferNotification, state).Get(ctx, nil)
 				if err != nil {
 					logger.Error("Error sending email %v", err)
 					return

@@ -12,6 +12,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/transaction"
 	"github.com/anhgeeky/go-temporal-labs/core/apis"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
 
@@ -22,13 +23,23 @@ type TransferController struct {
 
 func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 	workflowID := "TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
+	var req messages.TransferReq
+	json.Unmarshal(c.Body(), &req)
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
 		TaskQueue: configs.Workflows.BANK_TRANSFER,
 	}
 
-	msg := messages.TransferState{Items: make([]messages.TransferItem, 0)}
+	now := time.Now()
+
+	msg := messages.Transfer{
+		Id:                   uuid.NewString(),
+		AccountOriginId:      req.AccountOriginId,
+		AccountDestinationId: req.AccountDestinationId,
+		CreatedAt:            &now,
+	}
+
 	we, err := r.TemporalClient.ExecuteWorkflow(context.Background(), options, workflows.TransferWorkflow, msg)
 	if err != nil {
 		return apis.WriteError(c, err)
