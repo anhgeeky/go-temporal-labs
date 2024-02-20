@@ -16,16 +16,16 @@
 
 ### Start: Chuyển tiền
 
-1. [**Verify Flow**] Xác thực OTP (`Trigger [Transfer Flow]`)
-2. [**Transfer Flow**] Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
-  - **Run workflow**
+1. [**Transfer Flow**] Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
+  - Run [**Notification Flow**] send OTP
+2. [**Verify Flow**] Xác thực OTP (`Trigger Signal [Transfer Flow]`)
   - 2.1. Kiểm tra số dư (`Check balance account`) (`Parallel`)
   - 2.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
   - 2.3. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 2.1, 2.2 done -> Continue`)
   - 2.4. Tạo giao dịch ghi nợ (`Parallel`)
   - 2.5. Tạo giao dịch ghi có (`Parallel`)
   - 2.6. Transfer done  (`When step 2.4, 2.5 done -> Completed`) (`Trigger [Notification Flow]`)
-  - 2.7 [**Notification Flow**] Gửi thông báo đã chuyển tiền
+  - 2.7. Call subflow [**Notification Flow**] Gửi thông báo đã chuyển tiền
     - 2.7.1 Lấy thông tin `token` của các thiết bị theo tài khoản
     - 2.7.2 Push message SMS thông báo đã `Chuyển tiền Thành công`
     - 2.7.3 Push message notification vào `firebase`
