@@ -39,6 +39,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	var a *activities.TransferActivity
 
 	for {
+		childCtx, cancelHandler := workflow.WithCancel(ctx)
 		selector := workflow.NewSelector(ctx)
 
 		selector.AddReceive(verifyOtpChannel, func(c workflow.ReceiveChannel, _ bool) {
@@ -58,36 +59,41 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 		if verifiedOtp {
 			selector.AddFuture(workflow.ExecuteActivity(ctx, a.CheckBalance, state), func(f workflow.Future) {
 				if err := f.Get(ctx, nil); err != nil {
+					cancelHandler()
 					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
 			selector.AddFuture(workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state), func(f workflow.Future) {
 				if err := f.Get(ctx, nil); err != nil {
+					cancelHandler()
 					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
 			selector.AddFuture(workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state), func(f workflow.Future) {
 				if err := f.Get(ctx, nil); err != nil {
+					cancelHandler()
 					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
 			selector.AddFuture(workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state), func(f workflow.Future) {
 				if err := f.Get(ctx, nil); err != nil {
+					cancelHandler()
 					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 			selector.AddFuture(workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state), func(f workflow.Future) {
 				if err := f.Get(ctx, nil); err != nil {
+					cancelHandler()
 					workflow.GetLogger(ctx).Warn("Failure sending response activity", "error", err)
 				}
 			})
 
 			// Call subflow -> Gửi notification
 			if !completed {
-				selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+				selector.AddFuture(workflow.NewTimer(childCtx, abandonedTransferTimeout), func(f workflow.Future) {
 					execution := workflow.GetInfo(ctx).WorkflowExecution
 					childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
 					cwo := workflow.ChildWorkflowOptions{
