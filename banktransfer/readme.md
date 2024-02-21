@@ -3,9 +3,9 @@
 ## To-do
 
 - [x] Build cấu trúc cho Temporal (Api + Worker)
-- [ ] Xây dựng luồng **Xác thực**
-- [ ] Xây dựng luồng **Chuyển tiền**
-- [ ] Xây dựng luồng **Thông báo**
+- [x] Xây dựng luồng **Thông báo** (Notification Flow)
+- [ ] Xây dựng luồng **Chuyển tiền** (Transfer Flow)
+  - [ ] Bổ sung require before steps (`When step 2.4, 2.5 done -> Completed`)
 
 ## Workflow
 
@@ -19,17 +19,17 @@
 1. [**Transfer Flow**] Tạo lệnh YC chuyển tiền (`Create bank transfer`) (`Start`)
   - Run [**Notification Flow**] send OTP
 2. [**Transfer Flow**] Xác thực OTP (`Trigger Signal`)
-  - 2.1. Kiểm tra số dư (`Check balance account`) (`Parallel`)
-  - 2.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Parallel`)
+  - 2.1. Kiểm tra số dư (`Check balance account`) (`Synchronize`)
+  - 2.2. Kiểm tra tra tài khoản đích (`Check target account`) (`Synchronize`)
   - 2.3. Tạo giao dịch chuyển tiền (`Create new transaction`) (`When step 2.1, 2.2 done -> Continue`)
-  - 2.4. Tạo giao dịch ghi nợ (`Parallel`)
-  - 2.5. Tạo giao dịch ghi có (`Parallel`)
+  - 2.4. Tạo giao dịch ghi nợ (`Synchronize`)
+  - 2.5. Tạo giao dịch ghi có (`Synchronize`)
   - 2.6. Transfer done  (`When step 2.4, 2.5 done -> Completed`) (`Trigger [Notification Flow]`)
   - 2.7. Call subflow [**Notification Flow**] Gửi thông báo đã chuyển tiền
     - 2.7.1 Lấy thông tin `token` của các thiết bị theo tài khoản
-    - 2.7.2 Push message SMS thông báo đã `Chuyển tiền Thành công`
-    - 2.7.3 Push message notification vào `firebase`
-    - 2.7.4 Push message internal app, reload lại màn hình hiện tại `Đang xử lý` -> `Thành công`
+    - 2.7.2 Push message SMS thông báo đã `Chuyển tiền Thành công` (`Parallel`)
+    - 2.7.3 Push message notification vào `firebase` (`Parallel`)
+    - 2.7.4 Push message internal app, reload lại màn hình hiện tại `Đang xử lý` -> `Thành công` (`Parallel`)
 
 ### End: Chuyển tiền
 
