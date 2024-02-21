@@ -47,6 +47,9 @@
 ```bash
 go run worker/main.go
 go run api/main.go
+
+# or 
+sh start.sh
 ```
 
 ## Temporal

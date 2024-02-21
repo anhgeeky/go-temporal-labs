@@ -3,7 +3,7 @@
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
-@workflowID = BANK_TRANSFER-1708489693
+@workflowID = BANK_TRANSFER-1708491144
 
 ### Create transfer
 

@@ -30,9 +30,14 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	}
 
 	ao := workflow.ActivityOptions{
-		ScheduleToStartTimeout: 5 * time.Second,
-		ScheduleToCloseTimeout: 2 * time.Minute,
-		RetryPolicy:            &temporal.RetryPolicy{MaximumAttempts: 2},
+		StartToCloseTimeout: 2 * time.Minute,
+		HeartbeatTimeout:    10 * time.Second,
+		RetryPolicy: &temporal.RetryPolicy{
+			InitialInterval:    time.Second,
+			BackoffCoefficient: 2.0,
+			MaximumInterval:    time.Minute,
+			MaximumAttempts:    5,
+		},
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
@@ -100,7 +105,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 		if !completed && verifiedOtp {
 			selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
 				execution := workflow.GetInfo(ctx).WorkflowExecution
-				childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
+				childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
 				cwo := workflow.ChildWorkflowOptions{
 					WorkflowID: childID,
 				}
