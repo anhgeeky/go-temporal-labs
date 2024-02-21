@@ -6,6 +6,8 @@
 - [x] Xây dựng luồng **Thông báo** (Notification Flow)
 - [ ] Xây dựng luồng **Chuyển tiền** (Transfer Flow)
   - [ ] Bổ sung require before steps (`When step 2.4, 2.5 done -> Completed`)
+- [ ] Saga for Temporal
+- [ ] Add or Remove 1 activity
 
 ## Workflow
 
