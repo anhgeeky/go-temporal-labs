@@ -27,6 +27,11 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 		return err
 	}
 
+	ao := workflow.ActivityOptions{
+		StartToCloseTimeout: 10 * time.Second,
+	}
+	ctx = workflow.WithActivityOptions(ctx, ao)
+
 	verifyOtpChannel := workflow.GetSignalChannel(ctx, configs.SignalChannels.VERIFY_OTP_CHANNEL)
 	verifiedOtp := false
 	completed := false
@@ -81,29 +86,31 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 			})
 
 			// Call subflow -> Gửi notification
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
-				execution := workflow.GetInfo(ctx).WorkflowExecution
-				childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
-				cwo := workflow.ChildWorkflowOptions{
-					WorkflowID: childID,
-				}
-				ctx = workflow.WithChildOptions(ctx, cwo)
+			if !completed {
+				selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+					execution := workflow.GetInfo(ctx).WorkflowExecution
+					childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
+					cwo := workflow.ChildWorkflowOptions{
+						WorkflowID: childID,
+					}
+					ctx = workflow.WithChildOptions(ctx, cwo)
 
-				msgNotfication := messages.NotificationMessage{
-					// TODO: Bổ sung payload
-				}
+					msgNotfication := messages.NotificationMessage{
+						// TODO: Bổ sung payload
+					}
 
-				var result string
-				err = workflow.ExecuteChildWorkflow(ctx, NotificationWorkflow, msgNotfication).Get(ctx, &result)
-				if err != nil {
-					logger.Error("Parent execution received child execution failure.", "Error", err)
-					return
-				}
-				// ===============================================================================
-				logger.Info("Parent execution completed.", "Result", result)
+					var result string
+					err = workflow.ExecuteChildWorkflow(ctx, NotificationWorkflow, msgNotfication).Get(ctx, &result)
+					if err != nil {
+						logger.Error("Parent execution received child execution failure.", "Error", err)
+						return
+					}
+					// ===============================================================================
+					logger.Info("Parent execution completed.", "Result", result)
 
-				completed = true
-			})
+					completed = true
+				})
+			}
 		}
 
 		selector.Select(ctx)
