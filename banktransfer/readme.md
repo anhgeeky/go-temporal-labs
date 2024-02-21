@@ -54,7 +54,9 @@ sh start.sh
 
 ## Temporal
 
+![Screenshot](/banktransfer/docs/assets/bank-transfer-workflows.jpg)
 ![Screenshot](/banktransfer/docs/assets/bank-transfer-temporal-admin-log.png)
+![Screenshot](/banktransfer/docs/assets/bank-transfer-sub-workflow-temporal-admin-log.png)
 
 ## Stack for Sample
 
