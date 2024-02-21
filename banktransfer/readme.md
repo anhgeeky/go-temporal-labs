@@ -52,7 +52,7 @@ go run api/main.go
 sh start.sh
 ```
 
-## Temporal
+## Temporal screenshot
 
 ![Screenshot](/banktransfer/docs/assets/bank-transfer-workflows.jpg)
 ![Screenshot](/banktransfer/docs/assets/bank-transfer-temporal-admin-log.png)
