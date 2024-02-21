@@ -24,26 +24,26 @@ func (a *NotificationActivity) GetDeviceToken(ctx context.Context, msg interface
 	return &token, nil
 }
 
-func (a *NotificationActivity) PushSMS(ctx context.Context, msg interface{}) error {
+func (a *NotificationActivity) PushSMS(ctx context.Context, msg *messages.DeviceToken) (string, error) {
 	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushSMS", msg)
 
-	return nil
+	return "OK", nil
 }
 
-func (a *NotificationActivity) PushNotification(ctx context.Context, msg interface{}) error {
+func (a *NotificationActivity) PushNotification(ctx context.Context, msg *messages.DeviceToken) (string, error) {
 	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushNotification", msg)
 
-	return nil
+	return "OK", nil
 }
 
-func (a *NotificationActivity) PushInternalApp(ctx context.Context, msg interface{}) error {
+func (a *NotificationActivity) PushInternalApp(ctx context.Context, msg *messages.DeviceToken) (string, error) {
 	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushInternalApp", msg)
 
-	return nil
+	return "OK", nil
 }

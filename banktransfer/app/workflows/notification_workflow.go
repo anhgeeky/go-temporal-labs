@@ -26,7 +26,8 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 	logger.Info("NotificationWorkflow start")
 
 	ao := workflow.ActivityOptions{
-		StartToCloseTimeout: 10 * time.Second,
+		StartToCloseTimeout:    10 * time.Second,
+		ScheduleToCloseTimeout: 1 * time.Minute,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
@@ -62,11 +63,13 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 		results = append(results, result2, result3)
 	})
 
+	logger.Info("NotificationWorkflow before result", results)
+
 	_ = workflow.Await(ctx, func() bool {
+		logger.Info("NotificationWorkflow Await result", results)
 		return err != nil || len(results) == 3 // 3 task push đã chạy xong -> Completed
 	})
 
-	logger.Info("NotificationWorkflow result", results)
 	logger.Info("NotificationWorkflow end")
 
 	return "DONE", err
