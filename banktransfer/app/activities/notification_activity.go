@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
 )
 
@@ -19,7 +20,9 @@ func (a *NotificationActivity) GetDeviceToken(ctx context.Context, msg interface
 
 	logger.Info("NotificationActivity: GetDeviceToken", msg)
 
-	token := messages.DeviceToken{}
+	token := messages.DeviceToken{
+		FirebaseToken: uuid.New().String(),
+	}
 
 	return &token, nil
 }

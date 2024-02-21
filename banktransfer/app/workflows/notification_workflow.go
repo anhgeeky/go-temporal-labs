@@ -60,7 +60,7 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 		if err != nil {
 			return
 		}
-		results = append(results, result2, result3)
+		results = append(results, result1, result2, result3)
 	})
 
 	logger.Info("NotificationWorkflow before result", results)
