@@ -7,13 +7,14 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/configs"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 )
 
 var (
-	abandonedTransferTimeout = 10 * time.Second
+	transferTimeout = 5 * time.Second
 )
 
 func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
@@ -29,9 +30,9 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	}
 
 	ao := workflow.ActivityOptions{
-		// ScheduleToStartTimeout: 5 * time.Second,
-		// ScheduleToCloseTimeout: 1 * time.Minute,
-		RetryPolicy: &temporal.RetryPolicy{MaximumAttempts: 2},
+		ScheduleToStartTimeout: 5 * time.Second,
+		ScheduleToCloseTimeout: 2 * time.Minute,
+		RetryPolicy:            &temporal.RetryPolicy{MaximumAttempts: 2},
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
@@ -42,10 +43,11 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	var a *activities.TransferActivity
 
 	for {
-		// childCtx, cancelHandler := workflow.WithCancel(ctx)
+		childCtx, cancelHandler := workflow.WithCancel(ctx)
 		selector := workflow.NewSelector(ctx)
 
 		selector.AddReceive(verifyOtpChannel, func(c workflow.ReceiveChannel, _ bool) {
+
 			var signal interface{}
 			c.Receive(ctx, &signal)
 
@@ -56,32 +58,37 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 				return
 			}
 
-			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(childCtx, a.CheckBalance, state).Get(ctx, nil)
 			if err != nil {
+				cancelHandler()
 				logger.Error("Failure sending response activity", "error", err)
 				return
 			}
 
-			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(childCtx, a.CheckTargetAccount, state).Get(ctx, nil)
 			if err != nil {
+				cancelHandler()
 				logger.Error("Failure sending response activity", "error", err)
 				return
 			}
 
-			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(childCtx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
+				cancelHandler()
 				logger.Error("Failure sending response activity", "error", err)
 				return
 			}
 
-			err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(childCtx, a.WriteCreditAccount, state).Get(ctx, nil)
 			if err != nil {
+				cancelHandler()
 				logger.Error("Failure sending response activity", "error", err)
 				return
 			}
 
-			err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(childCtx, a.WriteDebitAccount, state).Get(ctx, nil)
 			if err != nil {
+				cancelHandler()
 				logger.Error("Failure sending response activity", "error", err)
 				return
 			}
@@ -91,7 +98,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 
 		// Call subflow -> Gửi notification
 		if !completed && verifiedOtp {
-			selector.AddFuture(workflow.NewTimer(ctx, abandonedTransferTimeout), func(f workflow.Future) {
+			selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
 				execution := workflow.GetInfo(ctx).WorkflowExecution
 				childID := fmt.Sprintf("TRANSFER:%v", execution.RunID)
 				cwo := workflow.ChildWorkflowOptions{
@@ -101,6 +108,9 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 
 				msgNotfication := messages.NotificationMessage{
 					// TODO: Bổ sung payload
+					Token: messages.DeviceToken{
+						FirebaseToken: uuid.New().String(),
+					},
 				}
 
 				var result string
