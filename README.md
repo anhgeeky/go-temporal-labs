@@ -22,6 +22,19 @@
 - `banktransfer`
 - `onboarding`
 
+## Quickstart
+
+```bash
+go run ./pkg/banktransfer/cmd/worker/main.go
+go run ./serivces/mcs-account/main.go
+go run ./serivces/mcs-money-transfer/main.go
+go run ./serivces/mcs-notification/main.go
+go run ./serivces/mcs-payment/main.go
+# or 
+sh start-worker.sh
+sh start-api.sh
+```
+
 ## Bank Transfer Workflow
 
 ### Before: Chuyển tiền
@@ -56,16 +69,6 @@
 
 - [x] Lấy DS giao dịch chuyển khoản: GET `/transfers`
 - [ ] Kiểm tra số dư: GET `/accounts/:ID/balance`
-
-## Quickstart
-
-```bash
-go run worker/main.go
-go run api/main.go
-
-# or 
-sh start.sh
-```
 
 ## Temporal screenshot
 
