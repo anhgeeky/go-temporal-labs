@@ -2,6 +2,8 @@ package activities
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
 	"go.temporal.io/sdk/activity"
@@ -56,4 +58,34 @@ func (a *TransferActivity) WriteDebitAccount(ctx context.Context, msg messages.T
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: WriteDebitAccount", msg)
 	return nil
+}
+
+// ============================================
+// Rollback
+// ============================================
+func (a *TransferActivity) CreateTransferTransactionCompensation(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: CreateTransferTransaction", msg)
+	return nil
+}
+
+func (a *TransferActivity) WriteCreditAccountCompensation(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: WriteCreditAccountCompensation", msg)
+	return nil
+}
+
+func (a *TransferActivity) WriteDebitAccountCompensation(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: WriteDebitAccountCompensation", msg)
+	return nil
+}
+
+func StepWithError(ctx context.Context, transferDetails TransferDetails) error {
+	fmt.Printf(
+		"\nSimulate failure to trigger compensation. ReferenceId: %s\n",
+		transferDetails.ReferenceID,
+	)
+
+	return errors.New("some error")
 }

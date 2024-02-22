@@ -11,23 +11,16 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
+	"go.uber.org/multierr"
 )
 
 var (
 	transferTimeout = 5 * time.Second
 )
 
-func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
+func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error) {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
-
-	err := workflow.SetQueryHandler(ctx, "getTransfer", func(input []byte) (messages.Transfer, error) {
-		return state, nil
-	})
-	if err != nil {
-		logger.Info("SetQueryHandler failed.", "Error", err)
-		return err
-	}
 
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 2 * time.Minute,
@@ -48,7 +41,6 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	var a *activities.TransferActivity
 
 	for {
-		childCtx, cancelHandler := workflow.WithCancel(ctx)
 		selector := workflow.NewSelector(ctx)
 
 		selector.AddReceive(verifyOtpChannel, func(c workflow.ReceiveChannel, _ bool) {
@@ -57,46 +49,60 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 			c.Receive(ctx, &signal)
 
 			var message messages.VerifiedOtpSignal
-			err := mapstructure.Decode(signal, &message)
+			err = mapstructure.Decode(signal, &message)
 			if err != nil {
 				logger.Error("Invalid signal type %v", err)
 				return
 			}
 
-			err = workflow.ExecuteActivity(childCtx, a.CheckBalance, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
 			if err != nil {
-				cancelHandler()
-				logger.Error("Failure sending response activity", "error", err)
-				return
+				return err
 			}
 
-			err = workflow.ExecuteActivity(childCtx, a.CheckTargetAccount, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
 			if err != nil {
-				cancelHandler()
-				logger.Error("Failure sending response activity", "error", err)
-				return
+				return err
 			}
 
-			err = workflow.ExecuteActivity(childCtx, a.CreateTransferTransaction, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
-				cancelHandler()
-				logger.Error("Failure sending response activity", "error", err)
-				return
+				return err
 			}
 
-			err = workflow.ExecuteActivity(childCtx, a.WriteCreditAccount, state).Get(ctx, nil)
+			// Run rollback khi có lỗi
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransferTransactionCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
+
+			err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
 			if err != nil {
-				cancelHandler()
-				logger.Error("Failure sending response activity", "error", err)
-				return
+				return err
 			}
 
-			err = workflow.ExecuteActivity(childCtx, a.WriteDebitAccount, state).Get(ctx, nil)
+			// Run rollback khi có lỗi
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.WriteCreditAccountCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
+
+			err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
 			if err != nil {
-				cancelHandler()
-				logger.Error("Failure sending response activity", "error", err)
-				return
+				return err
 			}
+
+			// Run rollback khi có lỗi
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.WriteDebitAccountCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
 
 			verifiedOtp = true
 		})
@@ -140,5 +146,5 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) error {
 	}
 
 	logger.Info("Workflow completed.")
-	return nil
+	return err
 }
