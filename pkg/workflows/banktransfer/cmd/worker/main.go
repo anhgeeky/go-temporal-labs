@@ -6,7 +6,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/configs"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/workflows"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -15,7 +15,7 @@ import (
 func main() {
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort: config.TEMPORAL_CLUSTER_HOST,
+		HostPort: viper.GetString("TEMPORAL_CLUSTER_HOST"),
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
