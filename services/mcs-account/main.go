@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/api/routes"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/apis/routes"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/config"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/spf13/viper"

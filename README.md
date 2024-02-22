@@ -10,6 +10,18 @@
 - [ ] Add or Remove 1 activity
   - Follow: <https://community.temporal.io/t/update-activity-and-or-workflow-inputs/4972/5>
 
+## APIs
+
+- `mcs-account`: `localhost:3001`
+- `mcs-money-transfer`: `localhost:3002`
+- `mcs-notification`: `localhost:3003`
+- `mcs-payment`: `localhost:3004`
+
+## Workers
+
+- `banktransfer`
+- `onboarding`
+
 ## Bank Transfer Workflow
 
 ### Before: Chuyển tiền

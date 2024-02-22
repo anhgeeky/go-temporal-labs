@@ -3,7 +3,7 @@ package activities
 import (
 	"context"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
 )

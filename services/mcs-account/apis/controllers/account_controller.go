@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/account"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/account"
 	"github.com/gofiber/fiber/v2"
 	"go.temporal.io/sdk/client"
 )

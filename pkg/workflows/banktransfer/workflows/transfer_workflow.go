@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/configs"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/temporal"
@@ -57,17 +57,17 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
 			if err != nil {
-				return err
+				return
 			}
 
 			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
 			if err != nil {
-				return err
+				return
 			}
 
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
-				return err
+				return
 			}
 
 			// Run rollback khi có lỗi
@@ -80,7 +80,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 			err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
 			if err != nil {
-				return err
+				return
 			}
 
 			// Run rollback khi có lỗi
@@ -93,7 +93,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 			err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
 			if err != nil {
-				return err
+				return
 			}
 
 			// Run rollback khi có lỗi
@@ -146,5 +146,5 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	}
 
 	logger.Info("Workflow completed.")
-	return err
+	return
 }

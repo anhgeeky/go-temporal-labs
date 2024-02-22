@@ -1,11 +1,11 @@
 package modules
 
 import (
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/account"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/notification"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/otp"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/transaction"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/repos"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/account"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/notification"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/otp"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/transaction"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/repos"
 )
 
 func SetupServices() map[string]interface{} {

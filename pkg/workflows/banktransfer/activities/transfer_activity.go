@@ -2,10 +2,8 @@ package activities
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"go.temporal.io/sdk/activity"
 )
 
@@ -81,11 +79,11 @@ func (a *TransferActivity) WriteDebitAccountCompensation(ctx context.Context, ms
 	return nil
 }
 
-func StepWithError(ctx context.Context, transferDetails TransferDetails) error {
-	fmt.Printf(
-		"\nSimulate failure to trigger compensation. ReferenceId: %s\n",
-		transferDetails.ReferenceID,
-	)
+// func StepWithError(ctx context.Context, transferDetails TransferDetails) error {
+// 	fmt.Printf(
+// 		"\nSimulate failure to trigger compensation. ReferenceId: %s\n",
+// 		transferDetails.ReferenceID,
+// 	)
 
-	return errors.New("some error")
-}
+// 	return errors.New("some error")
+// }

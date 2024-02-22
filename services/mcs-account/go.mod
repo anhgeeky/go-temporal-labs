@@ -3,7 +3,6 @@ module github.com/anhgeeky/go-temporal-labs/mcs-account
 go 1.21.6
 
 require (
-	github.com/anhgeeky/go-temporal-labs v0.0.0-20240222021043-94d2dfb7f1d1
 	github.com/gofiber/fiber/v2 v2.52.1
 	github.com/google/uuid v1.6.0
 	github.com/spf13/viper v1.18.2

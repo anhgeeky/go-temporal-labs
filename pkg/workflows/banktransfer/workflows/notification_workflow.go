@@ -3,8 +3,8 @@ package workflows
 import (
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"go.temporal.io/sdk/workflow"
 )
 

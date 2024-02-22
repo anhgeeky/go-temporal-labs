@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/api/controllers"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/transaction"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/apis/controllers"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/transaction"
 	"github.com/gofiber/fiber/v2"
 	"go.temporal.io/sdk/client"
 )

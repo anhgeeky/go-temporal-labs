@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/configs"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/workflows"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"

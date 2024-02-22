@@ -3,7 +3,6 @@ module github.com/anhgeeky/go-temporal-labs/banktransfer
 go 1.21.6
 
 require (
-	github.com/anhgeeky/go-temporal-labs v0.0.0-20240222021043-94d2dfb7f1d1
 	github.com/google/uuid v1.6.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/spf13/viper v1.18.2
@@ -20,6 +19,7 @@ require (
 	github.com/gogo/status v1.1.1 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
