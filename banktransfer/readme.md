@@ -8,6 +8,7 @@
   - [ ] Bổ sung require before steps (`When step 2.4, 2.5 done -> Completed`)
 - [ ] Saga for Temporal
 - [ ] Add or Remove 1 activity
+  - Follow: <https://community.temporal.io/t/update-activity-and-or-workflow-inputs/4972/5>
 
 ## Workflow
 
