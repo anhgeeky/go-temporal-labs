@@ -70,7 +70,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return
 			}
 
-			// Run rollback khi có lỗi
+			// Compensation
 			defer func() {
 				if err != nil {
 					errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransferTransactionCompensation, state).Get(ctx, nil)
@@ -83,7 +83,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return
 			}
 
-			// Run rollback khi có lỗi
+			// Compensation
 			defer func() {
 				if err != nil {
 					errCompensation := workflow.ExecuteActivity(ctx, a.WriteCreditAccountCompensation, state).Get(ctx, nil)
@@ -96,7 +96,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return
 			}
 
-			// Run rollback khi có lỗi
+			// Compensation
 			defer func() {
 				if err != nil {
 					errCompensation := workflow.ExecuteActivity(ctx, a.WriteDebitAccountCompensation, state).Get(ctx, nil)
