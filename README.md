@@ -15,21 +15,21 @@
 - `mcs-account`: `localhost:3001`
 - `mcs-money-transfer`: `localhost:3002`
 - `mcs-notification`: `localhost:3003`
-- `mcs-payment`: `localhost:3004`
 
 ## Workers
 
 - `banktransfer`
+- `notification`
 - `onboarding`
 
 ## Quickstart
 
 ```bash
 go run ./pkg/banktransfer/cmd/worker/main.go
+go run ./pkg/notification/cmd/worker/main.go
 go run ./serivces/mcs-account/main.go
 go run ./serivces/mcs-money-transfer/main.go
 go run ./serivces/mcs-notification/main.go
-go run ./serivces/mcs-payment/main.go
 # or 
 sh start-worker.sh
 sh start-api.sh

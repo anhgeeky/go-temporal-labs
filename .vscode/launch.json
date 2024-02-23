@@ -38,13 +38,6 @@
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}/mcs-notification"
-    },
-    {
-      "name": "Go Run MCS Payment Api",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "${workspaceFolder}/mcs-payment"
     }
   ]
 }
