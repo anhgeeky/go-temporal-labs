@@ -5,6 +5,7 @@ import (
 )
 
 var (
-	MCS_LOG_HOST          = viper.GetString("MCS_LOG_HOST")
+	MCS_ACCOUNT_HOST      = viper.GetString("MCS_ACCOUNT_HOST")
 	MCS_NOTIFICATION_HOST = viper.GetString("MCS_NOTIFICATION_HOST")
+	MCS_PAYMENT_HOST      = viper.GetString("MCS_PAYMENT_HOST")
 )
