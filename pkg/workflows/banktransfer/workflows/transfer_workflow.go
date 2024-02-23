@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	coreWorkflow "github.com/anhgeeky/go-temporal-labs/core/workflow"
 	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
@@ -31,7 +31,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
-	verifyOtpChannel := workflow.GetSignalChannel(ctx, configs.SignalChannels.VERIFY_OTP_CHANNEL)
+	verifyOtpChannel := workflow.GetSignalChannel(ctx, config.SignalChannels.VERIFY_OTP_CHANNEL)
 	verifiedOtp := false
 	completed := false
 

@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	notiActivities "github.com/anhgeeky/go-temporal-labs/notification/activities"
 	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
@@ -16,13 +16,13 @@ import (
 func main() {
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort: configs.TEMPORAL_CLUSTER_HOST,
+		HostPort: config.TEMPORAL_CLUSTER_HOST,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, configs.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
+	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
 
 	// Transfer workflow
 	transferActivity := &activities.TransferActivity{}

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/anhgeeky/go-temporal-labs/core/apis"
@@ -29,7 +29,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
-		TaskQueue: configs.TaskQueues.BANK_TRANSFER_QUEUE,
+		TaskQueue: config.TaskQueues.BANK_TRANSFER_QUEUE,
 	}
 
 	now := time.Now()

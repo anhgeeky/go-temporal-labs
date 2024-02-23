@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/anhgeeky/go-temporal-labs/notification/activities"
-	"github.com/anhgeeky/go-temporal-labs/notification/configs"
+	"github.com/anhgeeky/go-temporal-labs/notification/config"
 	"github.com/anhgeeky/go-temporal-labs/notification/workflows"
 
 	"go.temporal.io/sdk/client"
@@ -14,13 +14,13 @@ import (
 func main() {
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort: configs.TEMPORAL_CLUSTER_HOST,
+		HostPort: config.TEMPORAL_CLUSTER_HOST,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, configs.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
+	w := worker.New(c, config.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
 
 	// Notification workflow
 	notificationActivity := &activities.NotificationActivity{}

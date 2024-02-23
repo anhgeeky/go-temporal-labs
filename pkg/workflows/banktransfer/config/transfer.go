@@ -1,4 +1,4 @@
-package configs
+package config
 
 var SignalChannels = struct {
 	VERIFY_OTP_CHANNEL string
