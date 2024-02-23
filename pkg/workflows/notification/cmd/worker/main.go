@@ -20,17 +20,7 @@ func main() {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, configs.TaskQueues.BANK_TRANSFER, worker.Options{})
-
-	// Transfer workflow
-	transferActivity := &activities.TransferActivity{}
-	w.RegisterActivity(transferActivity.CreateTransfer)
-	w.RegisterActivity(transferActivity.CheckBalance)
-	w.RegisterActivity(transferActivity.CheckTargetAccount)
-	w.RegisterActivity(transferActivity.CreateTransferTransaction)
-	w.RegisterActivity(transferActivity.WriteCreditAccount)
-	w.RegisterActivity(transferActivity.WriteDebitAccount)
-	w.RegisterWorkflow(workflows.TransferWorkflow)
+	w := worker.New(c, configs.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
 
 	// Notification workflow
 	notificationActivity := &activities.NotificationActivity{}
