@@ -2,8 +2,8 @@ go 1.21.6
 
 use ./pkg/core
 use ./pkg/workflows/banktransfer
+use ./pkg/workflows/notification
 use ./pkg/workflows/onboarding
 use ./services/mcs-account
 use ./services/mcs-money-transfer
 use ./services/mcs-notification
-use ./services/mcs-payment

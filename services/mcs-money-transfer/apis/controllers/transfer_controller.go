@@ -10,7 +10,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/anhgeeky/go-temporal-labs/core/apis"
-	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/transaction"
+	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/modules/transaction"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
@@ -29,7 +29,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 	options := client.StartWorkflowOptions{
 		ID:        workflowID,
-		TaskQueue: configs.TaskQueues.BANK_TRANSFER,
+		TaskQueue: configs.TaskQueues.BANK_TRANSFER_QUEUE,
 	}
 
 	now := time.Now()

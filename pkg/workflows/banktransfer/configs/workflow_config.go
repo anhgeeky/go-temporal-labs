@@ -1,17 +1,13 @@
 package configs
 
 var TaskQueues = struct {
-	BANK_TRANSFER string
+	BANK_TRANSFER_QUEUE string
 }{
-	BANK_TRANSFER: "BANK_TRANSFER",
+	BANK_TRANSFER_QUEUE: "BANK_TRANSFER_QUEUE",
 }
 
 var Workflows = struct {
-	VERIFY       string
-	TRANSFER     string
-	NOTIFICATION string
+	TRANSFER string
 }{
-	VERIFY:       "VERIFY",
-	TRANSFER:     "TRANSFER",
-	NOTIFICATION: "NOTIFICATION",
+	TRANSFER: "TRANSFER",
 }

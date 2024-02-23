@@ -6,6 +6,8 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
+	notiActivities "github.com/anhgeeky/go-temporal-labs/notification/activities"
+	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -20,7 +22,7 @@ func main() {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, configs.TaskQueues.BANK_TRANSFER, worker.Options{})
+	w := worker.New(c, configs.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
 
 	// Transfer workflow
 	transferActivity := &activities.TransferActivity{}
@@ -33,12 +35,12 @@ func main() {
 	w.RegisterWorkflow(workflows.TransferWorkflow)
 
 	// Notification workflow
-	notificationActivity := &activities.NotificationActivity{}
+	notificationActivity := &notiActivities.NotificationActivity{}
 	w.RegisterActivity(notificationActivity.GetDeviceToken)
 	w.RegisterActivity(notificationActivity.PushSMS)
 	w.RegisterActivity(notificationActivity.PushNotification)
 	w.RegisterActivity(notificationActivity.PushInternalApp)
-	w.RegisterWorkflow(workflows.NotificationWorkflow)
+	w.RegisterWorkflow(notiWorkflows.NotificationWorkflow)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

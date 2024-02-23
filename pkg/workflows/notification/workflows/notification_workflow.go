@@ -3,8 +3,9 @@ package workflows
 import (
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
+	coreWorkflow "github.com/anhgeeky/go-temporal-labs/core/workflow"
+	"github.com/anhgeeky/go-temporal-labs/notification/activities"
+	"github.com/anhgeeky/go-temporal-labs/notification/messages"
 	"go.temporal.io/sdk/workflow"
 )
 
@@ -28,6 +29,7 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout:    10 * time.Second,
 		ScheduleToCloseTimeout: 1 * time.Minute,
+		RetryPolicy:            coreWorkflow.WorkflowConfigs.RetryPolicy,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 

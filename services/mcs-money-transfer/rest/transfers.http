@@ -1,7 +1,8 @@
 @hostname = localhost
-@port = 3131
+@port = 3002
 @host = {{hostname}}:{{port}}
 @contentType = application/json
+@workflowID = BANK_TRANSFER-1708496793
 
 ### Create transfer
 
@@ -14,3 +15,7 @@ Content-Type: {{contentType}}
   "amount": 5000
 }
 
+### Get transfer
+
+GET http://{{host}}/transfers/{{workflowID}}
+Content-Type: {{contentType}}

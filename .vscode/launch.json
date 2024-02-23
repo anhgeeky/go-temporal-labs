@@ -1,19 +1,43 @@
 {
   "version": "0.2.0",
   "configurations": [
+    // Workers
     {
-      "name": "Go Run Worker",
+      "name": "Go Run Bank Transfer Worker",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/banktransfer/worker"
+      "program": "${workspaceFolder}/banktransfer/cmd/worker"
     },
     {
-      "name": "Go Run Api",
+      "name": "Go Run Notification Worker",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/banktransfer/api"
+      "program": "${workspaceFolder}/notification/cmd/worker"
+    },
+
+    // Microservices
+    {
+      "name": "Go Run MCS Account Api",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/mcs-account"
+    },
+    {
+      "name": "Go Run MCS Money Transfer Api",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/mcs-money-transfer"
+    },
+    {
+      "name": "Go Run MCS Notification Api",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/mcs-notification"
     }
   ]
 }

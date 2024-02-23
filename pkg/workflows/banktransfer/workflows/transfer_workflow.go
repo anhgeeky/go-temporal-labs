@@ -7,9 +7,11 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
+	coreWorkflow "github.com/anhgeeky/go-temporal-labs/core/workflow"
+	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
+	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
-	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 	"go.uber.org/multierr"
 )
@@ -25,12 +27,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 2 * time.Minute,
 		HeartbeatTimeout:    10 * time.Second,
-		RetryPolicy: &temporal.RetryPolicy{
-			InitialInterval:    time.Second,
-			BackoffCoefficient: 2.0,
-			MaximumInterval:    time.Minute,
-			MaximumAttempts:    5,
-		},
+		RetryPolicy:         coreWorkflow.WorkflowConfigs.RetryPolicy,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
@@ -117,15 +114,15 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				}
 				ctx = workflow.WithChildOptions(ctx, cwo)
 
-				msgNotfication := messages.NotificationMessage{
+				msgNotfication := notiMsg.NotificationMessage{
 					// TODO: Bổ sung payload
-					Token: messages.DeviceToken{
+					Token: notiMsg.DeviceToken{
 						FirebaseToken: uuid.New().String(),
 					},
 				}
 
 				var result string
-				err = workflow.ExecuteChildWorkflow(ctx, NotificationWorkflow, msgNotfication).Get(ctx, &result)
+				err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
 				if err != nil {
 					logger.Error("Parent execution received child execution failure.", "Error", err)
 					return
