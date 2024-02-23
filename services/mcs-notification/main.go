@@ -59,9 +59,7 @@ func main() {
 
 	services := modules.SetupServices()
 
-	routes.StartAccountRoute(app, temporal, services)
-	routes.StartTransferRoute(app, temporal, services)
-	routes.StartVerifyRoute(app, temporal, services)
+	routes.StartNotificationRoute(app, temporal, services)
 
 	log.Println("App is running and listening on port", PORT)
 	app.Listen(fmt.Sprintf(":%d", PORT))

@@ -1,9 +1,0 @@
-@hostname = localhost
-@port = 3002
-@host = {{hostname}}:{{port}}
-@contentType = application/json
-
-### Get accounts
-
-GET http://{{host}}/accounts
-Content-Type: {{contentType}}
