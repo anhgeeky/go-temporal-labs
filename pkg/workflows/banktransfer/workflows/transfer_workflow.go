@@ -7,7 +7,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
-	coreWorkflow "github.com/anhgeeky/go-temporal-labs/core/workflow"
+	cw "github.com/anhgeeky/go-temporal-labs/core/workflow"
 	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
 	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/google/uuid"
@@ -27,7 +27,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 2 * time.Minute,
 		HeartbeatTimeout:    10 * time.Second,
-		RetryPolicy:         coreWorkflow.WorkflowConfigs.RetryPolicy,
+		RetryPolicy:         cw.WorkflowConfigs.RetryPolicy,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
