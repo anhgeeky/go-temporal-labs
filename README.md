@@ -80,11 +80,12 @@ sh start-api.sh
 ![Screenshot](/docs/assets/bank-transfer-temporal-admin-log.png)
 ![Screenshot](/docs/assets/bank-transfer-sub-workflow-temporal-admin-log.png)
 
-## Stack for Sample
+## Stack
 
-- `fiber`
-- `temporal`
-- `viper`
+- `fiber`: <https://github.com/gofiber/fiber>
+- `temporal`: <https://github.com/temporalio/temporal>
+- `viper`: <https://github.com/spf13/viper>
+- `kafka-go`: <https://github.com/segmentio/kafka-go>
 
 ## FAQ
 
