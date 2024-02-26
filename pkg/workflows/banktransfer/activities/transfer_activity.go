@@ -7,14 +7,12 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/notification"
 	"go.temporal.io/sdk/activity"
 )
 
 type TransferActivity struct {
 	AccountService       account.AccountService
 	MoneyTransferService moneytransfer.MoneyTransferService
-	NotificationService  notification.NotificationService
 }
 
 func (a *TransferActivity) CreateTransfer(ctx context.Context, msg messages.Transfer) error {

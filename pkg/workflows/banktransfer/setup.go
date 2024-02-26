@@ -5,7 +5,6 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/notification"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"go.temporal.io/sdk/worker"
 )
@@ -18,9 +17,6 @@ func SetupBankTransferWorkflow(w worker.Worker) {
 		},
 		MoneyTransferService: moneytransfer.MoneyTransferService{
 			Host: config.MCS_MONEY_TRANSFER_HOST,
-		},
-		NotificationService: notification.NotificationService{
-			Host: config.MCS_NOTIFICATION_HOST,
 		},
 	}
 	w.RegisterActivity(transferActivity.CreateTransfer)
