@@ -78,6 +78,21 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				}
 			}()
 
+			// ====================== TEST - ADD NEW ACTIVITY ======================
+			err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
+			if err != nil {
+				return
+			}
+
+			// Compensation
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
+			// ====================== TEST - ADD NEW ACTIVITY ======================
+
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
 				return

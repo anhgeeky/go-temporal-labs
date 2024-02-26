@@ -15,5 +15,6 @@ func SetupBankTransferWorkflow(w worker.Worker) {
 	w.RegisterActivity(transferActivity.CreateTransferTransaction)
 	w.RegisterActivity(transferActivity.WriteCreditAccount)
 	w.RegisterActivity(transferActivity.WriteDebitAccount)
+	// w.RegisterActivity(transferActivity.AddNewActivity)
 	w.RegisterWorkflow(workflows.TransferWorkflow)
 }
