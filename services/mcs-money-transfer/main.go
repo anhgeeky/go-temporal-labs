@@ -24,6 +24,7 @@ var (
 
 func main() {
 	viper.SetConfigFile(".env")
+	viper.SetConfigFile("./services/mcs-money-transfer/.env")
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()

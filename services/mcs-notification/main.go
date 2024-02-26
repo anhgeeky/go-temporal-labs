@@ -24,6 +24,7 @@ var (
 
 func main() {
 	viper.SetConfigFile(".env")
+	viper.SetConfigFile("./services/mcs-notification/.env")
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
