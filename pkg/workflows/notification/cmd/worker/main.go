@@ -3,9 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/anhgeeky/go-temporal-labs/notification/activities"
+	noti "github.com/anhgeeky/go-temporal-labs/notification"
 	"github.com/anhgeeky/go-temporal-labs/notification/config"
-	"github.com/anhgeeky/go-temporal-labs/notification/workflows"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -22,13 +21,7 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
 
-	// Notification workflow
-	notificationActivity := &activities.NotificationActivity{}
-	w.RegisterActivity(notificationActivity.GetDeviceToken)
-	w.RegisterActivity(notificationActivity.PushSMS)
-	w.RegisterActivity(notificationActivity.PushNotification)
-	w.RegisterActivity(notificationActivity.PushInternalApp)
-	w.RegisterWorkflow(workflows.NotificationWorkflow)
+	noti.SetupNotificationWorkflow(w)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

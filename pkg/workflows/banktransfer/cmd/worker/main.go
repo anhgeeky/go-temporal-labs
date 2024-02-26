@@ -3,11 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
+	trans "github.com/anhgeeky/go-temporal-labs/banktransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
-	notiActivities "github.com/anhgeeky/go-temporal-labs/notification/activities"
-	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
+	noti "github.com/anhgeeky/go-temporal-labs/notification"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -24,23 +22,8 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
 
-	// Transfer workflow
-	transferActivity := &activities.TransferActivity{}
-	w.RegisterActivity(transferActivity.CreateTransfer)
-	w.RegisterActivity(transferActivity.CheckBalance)
-	w.RegisterActivity(transferActivity.CheckTargetAccount)
-	w.RegisterActivity(transferActivity.CreateTransferTransaction)
-	w.RegisterActivity(transferActivity.WriteCreditAccount)
-	w.RegisterActivity(transferActivity.WriteDebitAccount)
-	w.RegisterWorkflow(workflows.TransferWorkflow)
-
-	// Notification workflow
-	notificationActivity := &notiActivities.NotificationActivity{}
-	w.RegisterActivity(notificationActivity.GetDeviceToken)
-	w.RegisterActivity(notificationActivity.PushSMS)
-	w.RegisterActivity(notificationActivity.PushNotification)
-	w.RegisterActivity(notificationActivity.PushInternalApp)
-	w.RegisterWorkflow(notiWorkflows.NotificationWorkflow)
+	trans.SetupBankTransferWorkflow(w)
+	noti.SetupNotificationWorkflow(w)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
