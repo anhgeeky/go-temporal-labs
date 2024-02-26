@@ -1,8 +1,8 @@
 package moneytransfer
 
 import (
+	"errors"
 	"fmt"
-	"log"
 
 	"github.com/anhgeeky/go-temporal-labs/core/models"
 	"github.com/go-resty/resty/v2"
@@ -23,7 +23,7 @@ func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (inte
 
 	url := fmt.Sprintf("%s/%s/transactions", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -33,8 +33,8 @@ func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (inte
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -49,7 +49,7 @@ func (r MoneyTransferService) WriteCreditAccount(workflowID string) (interface{}
 
 	url := fmt.Sprintf("%s/%s/credit-accounts", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -59,8 +59,8 @@ func (r MoneyTransferService) WriteCreditAccount(workflowID string) (interface{}
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -75,7 +75,7 @@ func (r MoneyTransferService) WriteDebitAccount(workflowID string) (interface{},
 
 	url := fmt.Sprintf("%s/%s/debit-accounts", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -85,8 +85,8 @@ func (r MoneyTransferService) WriteDebitAccount(workflowID string) (interface{},
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -101,7 +101,7 @@ func (r MoneyTransferService) AddNewActivity(workflowID string) (interface{}, er
 
 	url := fmt.Sprintf("%s/%s/new-activity", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -111,8 +111,8 @@ func (r MoneyTransferService) AddNewActivity(workflowID string) (interface{}, er
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -131,7 +131,7 @@ func (r MoneyTransferService) CreateTransferTransactionCompensation(workflowID s
 
 	url := fmt.Sprintf("%s/%s/transactions/rollback", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -141,8 +141,8 @@ func (r MoneyTransferService) CreateTransferTransactionCompensation(workflowID s
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -157,7 +157,7 @@ func (r MoneyTransferService) WriteCreditAccountCompensation(workflowID string) 
 
 	url := fmt.Sprintf("%s/%s/credit-accounts/rollback", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -167,8 +167,8 @@ func (r MoneyTransferService) WriteCreditAccountCompensation(workflowID string) 
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -183,7 +183,7 @@ func (r MoneyTransferService) WriteDebitAccountCompensation(workflowID string) (
 
 	url := fmt.Sprintf("%s/%s/debit-accounts/rollback", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -193,8 +193,8 @@ func (r MoneyTransferService) WriteDebitAccountCompensation(workflowID string) (
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())
@@ -209,7 +209,7 @@ func (r MoneyTransferService) AddNewActivityCompensation(workflowID string) (int
 
 	url := fmt.Sprintf("%s/%s/new-activity/rollback", endpoint, workflowID)
 	var data models.Response[SampleRes]
-	var errRes ErrorRes
+	var errRes *ErrorRes
 
 	response, err := client.R().
 		EnableTrace().
@@ -219,8 +219,8 @@ func (r MoneyTransferService) AddNewActivityCompensation(workflowID string) (int
 		SetError(&errRes).
 		Post(url)
 
-	if err != nil {
-		log.Fatal(err)
+	if err != nil || errRes != nil {
+		return nil, errors.New(errRes.Message)
 	}
 
 	fmt.Println("POST Response:", response.Status())

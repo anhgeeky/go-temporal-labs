@@ -5,5 +5,5 @@ type SampleRes struct {
 }
 
 type ErrorRes struct {
-	Msg string
+	Message string
 }
