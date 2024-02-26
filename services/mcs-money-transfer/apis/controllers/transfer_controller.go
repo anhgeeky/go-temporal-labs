@@ -37,6 +37,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 	msg := messages.Transfer{
 		Id:                   uuid.NewString(),
+		WorkflowID:           workflowID,
 		AccountOriginId:      req.AccountOriginId,
 		AccountDestinationId: req.AccountDestinationId,
 		CreatedAt:            &now,
@@ -69,19 +70,27 @@ func (r TransferController) GetTransfer(c *fiber.Ctx) error {
 }
 
 func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "OK"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "OK"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "OK"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "OK"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 // ============================================
@@ -89,17 +98,25 @@ func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
 // ============================================
 
 func (r TransferController) CreateTransferTransactionCompensation(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "Rollback done"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) WriteCreditAccountCompensation(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "Rollback done"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) WriteDebitAccountCompensation(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "Rollback done"
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) AddNewActivityCompensation(c *fiber.Ctx) error {
-	return nil
+	res := make(map[string]interface{})
+	res["msg"] = "Rollback done"
+	return responses.SuccessResult[interface{}](c, res)
 }

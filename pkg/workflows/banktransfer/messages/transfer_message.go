@@ -4,6 +4,7 @@ import "time"
 
 type Transfer struct {
 	Id                   string     `json:"id"`
+	WorkflowID           string     `json:"workflow_id"`
 	AccountOriginId      string     `json:"account_origin_id"`
 	AccountDestinationId string     `json:"account_destination_id"`
 	Amount               float64    `json:"amount"`

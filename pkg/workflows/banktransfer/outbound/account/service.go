@@ -15,6 +15,7 @@ var (
 
 type AccountService struct {
 	Host string
+	// Kafka
 }
 
 func (r AccountService) GetBalance() (interface{}, error) {
