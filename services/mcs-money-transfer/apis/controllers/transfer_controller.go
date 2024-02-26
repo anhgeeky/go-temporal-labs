@@ -9,7 +9,8 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
-	"github.com/anhgeeky/go-temporal-labs/core/apis"
+
+	"github.com/anhgeeky/go-temporal-labs/core/apis/responses"
 	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/modules/transaction"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -43,26 +44,62 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 	we, err := r.TemporalClient.ExecuteWorkflow(context.Background(), options, workflows.TransferWorkflow, msg)
 	if err != nil {
-		return apis.WriteError(c, err)
+		return responses.WriteError(c, err)
 	}
 
 	res := make(map[string]interface{})
 	res["msg"] = msg
 	res["workflowID"] = we.GetID()
 
-	return c.Status(fiber.StatusCreated).JSON(res)
+	return responses.SuccessResult[interface{}](c, res)
 }
 
 func (r TransferController) GetTransfer(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
-	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
+	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "GetTransfer")
 	if err != nil {
-		return apis.WriteError(c, err)
+		return responses.WriteError(c, err)
 	}
 	var res interface{}
 	if err := response.Get(&res); err != nil {
-		return apis.WriteError(c, err)
+		return responses.WriteError(c, err)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(res)
+	return responses.SuccessResult[interface{}](c, res)
+}
+
+func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
+	return nil
+}
+
+func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
+	return nil
+}
+
+func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
+	return nil
+}
+
+func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
+	return nil
+}
+
+// ============================================
+// Rollback
+// ============================================
+
+func (r TransferController) CreateTransferTransactionCompensation(c *fiber.Ctx) error {
+	return nil
+}
+
+func (r TransferController) WriteCreditAccountCompensation(c *fiber.Ctx) error {
+	return nil
+}
+
+func (r TransferController) WriteDebitAccountCompensation(c *fiber.Ctx) error {
+	return nil
+}
+
+func (r TransferController) AddNewActivityCompensation(c *fiber.Ctx) error {
+	return nil
 }
