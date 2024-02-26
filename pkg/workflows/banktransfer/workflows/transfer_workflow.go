@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
-	coreWorkflow "github.com/anhgeeky/go-temporal-labs/core/workflow"
+	cw "github.com/anhgeeky/go-temporal-labs/core/workflow"
 	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
 	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/google/uuid"
@@ -27,11 +27,11 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 2 * time.Minute,
 		HeartbeatTimeout:    10 * time.Second,
-		RetryPolicy:         coreWorkflow.WorkflowConfigs.RetryPolicy,
+		RetryPolicy:         cw.WorkflowConfigs.RetryPolicy,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
-	verifyOtpChannel := workflow.GetSignalChannel(ctx, configs.SignalChannels.VERIFY_OTP_CHANNEL)
+	verifyOtpChannel := workflow.GetSignalChannel(ctx, config.SignalChannels.VERIFY_OTP_CHANNEL)
 	verifiedOtp := false
 	completed := false
 
@@ -52,19 +52,24 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return
 			}
 
+			verifiedOtp = true
+		})
+
+		if verifiedOtp {
+
 			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
 			if err != nil {
-				return
+				return err
 			}
 
 			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
 			if err != nil {
-				return
+				return err
 			}
 
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
-				return
+				return err
 			}
 
 			// Compensation
@@ -77,7 +82,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 			err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
 			if err != nil {
-				return
+				return err
 			}
 
 			// Compensation
@@ -90,7 +95,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 			err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
 			if err != nil {
-				return
+				return err
 			}
 
 			// Compensation
@@ -101,37 +106,50 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				}
 			}()
 
-			verifiedOtp = true
-		})
+			// ====================== TEST - ADD NEW ACTIVITY ======================
+			err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
+			if err != nil {
+				return err
+			}
 
-		// Call subflow -> Gửi notification
-		if !completed && verifiedOtp {
-			selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
-				execution := workflow.GetInfo(ctx).WorkflowExecution
-				childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
-				cwo := workflow.ChildWorkflowOptions{
-					WorkflowID: childID,
-				}
-				ctx = workflow.WithChildOptions(ctx, cwo)
-
-				msgNotfication := notiMsg.NotificationMessage{
-					// TODO: Bổ sung payload
-					Token: notiMsg.DeviceToken{
-						FirebaseToken: uuid.New().String(),
-					},
-				}
-
-				var result string
-				err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
+			// Compensation
+			defer func() {
 				if err != nil {
-					logger.Error("Parent execution received child execution failure.", "Error", err)
-					return
+					errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
 				}
-				// ===============================================================================
-				logger.Info("Parent execution completed.", "Result", result)
+			}()
+			// ====================== TEST - ADD NEW ACTIVITY ======================
 
-				completed = true
-			})
+			// Call subflow -> Gửi notification
+			if !completed {
+				selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
+					execution := workflow.GetInfo(ctx).WorkflowExecution
+					childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
+					cwo := workflow.ChildWorkflowOptions{
+						WorkflowID: childID,
+					}
+					ctx = workflow.WithChildOptions(ctx, cwo)
+
+					msgNotfication := notiMsg.NotificationMessage{
+						// TODO: Bổ sung payload
+						Token: notiMsg.DeviceToken{
+							FirebaseToken: uuid.New().String(),
+						},
+					}
+
+					var result string
+					err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
+					if err != nil {
+						logger.Error("Parent execution received child execution failure.", "Error", err)
+						return
+					}
+					// ===============================================================================
+					logger.Info("Parent execution completed.", "Result", result)
+
+					completed = true
+				})
+			}
 		}
 
 		selector.Select(ctx)

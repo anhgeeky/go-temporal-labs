@@ -1,4 +1,4 @@
-package configs
+package config
 
 var TaskQueues = struct {
 	NOTIFICATION_QUEUE string

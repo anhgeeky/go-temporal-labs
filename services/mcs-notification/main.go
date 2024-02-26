@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	"github.com/anhgeeky/go-temporal-labs/mcs-notification/apis/routes"
 	"github.com/anhgeeky/go-temporal-labs/mcs-notification/config"
 	"github.com/anhgeeky/go-temporal-labs/mcs-notification/modules"
@@ -23,15 +26,13 @@ var (
 )
 
 func main() {
-	viper.SetConfigFile(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
-
-	err := viper.ReadInConfig()
+	_, b, _, _ := runtime.Caller(0)
+	filePath := filepath.Join(filepath.Dir(b), ".env")
+	configs.LoadConfig(filePath)
 	PORT := viper.GetInt32("PORT")
 	log.Println("PORT", PORT)
 
+	var err error
 	temporal, err = client.NewLazyClient(client.Options{
 		HostPort: config.TEMPORAL_CLUSTER_HOST,
 	})

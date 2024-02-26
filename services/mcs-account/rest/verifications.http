@@ -1,9 +1,9 @@
 @hostname = localhost
-@port = 3001
+@port = 6001
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
-@workflowID = BANK_TRANSFER-1708496793
+@workflowID = BANK_TRANSFER-1708940417
 
 ### Verify OTP
 

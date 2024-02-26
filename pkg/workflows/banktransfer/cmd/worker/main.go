@@ -2,45 +2,43 @@ package main
 
 import (
 	"log"
+	"path/filepath"
+	"runtime"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/configs"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
-	notiActivities "github.com/anhgeeky/go-temporal-labs/notification/activities"
-	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
+	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/anhgeeky/go-temporal-labs/core/configs"
+	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
+	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 )
 
 func main() {
+	_, b, _, _ := runtime.Caller(0)
+	filePath := filepath.Join(filepath.Dir(b), "../..", ".env")
+	configs.LoadConfig(filePath)
+
+	cfg := &config.ExternalConfigs{}
+	err := viper.Unmarshal(cfg)
+	if err != nil {
+		log.Fatalln("Could not load configuration", err)
+	}
+
+	log.Println("TemporalClusterHost", cfg.TemporalClusterHost)
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort: configs.TEMPORAL_CLUSTER_HOST,
+		HostPort: cfg.TemporalClusterHost,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, configs.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
+	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
 
-	// Transfer workflow
-	transferActivity := &activities.TransferActivity{}
-	w.RegisterActivity(transferActivity.CreateTransfer)
-	w.RegisterActivity(transferActivity.CheckBalance)
-	w.RegisterActivity(transferActivity.CheckTargetAccount)
-	w.RegisterActivity(transferActivity.CreateTransferTransaction)
-	w.RegisterActivity(transferActivity.WriteCreditAccount)
-	w.RegisterActivity(transferActivity.WriteDebitAccount)
-	w.RegisterWorkflow(workflows.TransferWorkflow)
-
-	// Notification workflow
-	notificationActivity := &notiActivities.NotificationActivity{}
-	w.RegisterActivity(notificationActivity.GetDeviceToken)
-	w.RegisterActivity(notificationActivity.PushSMS)
-	w.RegisterActivity(notificationActivity.PushNotification)
-	w.RegisterActivity(notificationActivity.PushInternalApp)
-	w.RegisterWorkflow(notiWorkflows.NotificationWorkflow)
+	tranFlow.SetupBankTransferWorkflow(w, cfg)
+	notiFlow.SetupNotificationWorkflow(w, cfg.NotificationHost)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

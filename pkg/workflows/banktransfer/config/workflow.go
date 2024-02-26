@@ -1,4 +1,4 @@
-package configs
+package config
 
 var TaskQueues = struct {
 	BANK_TRANSFER_QUEUE string

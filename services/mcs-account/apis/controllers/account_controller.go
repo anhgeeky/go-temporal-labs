@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/anhgeeky/go-temporal-labs/core/apis/responses"
 	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/account"
 	"github.com/gofiber/fiber/v2"
 	"go.temporal.io/sdk/client"
@@ -21,19 +22,13 @@ func (r AccountController) GetAccounts(c *fiber.Ctx) error {
 
 	res.Accounts = *items
 
-	return c.Status(fiber.StatusOK).JSON(res)
+	return responses.SuccessResult[account.AccountList](c, res)
 }
 
-// TODO: Code
 func (r AccountController) GetBalance(c *fiber.Ctx) error {
-	res := account.AccountList{}
-
-	items, err := r.Service.GetAccounts()
+	res, err := r.Service.GetBalance()
 	if err != nil {
 		return err
 	}
-
-	res.Accounts = *items
-
-	return c.Status(fiber.StatusOK).JSON(res)
+	return responses.SuccessResult[account.BalanceRes](c, *res)
 }

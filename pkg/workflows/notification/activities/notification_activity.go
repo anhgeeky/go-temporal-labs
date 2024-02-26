@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/anhgeeky/go-temporal-labs/notification/messages"
+	"github.com/anhgeeky/go-temporal-labs/notification/outbound/notification"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
 )
 
 type NotificationActivity struct {
+	NotificationService notification.NotificationService
 	// - 2.7.1 Lấy thông tin `token` của các thiết bị theo tài khoản
 	// - 2.7.2 Push message SMS thông báo đã `Chuyển tiền Thành công`
 	// - 2.7.3 Push message notification vào `firebase`
