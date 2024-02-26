@@ -7,14 +7,14 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/banktransfer/cmd/worker"
+      "program": "${workspaceFolder}/pkg/workflows/banktransfer/cmd/worker"
     },
     {
       "name": "Go Run Notification Worker",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/notification/cmd/worker"
+      "program": "${workspaceFolder}/pkg/workflows/notification/cmd/worker"
     },
 
     // Microservices
@@ -23,21 +23,21 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/mcs-account"
+      "program": "${workspaceFolder}/services/mcs-account"
     },
     {
       "name": "Go Run MCS Money Transfer Api",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/mcs-money-transfer"
+      "program": "${workspaceFolder}/services/mcs-money-transfer"
     },
     {
       "name": "Go Run MCS Notification Api",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/mcs-notification"
+      "program": "${workspaceFolder}/services/mcs-notification"
     }
   ]
 }

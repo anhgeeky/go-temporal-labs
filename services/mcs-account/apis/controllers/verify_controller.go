@@ -6,8 +6,8 @@ import (
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/configs"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/app/messages"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/modules/otp"
 	"github.com/anhgeeky/go-temporal-labs/core/apis"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/otp"
 	"github.com/gofiber/fiber/v2"
 	"go.temporal.io/sdk/client"
 )
