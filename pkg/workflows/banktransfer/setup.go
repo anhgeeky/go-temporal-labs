@@ -16,7 +16,7 @@ func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfigs) {
 			Host: cfg.AccountHost,
 		},
 		MoneyTransferService: moneytransfer.MoneyTransferService{
-			Host: cfg.AccountHost,
+			Host: cfg.MoneyTransferHost,
 		},
 	}
 	w.RegisterActivity(transferActivity.CheckBalance)

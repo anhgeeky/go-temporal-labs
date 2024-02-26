@@ -22,11 +22,12 @@ func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (inte
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/transactions", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -45,11 +46,12 @@ func (r MoneyTransferService) WriteCreditAccount(workflowID string) (interface{}
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/credit-accounts", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -68,11 +70,12 @@ func (r MoneyTransferService) WriteDebitAccount(workflowID string) (interface{},
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/debit-accounts", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -91,11 +94,12 @@ func (r MoneyTransferService) AddNewActivity(workflowID string) (interface{}, er
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/new-activity", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -118,11 +122,12 @@ func (r MoneyTransferService) CreateTransferTransactionCompensation(workflowID s
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/transactions/rollback", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -141,11 +146,12 @@ func (r MoneyTransferService) WriteCreditAccountCompensation(workflowID string) 
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/credit-accounts/rollback", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -164,11 +170,12 @@ func (r MoneyTransferService) WriteDebitAccountCompensation(workflowID string) (
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/debit-accounts/rollback", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
@@ -187,11 +194,12 @@ func (r MoneyTransferService) AddNewActivityCompensation(workflowID string) (int
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/new-activity/rollback", endpoint, workflowID)
-	var data models.Response[string]
+	var data models.Response[SampleRes]
 
 	response, err := client.R().
 		EnableTrace().
 		SetHeader("Accept", "application/json").
+		SetBody(`{}`).
 		SetResult(&data).
 		Post(url)
 
