@@ -12,7 +12,7 @@ var (
 )
 
 func init() {
-	services.SVC_HOST = "http://localhost:6001/accounts"
+	service.Host = "http://localhost:6001/"
 }
 
 func Test_GetBalance(t *testing.T) {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/services/responses"
 	"github.com/anhgeeky/go-temporal-labs/core/models"
 	"github.com/go-resty/resty/v2"
@@ -12,19 +11,19 @@ import (
 )
 
 var (
-	SVC_HOST = fmt.Sprintf("%s/%s", config.MCS_ACCOUNT_HOST, "accounts")
+	ACCOUNT_ROUTE = "accounts"
 )
 
 type AccountService struct {
+	Host string
 }
 
 func (r AccountService) GetBalance() (interface{}, error) {
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ACCOUNT_ROUTE)
 	accId, _ := uuid.Parse("54892431-0a67-4b66-91c7-255d2321b224") // TODO: Sample for test
 	client := resty.New()
 
-	url := fmt.Sprintf("%s/%s/balance", SVC_HOST, accId.String())
-	fmt.Printf("URL: %s", url)
-
+	url := fmt.Sprintf("%s/%s/balance", endpoint, accId.String())
 	var data models.Response[responses.BalanceRes]
 
 	response, err := client.R().

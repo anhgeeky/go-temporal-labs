@@ -5,10 +5,15 @@ import (
 	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/services"
 	"go.temporal.io/sdk/activity"
 )
 
-type TransferActivity struct{}
+type TransferActivity struct {
+	AccountService       services.AccountService
+	MoneyTransferService services.MoneyTransferService
+	NotificationService  services.NotificationService
+}
 
 func (a *TransferActivity) CreateTransfer(ctx context.Context, msg messages.Transfer) error {
 	logger := activity.GetLogger(ctx)
@@ -96,12 +101,3 @@ func (a *TransferActivity) AddNewActivityCompensation(ctx context.Context, msg m
 	logger.Info("TransferActivity: AddNewActivityCompensation", msg)
 	return nil
 }
-
-// func StepWithError(ctx context.Context, transferDetails TransferDetails) error {
-// 	fmt.Printf(
-// 		"\nSimulate failure to trigger compensation. ReferenceId: %s\n",
-// 		transferDetails.ReferenceID,
-// 	)
-
-// 	return errors.New("some error")
-// }
