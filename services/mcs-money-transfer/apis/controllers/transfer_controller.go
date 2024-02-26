@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -78,11 +79,15 @@ func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
 }
 
 func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
+	// TODO: Đang test case lỗi error
+	return responses.WriteError(c, errors.New("OOPS!!! AddNewActivity error"))
+	// return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
 }
 
 func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
+	// TODO: Đang test case lỗi error
+	return responses.WriteError(c, errors.New("OOPS!!! AddNewActivity error"))
+	// return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
 }
 
 // ============================================
