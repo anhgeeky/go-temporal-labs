@@ -80,7 +80,7 @@ func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
 
 func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
 	// TODO: Đang test case lỗi error
-	return responses.WriteError(c, errors.New("OOPS!!! AddNewActivity error"))
+	return responses.WriteError(c, errors.New("OOPS!!! WriteDebitAccount error"))
 	// return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
 }
 
