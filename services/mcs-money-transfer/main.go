@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/apis/routes"
 	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/config"
 	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/modules"
@@ -23,16 +24,11 @@ var (
 )
 
 func main() {
-	viper.SetConfigFile(".env")
-	viper.SetConfigFile("./services/mcs-money-transfer/.env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
-
-	err := viper.ReadInConfig()
+	configs.LoadConfig("./services/mcs-money-transfer/.env")
 	PORT := viper.GetInt32("PORT")
 	log.Println("PORT", PORT)
 
+	var err error
 	temporal, err = client.NewLazyClient(client.Options{
 		HostPort: config.TEMPORAL_CLUSTER_HOST,
 	})

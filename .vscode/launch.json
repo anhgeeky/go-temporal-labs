@@ -3,7 +3,7 @@
   "configurations": [
     // Workers
     {
-      "name": "Go Run Bank Transfer Worker",
+      "name": "Go Run BankTransfer Worker",
       "type": "go",
       "request": "launch",
       "mode": "auto",

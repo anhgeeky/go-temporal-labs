@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
 	"github.com/anhgeeky/go-temporal-labs/notification/config"
 
@@ -11,6 +12,7 @@ import (
 )
 
 func main() {
+	configs.LoadConfig("./pkg/workflows/notification/.env")
 
 	c, err := client.NewLazyClient(client.Options{
 		HostPort: config.TEMPORAL_CLUSTER_HOST,

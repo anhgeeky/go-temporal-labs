@@ -5,6 +5,7 @@ import (
 
 	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
 
 	"go.temporal.io/sdk/client"
@@ -12,6 +13,9 @@ import (
 )
 
 func main() {
+	configs.LoadConfig("./pkg/workflows/banktransfer/.env")
+
+	log.Println("config.TEMPORAL_CLUSTER_HOST", config.TEMPORAL_CLUSTER_HOST)
 
 	c, err := client.NewLazyClient(client.Options{
 		HostPort: config.TEMPORAL_CLUSTER_HOST,
