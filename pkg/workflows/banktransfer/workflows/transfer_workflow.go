@@ -57,10 +57,26 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return
 			}
 
+			// Compensation
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.CheckBalanceCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
+
 			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
 			if err != nil {
 				return
 			}
+
+			// Compensation
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.CheckTargetAccountCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
 
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {

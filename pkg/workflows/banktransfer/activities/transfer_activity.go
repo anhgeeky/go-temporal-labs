@@ -61,6 +61,19 @@ func (a *TransferActivity) WriteDebitAccount(ctx context.Context, msg messages.T
 // ============================================
 // Rollback
 // ============================================
+
+func (a *TransferActivity) CheckBalanceCompensation(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: CheckBalanceCompensation", msg)
+	return nil
+}
+
+func (a *TransferActivity) CheckTargetAccountCompensation(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: CheckTargetAccountCompensation", msg)
+	return nil
+}
+
 func (a *TransferActivity) CreateTransferTransactionCompensation(ctx context.Context, msg messages.Transfer) error {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CreateTransferTransaction", msg)
