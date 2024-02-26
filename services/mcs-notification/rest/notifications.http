@@ -1,5 +1,5 @@
 @hostname = localhost
-@port = 3003
+@port = 6003
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 

@@ -9,8 +9,10 @@ replace github.com/anhgeeky/go-temporal-labs/notification => ../notification
 require (
 	github.com/anhgeeky/go-temporal-labs/core v0.0.0-00010101000000-000000000000
 	github.com/anhgeeky/go-temporal-labs/notification v0.0.0-00010101000000-000000000000
+	github.com/go-resty/resty/v2 v2.11.0
 	github.com/google/uuid v1.6.0
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/segmentio/kafka-go v0.4.47
 	github.com/spf13/viper v1.18.2
 	go.temporal.io/sdk v1.25.1
 	go.uber.org/multierr v1.11.0
@@ -38,7 +40,6 @@ require (
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
-	github.com/segmentio/kafka-go v0.4.47 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect

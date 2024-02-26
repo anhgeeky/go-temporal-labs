@@ -29,9 +29,9 @@ sh start-api.sh
 
 ## Host APIs
 
-- `mcs-account`: `localhost:3001`
-- `mcs-money-transfer`: `localhost:3002`
-- `mcs-notification`: `localhost:3003`
+- `mcs-account`: `localhost:6001`
+- `mcs-money-transfer`: `localhost:6002`
+- `mcs-notification`: `localhost:6003`
 
 ## Workers
 

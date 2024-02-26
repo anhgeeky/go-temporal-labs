@@ -1,5 +1,5 @@
 @hostname = localhost
-@port = 3002
+@port = 6002
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 @workflowID = BANK_TRANSFER-1708496793
