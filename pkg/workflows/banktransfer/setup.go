@@ -25,5 +25,10 @@ func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfigs) {
 	w.RegisterActivity(transferActivity.WriteCreditAccount)
 	w.RegisterActivity(transferActivity.WriteDebitAccount)
 	w.RegisterActivity(transferActivity.AddNewActivity)
+	// Rollback
+	w.RegisterActivity(transferActivity.CreateTransferTransactionCompensation)
+	w.RegisterActivity(transferActivity.WriteCreditAccountCompensation)
+	w.RegisterActivity(transferActivity.WriteDebitAccountCompensation)
+	w.RegisterActivity(transferActivity.AddNewActivityCompensation)
 	w.RegisterWorkflow(workflows.TransferWorkflow)
 }

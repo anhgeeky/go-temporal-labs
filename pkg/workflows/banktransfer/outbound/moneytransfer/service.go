@@ -18,7 +18,7 @@ type MoneyTransferService struct {
 }
 
 func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/transactions", endpoint, workflowID)
@@ -41,7 +41,7 @@ func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (inte
 }
 
 func (r MoneyTransferService) WriteCreditAccount(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/credit-accounts", endpoint, workflowID)
@@ -64,7 +64,7 @@ func (r MoneyTransferService) WriteCreditAccount(workflowID string) (interface{}
 }
 
 func (r MoneyTransferService) WriteDebitAccount(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/debit-accounts", endpoint, workflowID)
@@ -87,7 +87,7 @@ func (r MoneyTransferService) WriteDebitAccount(workflowID string) (interface{},
 }
 
 func (r MoneyTransferService) AddNewActivity(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/new-activity", endpoint, workflowID)
@@ -114,7 +114,7 @@ func (r MoneyTransferService) AddNewActivity(workflowID string) (interface{}, er
 // ========================================
 
 func (r MoneyTransferService) CreateTransferTransactionCompensation(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/transactions/rollback", endpoint, workflowID)
@@ -137,7 +137,7 @@ func (r MoneyTransferService) CreateTransferTransactionCompensation(workflowID s
 }
 
 func (r MoneyTransferService) WriteCreditAccountCompensation(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/credit-accounts/rollback", endpoint, workflowID)
@@ -160,7 +160,7 @@ func (r MoneyTransferService) WriteCreditAccountCompensation(workflowID string) 
 }
 
 func (r MoneyTransferService) WriteDebitAccountCompensation(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/debit-accounts/rollback", endpoint, workflowID)
@@ -183,7 +183,7 @@ func (r MoneyTransferService) WriteDebitAccountCompensation(workflowID string) (
 }
 
 func (r MoneyTransferService) AddNewActivityCompensation(workflowID string) (interface{}, error) {
-	endpoint := fmt.Sprintf("%s/%s/transfer", r.Host, ROUTE)
+	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/new-activity/rollback", endpoint, workflowID)

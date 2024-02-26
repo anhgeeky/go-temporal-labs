@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
@@ -24,7 +26,9 @@ var (
 )
 
 func main() {
-	configs.LoadConfig("./services/mcs-account/.env")
+	_, b, _, _ := runtime.Caller(0)
+	filePath := filepath.Join(filepath.Dir(b), ".env")
+	configs.LoadConfig(filePath)
 	PORT := viper.GetInt32("PORT")
 	log.Println("PORT", PORT)
 

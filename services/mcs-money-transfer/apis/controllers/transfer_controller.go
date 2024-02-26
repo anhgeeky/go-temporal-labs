@@ -57,7 +57,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 func (r TransferController) GetTransfer(c *fiber.Ctx) error {
 	workflowID := c.Params("workflowID")
-	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "GetTransfer")
+	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
 	if err != nil {
 		return responses.WriteError(c, err)
 	}
