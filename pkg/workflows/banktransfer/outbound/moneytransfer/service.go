@@ -1,7 +1,7 @@
-package services
+package moneytransfer
 
 var (
-	MONEY_TRANSFER_ROUTE = "transfers"
+	ROUTE = "transfers"
 )
 
 type MoneyTransferService struct {

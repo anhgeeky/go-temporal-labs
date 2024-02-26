@@ -1,14 +1,14 @@
-package services_test
+package account_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/services"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 )
 
 var (
-	service services.AccountService
+	service account.AccountService
 )
 
 func init() {

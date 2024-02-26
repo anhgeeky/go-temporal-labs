@@ -1,7 +1,7 @@
-package services
+package notification
 
 var (
-	NOTIFICATION_ROUTE = "notifications"
+	ROUTE = "notifications"
 )
 
 type NotificationService struct {
