@@ -1,13 +1,8 @@
 package config
 
-import "github.com/spf13/viper"
-
-var (
-	TEMPORAL_CLUSTER_HOST = viper.GetString("TEMPORAL_CLUSTER_HOST")
-)
-
-var (
-	MCS_ACCOUNT_HOST        = viper.GetString("MCS_ACCOUNT_HOST")
-	MCS_MONEY_TRANSFER_HOST = viper.GetString("MCS_MONEY_TRANSFER_HOST")
-	MCS_NOTIFICATION_HOST   = viper.GetString("MCS_NOTIFICATION_HOST")
-)
+type ExternalConfigs struct {
+	TemporalClusterHost string `mapstructure:"TEMPORAL_CLUSTER_HOST"`
+	AccountHost         string `mapstructure:"MCS_ACCOUNT_HOST"`
+	MoneyTransfer       string `mapstructure:"MCS_MONEY_TRANSFER_HOST"`
+	NotificationHost    string `mapstructure:"MCS_NOTIFICATION_HOST"`
+}

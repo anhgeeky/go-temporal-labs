@@ -10,13 +10,13 @@ import (
 )
 
 // Transfer workflow
-func SetupBankTransferWorkflow(w worker.Worker) {
+func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfigs) {
 	transferActivity := &activities.TransferActivity{
 		AccountService: account.AccountService{
-			Host: config.MCS_ACCOUNT_HOST,
+			Host: cfg.AccountHost,
 		},
 		MoneyTransferService: moneytransfer.MoneyTransferService{
-			Host: config.MCS_MONEY_TRANSFER_HOST,
+			Host: cfg.AccountHost,
 		},
 	}
 	w.RegisterActivity(transferActivity.CheckBalance)

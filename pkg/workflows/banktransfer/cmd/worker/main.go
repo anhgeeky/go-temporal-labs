@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
 	"runtime"
@@ -10,6 +9,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
+	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -18,13 +18,18 @@ import (
 func main() {
 	_, b, _, _ := runtime.Caller(0)
 	filePath := filepath.Join(filepath.Dir(b), "../..", ".env")
-	fmt.Println("File Path", filePath)
 	configs.LoadConfig(filePath)
 
-	log.Println("TEMPORAL_CLUSTER_HOST", config.TEMPORAL_CLUSTER_HOST)
+	cfg := &config.ExternalConfigs{}
+	err := viper.Unmarshal(cfg)
+	if err != nil {
+		log.Fatalln("Could not load configuration", err)
+	}
+
+	log.Println("TemporalClusterHost", cfg.TemporalClusterHost)
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort: config.TEMPORAL_CLUSTER_HOST,
+		HostPort: cfg.TemporalClusterHost,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
@@ -32,8 +37,8 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
 
-	tranFlow.SetupBankTransferWorkflow(w)
-	notiFlow.SetupNotificationWorkflow(w)
+	tranFlow.SetupBankTransferWorkflow(w, cfg)
+	notiFlow.SetupNotificationWorkflow(w, cfg.NotificationHost)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
