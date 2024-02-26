@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	trans "github.com/anhgeeky/go-temporal-labs/banktransfer"
+	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
-	noti "github.com/anhgeeky/go-temporal-labs/notification"
+	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -22,8 +22,8 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
 
-	trans.SetupBankTransferWorkflow(w)
-	noti.SetupNotificationWorkflow(w)
+	tranFlow.SetupBankTransferWorkflow(w)
+	notiFlow.SetupNotificationWorkflow(w)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	noti "github.com/anhgeeky/go-temporal-labs/notification"
+	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
 	"github.com/anhgeeky/go-temporal-labs/notification/config"
 
 	"go.temporal.io/sdk/client"
@@ -21,7 +21,7 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
 
-	noti.SetupNotificationWorkflow(w)
+	notiFlow.SetupNotificationWorkflow(w)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
