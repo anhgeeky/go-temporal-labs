@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"path/filepath"
+	"runtime"
 
 	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
@@ -13,9 +16,12 @@ import (
 )
 
 func main() {
-	configs.LoadConfig("./pkg/workflows/banktransfer/.env")
+	_, b, _, _ := runtime.Caller(0)
+	filePath := filepath.Join(filepath.Dir(b), "../..", ".env")
+	fmt.Println("File Path", filePath)
+	configs.LoadConfig(filePath)
 
-	log.Println("config.TEMPORAL_CLUSTER_HOST", config.TEMPORAL_CLUSTER_HOST)
+	log.Println("TEMPORAL_CLUSTER_HOST", config.TEMPORAL_CLUSTER_HOST)
 
 	c, err := client.NewLazyClient(client.Options{
 		HostPort: config.TEMPORAL_CLUSTER_HOST,
