@@ -72,7 +72,11 @@ sh start-api.sh
 ## APIs
 
 - [x] Lấy DS giao dịch chuyển khoản: GET `/transfers`
-- [ ] Kiểm tra số dư: GET `/accounts/:ID/balance`
+- [x] Kiểm tra số dư: GET `/accounts/:ID/balance`
+
+## Saga
+
+![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
 
 ## Temporal screenshot
 

@@ -67,21 +67,6 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return err
 			}
 
-			// ====================== TEST - ADD NEW ACTIVITY ======================
-			err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
-			if err != nil {
-				return err
-			}
-
-			// Compensation
-			defer func() {
-				if err != nil {
-					errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
-					err = multierr.Append(err, errCompensation)
-				}
-			}()
-			// ====================== TEST - ADD NEW ACTIVITY ======================
-
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
 				return err
@@ -120,6 +105,21 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 					err = multierr.Append(err, errCompensation)
 				}
 			}()
+
+			// ====================== TEST - ADD NEW ACTIVITY ======================
+			err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
+			if err != nil {
+				return err
+			}
+
+			// Compensation
+			defer func() {
+				if err != nil {
+					errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
+					err = multierr.Append(err, errCompensation)
+				}
+			}()
+			// ====================== TEST - ADD NEW ACTIVITY ======================
 
 			// Call subflow -> Gửi notification
 			if !completed {
