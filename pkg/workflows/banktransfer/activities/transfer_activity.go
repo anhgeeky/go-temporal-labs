@@ -41,6 +41,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 	logger.Info("TransferActivity: CreateTransferTransaction", msg)
 	res, err := a.MoneyTransferService.CreateTransferTransaction(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: CreateTransferTransaction done", res)
@@ -54,6 +55,7 @@ func (a *TransferActivity) WriteCreditAccount(ctx context.Context, msg messages.
 	logger.Info("TransferActivity: WriteCreditAccount", msg)
 	res, err := a.MoneyTransferService.WriteCreditAccount(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: WriteCreditAccount done", res)
@@ -66,6 +68,7 @@ func (a *TransferActivity) WriteDebitAccount(ctx context.Context, msg messages.T
 	logger.Info("TransferActivity: WriteDebitAccount", msg)
 	res, err := a.MoneyTransferService.WriteDebitAccount(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: WriteDebitAccount done", res)
@@ -78,6 +81,7 @@ func (a *TransferActivity) AddNewActivity(ctx context.Context, msg messages.Tran
 	logger.Info("TransferActivity: AddNewActivity", msg)
 	res, err := a.MoneyTransferService.AddNewActivity(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: AddNewActivity done", res)
@@ -104,6 +108,7 @@ func (a *TransferActivity) WriteCreditAccountCompensation(ctx context.Context, m
 	logger.Info("TransferActivity: WriteCreditAccountCompensation", msg)
 	res, err := a.MoneyTransferService.WriteCreditAccountCompensation(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: WriteCreditAccountCompensation done", res)
@@ -115,6 +120,7 @@ func (a *TransferActivity) WriteDebitAccountCompensation(ctx context.Context, ms
 	logger.Info("TransferActivity: WriteDebitAccountCompensation", msg)
 	res, err := a.MoneyTransferService.WriteDebitAccountCompensation(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: WriteDebitAccountCompensation done", res)
@@ -126,6 +132,7 @@ func (a *TransferActivity) AddNewActivityCompensation(ctx context.Context, msg m
 	logger.Info("TransferActivity: AddNewActivityCompensation", msg)
 	res, err := a.MoneyTransferService.AddNewActivityCompensation(msg.WorkflowID)
 	if err != nil {
+		logger.Info("TransferActivity: Tracing error", err)
 		return err
 	}
 	logger.Info("TransferActivity: AddNewActivityCompensation done", res)
