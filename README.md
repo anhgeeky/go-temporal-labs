@@ -86,9 +86,9 @@ sh start-api.sh
 - [x] Tạo giao dịch ghi nợ (`WriteCreditAccount`): POST `/transfers/:workflowID/credit-accounts`
 - [x] Tạo giao dịch ghi có (`WriteDebitAccount`): POST `/transfers/:workflowID/debit-accounts`
 - [x] Add new activity for test: POST `/transfers/:workflowID/new-activity`
-- [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransaction`): POST `/transfers/:workflowID/transactions/rollback`
-- [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccount`): POST `/transfers/:workflowID/credit-accounts/rollback`
-- [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccount`): POST `/transfers/:workflowID/debit-accounts/rollback`
+- [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransactionCompensation`): POST `/transfers/:workflowID/transactions/rollback`
+- [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccountCompensation`): POST `/transfers/:workflowID/credit-accounts/rollback`
+- [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccountCompensation`): POST `/transfers/:workflowID/debit-accounts/rollback`
 - [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback`
 
 ## Saga
