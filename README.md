@@ -17,6 +17,12 @@
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
 
+## Issues
+
+- [ ] 1. chỉnh workflow áp dụng kafka (Database có thể produce vào Request & Response, MService chỉ 1 chiều nhận từ kafka)
+- [ ] 2. áp dụng commit hub
+- [ ] 3. interface luồng để dev ko bị sót khi code rollback
+
 ## Quickstart
 
 ```bash
