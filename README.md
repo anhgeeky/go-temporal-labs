@@ -95,6 +95,11 @@ sh start-api.sh
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
 
+## Worker versioning
+
+![Screenshot](/docs/assets/temporal-worker-versioning-1.png)
+![Screenshot](/docs/assets/temporal-worker-versioning-2.png)
+
 ## Temporal screenshot
 
 ![Screenshot](/docs/assets/bank-transfer-workflows.jpg)
