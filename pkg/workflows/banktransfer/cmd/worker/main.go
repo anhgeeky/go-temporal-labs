@@ -26,12 +26,12 @@ func main() {
 		log.Fatalln("Could not load configuration", err)
 	}
 
-	log.Println("TemporalClusterHost", cfg.TemporalClusterHost)
-	log.Println("TemporalClusterNamespace", cfg.TemporalClusterNamespace)
+	log.Println("TemporalHost", cfg.TemporalHost)
+	log.Println("TemporalNamespace", cfg.TemporalNamespace)
 
 	c, err := client.NewLazyClient(client.Options{
-		HostPort:  cfg.TemporalClusterHost,
-		Namespace: cfg.TemporalClusterNamespace,
+		HostPort:  cfg.TemporalHost,
+		Namespace: cfg.TemporalNamespace,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)

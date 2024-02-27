@@ -19,7 +19,7 @@ func Test_LoadConfig(t *testing.T) {
 	configs.LoadConfig(filePath)
 
 	assert.Equal(t, "3131", viper.GetString("PORT"))
-	assert.Equal(t, "localhost:7233", viper.GetString("TEMPORAL_CLUSTER_HOST"))
+	assert.Equal(t, "localhost:7233", viper.GetString("TEMPORAL_HOST"))
 	assert.Equal(t, "http://localhost:6001", viper.GetString("MCS_ACCOUNT_HOST"))
 	assert.Equal(t, "http://localhost:6002", viper.GetString("MCS_MONEY_TRANSFER_HOST"))
 	assert.Equal(t, "http://localhost:6003", viper.GetString("MCS_NOTIFICATION_HOST"))

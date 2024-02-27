@@ -34,8 +34,8 @@ func main() {
 
 	var err error
 	temporal, err = client.NewLazyClient(client.Options{
-		HostPort:  config.TEMPORAL_CLUSTER_HOST,
-		Namespace: config.TEMPORAL_CLUSTER_NAMESPACE,
+		HostPort:  config.TEMPORAL_HOST,
+		Namespace: config.TEMPORAL_NAMESPACE,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
