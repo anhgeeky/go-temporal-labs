@@ -32,10 +32,18 @@ func main() {
 	PORT := viper.GetInt32("PORT")
 	log.Println("PORT", PORT)
 
-	var err error
+	temporalCfg := &config.TemporalConfig{}
+	err := viper.Unmarshal(temporalCfg)
+	if err != nil {
+		log.Fatalln("Could not load configuration", err)
+	}
+
+	log.Println("TemporalHost", temporalCfg.TemporalHost)
+	log.Println("TemporalNamespace", temporalCfg.TemporalNamespace)
+
 	temporal, err = client.NewLazyClient(client.Options{
-		HostPort:  config.TEMPORAL_HOST,
-		Namespace: config.TEMPORAL_NAMESPACE,
+		HostPort:  temporalCfg.TemporalHost,
+		Namespace: temporalCfg.TemporalNamespace,
 	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)

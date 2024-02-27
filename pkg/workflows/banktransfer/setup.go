@@ -10,7 +10,7 @@ import (
 )
 
 // Transfer workflow
-func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfigs) {
+func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfig) {
 	transferActivity := &activities.TransferActivity{
 		AccountService: account.AccountService{
 			Host: cfg.AccountHost,
