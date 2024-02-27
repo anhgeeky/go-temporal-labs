@@ -40,6 +40,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	for {
 		selector := workflow.NewSelector(ctx)
 
+		// ====================== Signal: Verify OTP ======================
 		selector.AddReceive(verifyOtpChannel, func(c workflow.ReceiveChannel, _ bool) {
 
 			var signal interface{}
@@ -54,24 +55,28 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 			verifiedOtp = true
 		})
+		// ====================== Signal: Verify OTP ======================
 
 		if verifiedOtp {
-
+			// ====================== Activity: CheckBalance ======================
 			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
 			if err != nil {
 				return err
 			}
+			// ====================== Activity: CheckBalance ======================
 
+			// ====================== Activity: CheckTargetAccount ======================
 			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
 			if err != nil {
 				return err
 			}
+			// ====================== Activity: CheckTargetAccount ======================
 
+			// ====================== Activity: CreateTransferTransaction ======================
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
 			if err != nil {
 				return err
 			}
-
 			// Compensation
 			defer func() {
 				if err != nil {
@@ -79,12 +84,13 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 					err = multierr.Append(err, errCompensation)
 				}
 			}()
+			// ====================== Activity: CreateTransferTransaction ======================
 
+			// ====================== Activity: WriteCreditAccount ======================
 			err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
 			if err != nil {
 				return err
 			}
-
 			// Compensation
 			defer func() {
 				if err != nil {
@@ -92,12 +98,13 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 					err = multierr.Append(err, errCompensation)
 				}
 			}()
+			// ====================== Activity: WriteCreditAccount ======================
 
+			// ====================== Activity: WriteDebitAccount ======================
 			err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
 			if err != nil {
 				return err
 			}
-
 			// Compensation
 			defer func() {
 				if err != nil {
@@ -105,8 +112,9 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 					err = multierr.Append(err, errCompensation)
 				}
 			}()
+			// ====================== Activity: WriteDebitAccount ======================
 
-			// ====================== TEST - ADD NEW ACTIVITY ======================
+			// ====================== Activity: AddNewActivity ======================
 			err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
 			if err != nil {
 				return err
@@ -119,10 +127,11 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 					err = multierr.Append(err, errCompensation)
 				}
 			}()
-			// ====================== TEST - ADD NEW ACTIVITY ======================
+			// ====================== Activity: AddNewActivity ======================
 
 			// Call subflow -> Gửi notification
 			if !completed {
+				// ====================== Subflow: NotificationWorkflow ======================
 				selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
 					execution := workflow.GetInfo(ctx).WorkflowExecution
 					childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
@@ -130,7 +139,6 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 						WorkflowID: childID,
 					}
 					ctx = workflow.WithChildOptions(ctx, cwo)
-
 					msgNotfication := notiMsg.NotificationMessage{
 						// TODO: Bổ sung payload
 						Token: notiMsg.DeviceToken{
@@ -144,11 +152,11 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 						logger.Error("Parent execution received child execution failure.", "Error", err)
 						return
 					}
-					// ===============================================================================
 					logger.Info("Parent execution completed.", "Result", result)
 
 					completed = true
 				})
+				// ====================== Subflow: NotificationWorkflow ======================
 			}
 		}
 
