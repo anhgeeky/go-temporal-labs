@@ -6,9 +6,10 @@
 - [x] Xây dựng luồng **Thông báo** (Notification Flow)
 - [ ] Xây dựng luồng **Chuyển tiền** (Transfer Flow)
   - [ ] Bổ sung require before steps (`When step 2.4, 2.5 done -> Completed`)
-- [ ] Tái cấu trúc project for Temporal
+- [x] Tái cấu trúc project for Temporal
   - [x] Chia nhỏ submodule cho `workflow`, `api`
-  - [ ] Bổ sung thêm các features chung cho `workflow` core
+  - [x] Config `namespace` for temporal
+  - [x] Bổ sung thêm các features chung cho `workflow` core
 - [ ] Saga for Temporal
   - [x] Saga sample with `REST Api`
   - [ ] Saga sample with `Kafka Event Driven`
