@@ -11,8 +11,8 @@ import (
 var KafkaConsumer *kk.Reader
 var KafkaProducer *kk.Writer
 
-func ConnectKafkaConsumer() {
-	kkServers := viper.GetString("KAFKA_SERVERS")
+func NewKafkaConsumer() {
+	kkServers := viper.GetString("KAFKA_BROKERS")
 	kkTopic := viper.GetString("KAFKA_TOPIC")
 	kkGroup := viper.GetString("KAFKA_GROUP")
 	KafkaConsumer = kafka.NewReader(kkServers, kkTopic, kkGroup, false)
@@ -20,8 +20,8 @@ func ConnectKafkaConsumer() {
 	defer KafkaConsumer.Close()
 }
 
-func ConnectKafkaProducer() {
-	kkServers := viper.GetString("KAFKA_SERVERS")
+func NewKafkaProducer() {
+	kkServers := viper.GetString("KAFKA_BROKERS")
 	kkTopic := viper.GetString("KAFKA_TOPIC")
 	KafkaProducer = kafka.NewWriter(kkServers, kkTopic)
 	log.Println("Kafka producer has been created")
