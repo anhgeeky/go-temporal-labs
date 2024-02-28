@@ -71,23 +71,23 @@ func (r TransferController) GetTransfer(c *fiber.Ctx) error {
 }
 
 func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
+	return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
 }
 
 func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
+	return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
 }
 
 func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
 	// TODO: Đang test case lỗi error
 	return responses.WriteError(c, errors.New("OOPS!!! WriteDebitAccount error"))
-	// return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
+	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
 }
 
 func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
 	// TODO: Đang test case lỗi error
 	return responses.WriteError(c, errors.New("OOPS!!! AddNewActivity error"))
-	// return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "OK"})
+	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
 }
 
 // ============================================
@@ -95,17 +95,17 @@ func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
 // ============================================
 
 func (r TransferController) CreateTransferTransactionCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "Rollback done"})
+	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
 }
 
 func (r TransferController) WriteCreditAccountCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "Rollback done"})
+	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
 }
 
 func (r TransferController) WriteDebitAccountCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "Rollback done"})
+	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
 }
 
 func (r TransferController) AddNewActivityCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult[transaction.SampleRes](c, transaction.SampleRes{Msg: "Rollback done"})
+	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
 }
