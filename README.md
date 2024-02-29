@@ -6,9 +6,10 @@
 - [x] Xây dựng luồng **Thông báo** (Notification Flow)
 - [ ] Xây dựng luồng **Chuyển tiền** (Transfer Flow)
   - [ ] Bổ sung require before steps (`When step 2.4, 2.5 done -> Completed`)
-- [ ] Tái cấu trúc project for Temporal
+- [x] Tái cấu trúc project for Temporal
   - [x] Chia nhỏ submodule cho `workflow`, `api`
-  - [ ] Bổ sung thêm các features chung cho `workflow` core
+  - [x] Config `namespace` for temporal
+  - [x] Bổ sung thêm các features chung cho `workflow` core
 - [ ] Saga for Temporal
   - [x] Saga sample with `REST Api`
   - [ ] Saga sample with `Kafka Event Driven`
@@ -16,6 +17,13 @@
   - Follow: <https://community.temporal.io/t/update-activity-and-or-workflow-inputs/4972/5>
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
+
+- [ ] Đang tìm hiểu EventBus (Kafka) + Temporal
+- [ ] Đang tìm hiểu EventBus (Kafka) <https://github.com/google/go-cloud>
+- [ ] Xây dựng kiến trúc Temporal + microservices
+- [ ] Xây dựng kiến trúc Temporal + microservices + two phase commit
+- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka)
+- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka) + two phase commit
 
 ## Issues
 
