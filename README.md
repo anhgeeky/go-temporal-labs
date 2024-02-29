@@ -125,7 +125,6 @@ sh start-api.sh
 - `fiber`: <https://github.com/gofiber/fiber>
 - `temporal`: <https://github.com/temporalio/temporal>
 - `viper`: <https://github.com/spf13/viper>
-- `kafka-go`: <https://github.com/segmentio/kafka-go>
 
 ## FAQ
 
