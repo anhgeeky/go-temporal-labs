@@ -17,6 +17,12 @@
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
 
+## Issues
+
+- [ ] 1. chỉnh workflow áp dụng kafka (Database có thể produce vào Request & Response, MService chỉ 1 chiều nhận từ kafka)
+- [ ] 2. áp dụng commit hub
+- [ ] 3. interface luồng để dev ko bị sót khi code rollback
+
 ## Quickstart
 
 ```bash
@@ -86,14 +92,19 @@ sh start-api.sh
 - [x] Tạo giao dịch ghi nợ (`WriteCreditAccount`): POST `/transfers/:workflowID/credit-accounts`
 - [x] Tạo giao dịch ghi có (`WriteDebitAccount`): POST `/transfers/:workflowID/debit-accounts`
 - [x] Add new activity for test: POST `/transfers/:workflowID/new-activity`
-- [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransaction`): POST `/transfers/:workflowID/transactions/rollback`
-- [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccount`): POST `/transfers/:workflowID/credit-accounts/rollback`
-- [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccount`): POST `/transfers/:workflowID/debit-accounts/rollback`
+- [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransactionCompensation`): POST `/transfers/:workflowID/transactions/rollback`
+- [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccountCompensation`): POST `/transfers/:workflowID/credit-accounts/rollback`
+- [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccountCompensation`): POST `/transfers/:workflowID/debit-accounts/rollback`
 - [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback`
 
 ## Saga
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
+
+## Worker versioning
+
+![Screenshot](/docs/assets/temporal-worker-versioning-1.png)
+![Screenshot](/docs/assets/temporal-worker-versioning-2.png)
 
 ## Temporal screenshot
 

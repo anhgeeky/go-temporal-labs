@@ -15,11 +15,3 @@ type Account struct {
 	Balance   float64   `json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 }
-
-type AccountList struct {
-	Accounts []Account `json:"accounts"`
-}
-
-type BalanceRes struct {
-	Balance float64 `json:"balance"`
-}

@@ -1,9 +1,6 @@
 package config
 
-import (
-	"github.com/spf13/viper"
-)
-
-var (
-	TEMPORAL_CLUSTER_HOST = viper.GetString("TEMPORAL_CLUSTER_HOST")
-)
+type TemporalConfig struct {
+	TemporalHost      string `mapstructure:"TEMPORAL_HOST"`
+	TemporalNamespace string `mapstructure:"TEMPORAL_NAMESPACE"`
+}
