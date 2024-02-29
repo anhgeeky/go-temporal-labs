@@ -17,7 +17,13 @@
   - Follow: <https://community.temporal.io/t/update-activity-and-or-workflow-inputs/4972/5>
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
-- [ ] Xây dựng luồng Temporal + Microservice with Kafka
+
+- [ ] Đang tìm hiểu EventBus (Kafka) + Temporal
+- [ ] Đang tìm hiểu EventBus (Kafka) <https://github.com/google/go-cloud>
+- [ ] Xây dựng kiến trúc Temporal + microservices
+- [ ] Xây dựng kiến trúc Temporal + microservices + two phase commit
+- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka)
+- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka) + two phase commit
 
 ## Issues
 
