@@ -2,6 +2,8 @@ package activities
 
 import (
 	"context"
+	"fmt"
+	"net/smtp"
 
 	"github.com/anhgeeky/go-temporal-labs/notification/messages"
 	"github.com/anhgeeky/go-temporal-labs/notification/outbound/notification"
@@ -29,6 +31,25 @@ func (a *NotificationActivity) PushEmail(ctx context.Context, msg *messages.Devi
 	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushEmail", msg)
+
+	from := "anhnguyen.sogo@gmail.com"
+	password := "oesb wira pygw ncqe" // test only
+
+	to := []string{
+		"anhgeeky@gmail.com",
+	}
+
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	message := []byte("This is a test email message.")
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+	if err != nil {
+		fmt.Println(err)
+		return "Failed", err
+	}
+	fmt.Println("Email Sent!")
 
 	return "OK", nil
 }
