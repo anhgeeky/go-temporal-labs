@@ -13,7 +13,7 @@ import (
 // Micro: Nhận request từ Temporal -> Reply lại Temporal
 func main() {
 	// ======================= BROKER =======================
-	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094")
+	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 	// ======================= BROKER =======================
 
 	workflowID := "BANK_TRANSFER-1709525114"

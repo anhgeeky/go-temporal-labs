@@ -14,7 +14,7 @@ import (
 // Temporal: Gửi request từ Temporal -> Nhận request từ Micro
 func main() {
 	// ======================= BROKER =======================
-	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094")
+	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 	// ======================= BROKER =======================
 
 	workflowID := "BANK_TRANSFER-1709525114"
