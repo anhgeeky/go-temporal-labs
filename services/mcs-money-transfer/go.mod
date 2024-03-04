@@ -2,15 +2,16 @@ module github.com/anhgeeky/go-temporal-labs/mcs-money-transfer
 
 go 1.21.6
 
-replace github.com/anhgeeky/go-temporal-labs/core => ../../pkg/core
+replace github.com/anhgeeky/go-temporal-labs/core v0.0.0 => ../../pkg/core
 
-replace github.com/anhgeeky/go-temporal-labs/banktransfer => ../../pkg/workflows/banktransfer
+replace github.com/anhgeeky/go-temporal-labs/banktransfer v0.0.0 => ../../pkg/workflows/banktransfer
 
-replace github.com/anhgeeky/go-temporal-labs/notification => ../../pkg/workflows/notification
+replace github.com/anhgeeky/go-temporal-labs/notification v0.0.0 => ../../pkg/workflows/notification
 
 require (
-	github.com/anhgeeky/go-temporal-labs/banktransfer v0.0.0-00010101000000-000000000000
-	github.com/anhgeeky/go-temporal-labs/core v0.0.0-00010101000000-000000000000
+	github.com/anhgeeky/go-temporal-labs/banktransfer v0.0.0
+	github.com/anhgeeky/go-temporal-labs/core v0.0.0
+	github.com/anhgeeky/go-temporal-labs/notification v0.0.0
 	github.com/gofiber/fiber/v2 v2.52.1
 	github.com/google/uuid v1.6.0
 	github.com/spf13/viper v1.18.2
@@ -19,7 +20,6 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/anhgeeky/go-temporal-labs/notification v0.0.0-00010101000000-000000000000 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
