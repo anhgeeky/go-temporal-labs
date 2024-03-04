@@ -45,31 +45,39 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 	// Lấy được Device token thì run các activities parallel
 	// Start a goroutine in a workflow safe way
 	workflow.Go(ctx, func(gCtx workflow.Context) {
+		// var result1 string
+		// err = workflow.ExecuteActivity(gCtx, a.PushInternalApp, token).Get(gCtx, &result1)
+		// if err != nil {
+		// 	return
+		// }
+
+		// var result2 string
+		// err = workflow.ExecuteActivity(gCtx, a.PushNotification, token).Get(gCtx, &result2)
+		// if err != nil {
+		// 	return
+		// }
+
+		// var result3 string
+		// err = workflow.ExecuteActivity(gCtx, a.PushSMS, token).Get(gCtx, &result3)
+		// if err != nil {
+		// 	return
+		// }
+		// results = append(results, result1, result2, result3)
+
 		var result1 string
-		err = workflow.ExecuteActivity(gCtx, a.PushInternalApp, token).Get(gCtx, &result1)
+		err = workflow.ExecuteActivity(gCtx, a.PushEmail, token).Get(gCtx, &result1)
 		if err != nil {
 			return
 		}
 
-		var result2 string
-		err = workflow.ExecuteActivity(gCtx, a.PushNotification, token).Get(gCtx, &result2)
-		if err != nil {
-			return
-		}
-
-		var result3 string
-		err = workflow.ExecuteActivity(gCtx, a.PushSMS, token).Get(gCtx, &result3)
-		if err != nil {
-			return
-		}
-		results = append(results, result1, result2, result3)
+		results = append(results, result1)
 	})
 
 	logger.Info("NotificationWorkflow before result", results)
 
 	_ = workflow.Await(ctx, func() bool {
 		logger.Info("NotificationWorkflow Await result", results)
-		return err != nil || len(results) == 3 // 3 task push đã chạy xong -> Completed
+		return err != nil || len(results) == 1
 	})
 
 	logger.Info("NotificationWorkflow end")

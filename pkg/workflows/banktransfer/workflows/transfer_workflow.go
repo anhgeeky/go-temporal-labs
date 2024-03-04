@@ -13,7 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/workflow"
-	"go.uber.org/multierr"
 )
 
 var (
@@ -66,10 +65,10 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 			// ====================== Activity: CheckBalance ======================
 
 			// ====================== Activity: CheckTargetAccount ======================
-			err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
-			if err != nil {
-				return err
-			}
+			// err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
+			// if err != nil {
+			// 	return err
+			// }
 			// ====================== Activity: CheckTargetAccount ======================
 
 			// ====================== Activity: CreateTransferTransaction ======================
@@ -78,56 +77,56 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return err
 			}
 			// Compensation
-			defer func() {
-				if err != nil {
-					errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransferTransactionCompensation, state).Get(ctx, nil)
-					err = multierr.Append(err, errCompensation)
-				}
-			}()
-			// ====================== Activity: CreateTransferTransaction ======================
+			// defer func() {
+			// 	if err != nil {
+			// 		errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransferTransactionCompensation, state).Get(ctx, nil)
+			// 		err = multierr.Append(err, errCompensation)
+			// 	}
+			// }()
+			// // ====================== Activity: CreateTransferTransaction ======================
 
-			// ====================== Activity: WriteCreditAccount ======================
-			err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
-			if err != nil {
-				return err
-			}
-			// Compensation
-			defer func() {
-				if err != nil {
-					errCompensation := workflow.ExecuteActivity(ctx, a.WriteCreditAccountCompensation, state).Get(ctx, nil)
-					err = multierr.Append(err, errCompensation)
-				}
-			}()
-			// ====================== Activity: WriteCreditAccount ======================
+			// // ====================== Activity: WriteCreditAccount ======================
+			// err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
+			// if err != nil {
+			// 	return err
+			// }
+			// // Compensation
+			// defer func() {
+			// 	if err != nil {
+			// 		errCompensation := workflow.ExecuteActivity(ctx, a.WriteCreditAccountCompensation, state).Get(ctx, nil)
+			// 		err = multierr.Append(err, errCompensation)
+			// 	}
+			// }()
+			// // ====================== Activity: WriteCreditAccount ======================
 
-			// ====================== Activity: WriteDebitAccount ======================
-			err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
-			if err != nil {
-				return err
-			}
-			// Compensation
-			defer func() {
-				if err != nil {
-					errCompensation := workflow.ExecuteActivity(ctx, a.WriteDebitAccountCompensation, state).Get(ctx, nil)
-					err = multierr.Append(err, errCompensation)
-				}
-			}()
-			// ====================== Activity: WriteDebitAccount ======================
+			// // ====================== Activity: WriteDebitAccount ======================
+			// err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
+			// if err != nil {
+			// 	return err
+			// }
+			// // Compensation
+			// defer func() {
+			// 	if err != nil {
+			// 		errCompensation := workflow.ExecuteActivity(ctx, a.WriteDebitAccountCompensation, state).Get(ctx, nil)
+			// 		err = multierr.Append(err, errCompensation)
+			// 	}
+			// }()
+			// // ====================== Activity: WriteDebitAccount ======================
 
-			// ====================== Activity: AddNewActivity ======================
-			err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
-			if err != nil {
-				return err
-			}
+			// // ====================== Activity: AddNewActivity ======================
+			// err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
+			// if err != nil {
+			// 	return err
+			// }
 
-			// Compensation
-			defer func() {
-				if err != nil {
-					errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
-					err = multierr.Append(err, errCompensation)
-				}
-			}()
-			// ====================== Activity: AddNewActivity ======================
+			// // Compensation
+			// defer func() {
+			// 	if err != nil {
+			// 		errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
+			// 		err = multierr.Append(err, errCompensation)
+			// 	}
+			// }()
+			// // ====================== Activity: AddNewActivity ======================
 
 			// Call subflow -> Gửi notification
 			if !completed {
