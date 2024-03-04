@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/apis/routes"
 	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/config"
@@ -38,9 +39,6 @@ func main() {
 		log.Fatalln("Could not load configuration", err)
 	}
 
-	log.Println("TemporalHost", temporalCfg.TemporalHost)
-	log.Println("TemporalNamespace", temporalCfg.TemporalNamespace)
-
 	temporal, err = client.NewLazyClient(client.Options{
 		HostPort:  temporalCfg.TemporalHost,
 		Namespace: temporalCfg.TemporalNamespace,
@@ -67,8 +65,11 @@ func main() {
 		Output:       os.Stdout,
 	}))
 
-	services := modules.SetupServices()
+	// ======================= BROKER =======================
+	kafka.ConnectBrokerKafka()
+	// ======================= BROKER =======================
 
+	services := modules.SetupServices()
 	routes.StartTransferRoute(app, temporal, services)
 
 	log.Println("App is running and listening on port", PORT)

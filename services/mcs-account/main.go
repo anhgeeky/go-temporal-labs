@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	"github.com/anhgeeky/go-temporal-labs/mcs-account/apis/routes"
 	"github.com/anhgeeky/go-temporal-labs/mcs-account/config"
@@ -38,9 +39,6 @@ func main() {
 		log.Fatalln("Could not load configuration", err)
 	}
 
-	log.Println("TemporalHost", temporalCfg.TemporalHost)
-	log.Println("TemporalNamespace", temporalCfg.TemporalNamespace)
-
 	temporal, err = client.NewLazyClient(client.Options{
 		HostPort:  temporalCfg.TemporalHost,
 		Namespace: temporalCfg.TemporalNamespace,
@@ -66,6 +64,10 @@ func main() {
 		TimeInterval: 500 * time.Millisecond,
 		Output:       os.Stdout,
 	}))
+
+	// ======================= BROKER =======================
+	kafka.ConnectBrokerKafka()
+	// ======================= BROKER =======================
 
 	services := modules.SetupServices()
 

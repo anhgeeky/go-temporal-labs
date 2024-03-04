@@ -7,6 +7,7 @@ import (
 
 	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
 	"github.com/spf13/viper"
@@ -32,9 +33,6 @@ func main() {
 		log.Fatalln("Could not load `TemporalConfig` configuration", err)
 	}
 
-	log.Println("TemporalHost", temporalCfg.TemporalHost)
-	log.Println("TemporalNamespace", temporalCfg.TemporalNamespace)
-
 	c, err := client.NewLazyClient(client.Options{
 		HostPort:  temporalCfg.TemporalHost,
 		Namespace: temporalCfg.TemporalNamespace,
@@ -44,6 +42,10 @@ func main() {
 	}
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
+
+	// ======================= BROKER =======================
+	kafka.ConnectBrokerKafka()
+	// ======================= BROKER =======================
 
 	tranFlow.SetupBankTransferWorkflow(w, externalCfg)
 	notiFlow.SetupNotificationWorkflow(w, externalCfg.NotificationHost)
