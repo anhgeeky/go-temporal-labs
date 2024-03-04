@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -56,56 +55,56 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 	return responses.SuccessResult[interface{}](c, res)
 }
 
-func (r TransferController) GetTransfer(c *fiber.Ctx) error {
-	workflowID := c.Params("workflowID")
-	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
-	if err != nil {
-		return responses.WriteError(c, err)
-	}
-	var res interface{}
-	if err := response.Get(&res); err != nil {
-		return responses.WriteError(c, err)
-	}
+// func (r TransferController) GetTransfer(c *fiber.Ctx) error {
+// 	workflowID := c.Params("workflowID")
+// 	response, err := r.TemporalClient.QueryWorkflow(context.Background(), workflowID, "", "getTransfer")
+// 	if err != nil {
+// 		return responses.WriteError(c, err)
+// 	}
+// 	var res interface{}
+// 	if err := response.Get(&res); err != nil {
+// 		return responses.WriteError(c, err)
+// 	}
 
-	return responses.SuccessResult[interface{}](c, res)
-}
+// 	return responses.SuccessResult[interface{}](c, res)
+// }
 
 func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
 	return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
 }
 
-func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
-	return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
-}
+// func (r TransferController) WriteCreditAccount(c *fiber.Ctx) error {
+// 	return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
+// }
 
-func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
-	// TODO: Đang test case lỗi error
-	return responses.WriteError(c, errors.New("OOPS!!! WriteDebitAccount error"))
-	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
-}
+// func (r TransferController) WriteDebitAccount(c *fiber.Ctx) error {
+// 	// TODO: Đang test case lỗi error
+// 	return responses.WriteError(c, errors.New("OOPS!!! WriteDebitAccount error"))
+// 	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
+// }
 
-func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
-	// TODO: Đang test case lỗi error
-	return responses.WriteError(c, errors.New("OOPS!!! AddNewActivity error"))
-	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
-}
+// func (r TransferController) AddNewActivity(c *fiber.Ctx) error {
+// 	// TODO: Đang test case lỗi error
+// 	return responses.WriteError(c, errors.New("OOPS!!! AddNewActivity error"))
+// 	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
+// }
 
 // ============================================
 // Rollback
 // ============================================
 
-func (r TransferController) CreateTransferTransactionCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
-}
+// func (r TransferController) CreateTransferTransactionCompensation(c *fiber.Ctx) error {
+// 	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
+// }
 
-func (r TransferController) WriteCreditAccountCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
-}
+// func (r TransferController) WriteCreditAccountCompensation(c *fiber.Ctx) error {
+// 	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
+// }
 
-func (r TransferController) WriteDebitAccountCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
-}
+// func (r TransferController) WriteDebitAccountCompensation(c *fiber.Ctx) error {
+// 	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
+// }
 
-func (r TransferController) AddNewActivityCompensation(c *fiber.Ctx) error {
-	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
-}
+// func (r TransferController) AddNewActivityCompensation(c *fiber.Ctx) error {
+// 	return responses.SuccessResult(c, transaction.SampleRes{Msg: "Rollback done"})
+// }

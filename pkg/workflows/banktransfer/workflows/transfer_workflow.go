@@ -7,6 +7,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	cw "github.com/anhgeeky/go-temporal-labs/core/workflow"
 	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
 	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
@@ -58,7 +59,8 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 		if verifiedOtp {
 			// ====================== Activity: CheckBalance ======================
-			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, nil)
+			var checkBalanceRes *account.BalanceRes
+			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, &checkBalanceRes)
 			if err != nil {
 				return err
 			}
@@ -72,7 +74,8 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 			// ====================== Activity: CheckTargetAccount ======================
 
 			// ====================== Activity: CreateTransferTransaction ======================
-			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, nil)
+			var createTransactionRes *account.CreateTransactionRes
+			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, &createTransactionRes)
 			if err != nil {
 				return err
 			}

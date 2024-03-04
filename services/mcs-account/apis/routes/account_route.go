@@ -14,5 +14,5 @@ func StartAccountRoute(app *fiber.App, temporal client.Client, services map[stri
 	}
 	group := app.Group("/accounts")
 	group.Get("/", controller.GetAccounts)
-	group.Get("/:ID/balance", controller.GetBalance)
+	group.Post("/:ID/balance", controller.GetBalance)
 }
