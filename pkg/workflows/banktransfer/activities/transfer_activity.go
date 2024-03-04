@@ -33,7 +33,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 
 	isReceived := false
 	var res account.BalanceRes
-	csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
 	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
 	// TODO: Trường hợp không tìm thấy được message phù hợp -> Timeout
@@ -57,7 +57,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 			}
 
 			return nil
-		}, csGroupOpt)
+		}) //, csGroupOpt)
 
 		if isReceived {
 			break
@@ -91,7 +91,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 
 	isReceived := false
 	var res account.CreateTransactionRes // TODO: check lại với Sơn
-	csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
 	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
 	// TODO: Trường hợp không tìm thấy được message phù hợp -> Timeout
@@ -115,7 +115,8 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 			}
 
 			return nil
-		}, csGroupOpt)
+		}) //, csGroupOpt)
+		// }, csGroupOpt)
 
 		if isReceived {
 			break

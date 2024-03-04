@@ -66,7 +66,12 @@ func main() {
 	}))
 
 	// ======================= BROKER =======================
-	kafka.ConnectBrokerKafka()
+	kafkaCfg := &config.KafkaConfig{}
+	err = viper.Unmarshal(kafkaCfg)
+	if err != nil {
+		log.Fatalln("Could not load `KafkaConfig` configuration", err)
+	}
+	bk := kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
 	// ======================= BROKER =======================
 
 	services := modules.SetupServices()

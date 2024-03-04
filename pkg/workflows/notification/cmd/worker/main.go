@@ -31,9 +31,6 @@ func main() {
 		log.Fatalln("Could not load `TemporalConfig` configuration", err)
 	}
 
-	log.Println("TemporalHost", temporalCfg.TemporalHost)
-	log.Println("TemporalNamespace", temporalCfg.TemporalNamespace)
-
 	c, err := client.NewLazyClient(client.Options{
 		HostPort:  temporalCfg.TemporalHost,
 		Namespace: temporalCfg.TemporalNamespace,

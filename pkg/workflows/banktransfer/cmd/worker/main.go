@@ -44,7 +44,12 @@ func main() {
 	w := worker.New(c, config.TaskQueues.TRANSFER_QUEUE, worker.Options{})
 
 	// ======================= BROKER =======================
-	bk := kafka.ConnectBrokerKafka()
+	kafkaCfg := &config.KafkaConfig{}
+	err = viper.Unmarshal(kafkaCfg)
+	if err != nil {
+		log.Fatalln("Could not load `KafkaConfig` configuration", err)
+	}
+	bk := kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
 	// ======================= BROKER =======================
 
 	tranFlow.SetupBankTransferWorkflow(w, externalCfg, bk)

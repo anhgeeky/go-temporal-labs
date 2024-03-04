@@ -3,7 +3,6 @@ package kafka
 import (
 	"context"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
@@ -11,10 +10,10 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/core/logger/logrus"
 )
 
-func ConnectBrokerKafka() broker.Broker {
+func ConnectBrokerKafka(brokers string) broker.Broker {
 	// ======================= BROKER =======================
 	var config = &KafkaBrokerConfig{
-		Addresses: strings.Split(os.Getenv("KAFKA_BROKERS"), ","),
+		Addresses: strings.Split(brokers, ","),
 	}
 
 	cLogger := logrus.NewLogrusLogger(

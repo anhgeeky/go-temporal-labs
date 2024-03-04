@@ -2,7 +2,7 @@
 @port = 6001
 @host = {{hostname}}:{{port}}
 @contentType = application/json
-@workflowID = BANK_TRANSFER-1709018499
+@workflowID = BANK_TRANSFER-1709524751
 
 ### Get accounts
 
