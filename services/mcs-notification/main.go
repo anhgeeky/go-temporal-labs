@@ -71,7 +71,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("Could not load `KafkaConfig` configuration", err)
 	}
-	bk := kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
+	kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
 	// ======================= BROKER =======================
 
 	services := modules.SetupServices()
