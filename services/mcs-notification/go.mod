@@ -2,13 +2,12 @@ module github.com/anhgeeky/go-temporal-labs/mcs-notification
 
 go 1.21.6
 
-replace github.com/anhgeeky/go-temporal-labs/core v0.0.0 => ../../pkg/core
+replace github.com/anhgeeky/go-temporal-labs/core => ../../pkg/core
 
-replace github.com/anhgeeky/go-temporal-labs/notification v0.0.0 => ../../pkg/workflows/notification
+replace github.com/anhgeeky/go-temporal-labs/notification => ../../pkg/workflows/notification
 
 require (
 	github.com/anhgeeky/go-temporal-labs/core v0.0.0
-	github.com/anhgeeky/go-temporal-labs/notification v0.0.0
 	github.com/gofiber/fiber/v2 v2.52.1
 	github.com/spf13/viper v1.18.2
 	go.temporal.io/sdk v1.25.1
@@ -24,7 +23,7 @@ require (
 	github.com/gogo/status v1.1.1 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/uuid v1.5.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

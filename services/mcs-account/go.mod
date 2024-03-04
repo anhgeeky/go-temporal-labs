@@ -2,9 +2,9 @@ module github.com/anhgeeky/go-temporal-labs/mcs-account
 
 go 1.21.6
 
-replace github.com/anhgeeky/go-temporal-labs/core v0.0.0 => ../../pkg/core
+replace github.com/anhgeeky/go-temporal-labs/core => ../../pkg/core
 
-replace github.com/anhgeeky/go-temporal-labs/banktransfer v0.0.0 => ../../pkg/workflows/banktransfer
+replace github.com/anhgeeky/go-temporal-labs/banktransfer => ../../pkg/workflows/banktransfer
 
 require (
 	github.com/anhgeeky/go-temporal-labs/banktransfer v0.0.0

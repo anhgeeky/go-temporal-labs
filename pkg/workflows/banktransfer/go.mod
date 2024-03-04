@@ -2,9 +2,9 @@ module github.com/anhgeeky/go-temporal-labs/banktransfer
 
 go 1.21.6
 
-replace github.com/anhgeeky/go-temporal-labs/core v0.0.0 => ../../core
+replace github.com/anhgeeky/go-temporal-labs/core => ../../core
 
-replace github.com/anhgeeky/go-temporal-labs/notification v0.0.0 => ../notification
+replace github.com/anhgeeky/go-temporal-labs/notification => ../notification
 
 require (
 	github.com/anhgeeky/go-temporal-labs/core v0.0.0
