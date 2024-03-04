@@ -45,7 +45,7 @@ func main() {
 
 	isReceived := false
 	var res account.CheckBalanceRes // TODO: check lại với Sơn
-	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+	csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
 	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
 	// TODO: Trường hợp không tìm thấy được message phù hợp -> Timeout
@@ -70,8 +70,7 @@ func main() {
 			}
 
 			return nil
-		}) //, csGroupOpt)
-		// }, csGroupOpt)
+		}, csGroupOpt)
 
 		if isReceived {
 			break
