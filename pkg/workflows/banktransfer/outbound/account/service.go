@@ -23,7 +23,7 @@ func (r AccountService) GetBalance() (interface{}, error) {
 	client := resty.New()
 
 	url := fmt.Sprintf("%s/%s/balance", endpoint, accId.String())
-	var data models.Response[BalanceRes]
+	var data models.Response[CheckBalanceRes]
 
 	response, err := client.R().
 		EnableTrace().

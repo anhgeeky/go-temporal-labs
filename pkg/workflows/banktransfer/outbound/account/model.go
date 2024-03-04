@@ -1,6 +1,10 @@
 package account
 
-type BalanceRes struct {
+type CheckBalanceReq struct {
+	// TODO: Check với Sơn response
+}
+
+type CheckBalanceRes struct {
 	Balance float64 `json:"balance"`
 }
 

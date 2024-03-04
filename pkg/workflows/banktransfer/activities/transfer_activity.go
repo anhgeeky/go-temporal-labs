@@ -19,20 +19,41 @@ type TransferActivity struct {
 	MoneyTransferService moneytransfer.MoneyTransferService
 }
 
-func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transfer) (account.BalanceRes, error) {
+func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transfer) (*account.CheckBalanceRes, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CheckBalance", msg)
+	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
+	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 
+	// ======================== TEST ONLY ========================
 	// Call REST api
 	// res, err := a.AccountService.GetBalance()
 	// if err != nil {
 	// 	return err
 	// }
+	// ======================== TEST ONLY ========================
 
-	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
+	// ======================== SEND REQUEST ========================
+	req := account.CheckBalanceReq{}
+	body, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
 
+	fMsg := broker.Message{
+		Body: body,
+		Headers: map[string]string{
+			"workflow_id": msg.WorkflowID,
+			"activity-id": config.Messages.CHECK_BALANCE_ACTION,
+		},
+	}
+
+	a.Broker.Publish(requestTopic, &fMsg)
+	// ======================== SEND REQUEST ========================
+
+	// ======================== GET RESPONSE ========================
 	isReceived := false
-	var res account.BalanceRes
+	var res account.CheckBalanceRes
 	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
 	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
@@ -44,7 +65,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 			// TODO: Nhận response từ API Microservice push vào topic Reply
 
 			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == "CHECK_BALANCE" { // TODO: check lại với Sơn
+			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == config.Messages.CHECK_BALANCE_ACTION { // TODO: check lại với Sơn
 				body := string(e.Message().Body)
 				if body != "" {
 					err := json.Unmarshal(e.Message().Body, &res)
@@ -67,8 +88,9 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	if isReceived {
 		logger.Info("TransferActivity: CheckBalance done", res)
 	}
+	// ======================== GET RESPONSE ========================
 
-	return res, nil
+	return &res, nil
 }
 
 // func (a *TransferActivity) CheckTargetAccount(ctx context.Context, msg messages.Transfer) error {
@@ -77,17 +99,41 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 // 	return nil
 // }
 
-func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg messages.Transfer) (account.CreateTransactionRes, error) {
+func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
 	logger := activity.GetLogger(ctx)
 
 	logger.Info("TransferActivity: CreateTransferTransaction", msg)
+
+	// ======================== TEST ONLY ========================
 	// res, err := a.MoneyTransferService.CreateTransferTransaction(msg.WorkflowID)
 	// if err != nil {
 	// 	logger.Error("TransferActivity CreateTransferTransaction failed.", "Error", err)
 	// 	return err
 	// }
+	// ======================== TEST ONLY ========================
 
+	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
+
+	// ======================== SEND REQUEST ========================
+	req := account.CheckBalanceReq{}
+	body, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+
+	fMsg := broker.Message{
+		Body: body,
+		Headers: map[string]string{
+			"workflow_id": msg.WorkflowID,
+			"activity-id": config.Messages.CREATE_TRANSACTION_ACTION,
+		},
+	}
+
+	a.Broker.Publish(requestTopic, &fMsg)
+	// ======================== SEND REQUEST ========================
+
+	// ======================== GET RESPONSE ========================
 
 	isReceived := false
 	var res account.CreateTransactionRes // TODO: check lại với Sơn
@@ -102,7 +148,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 			// TODO: Nhận response từ API Microservice push vào topic Reply
 
 			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == "CREATE_TRANSACTION" { // TODO: check lại với Sơn
+			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == config.Messages.CREATE_TRANSACTION_ACTION { // TODO: check lại với Sơn
 				body := string(e.Message().Body)
 				if body != "" {
 					err := json.Unmarshal(e.Message().Body, &res)
@@ -126,10 +172,11 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 	if isReceived {
 		logger.Info("TransferActivity: CheckBalance done", res)
 	}
+	// ======================== GET RESPONSE ========================
 
 	logger.Info("TransferActivity: CreateTransferTransaction done", res)
 
-	return res, nil
+	return &res, nil
 }
 
 // func (a *TransferActivity) WriteCreditAccount(ctx context.Context, msg messages.Transfer) error {

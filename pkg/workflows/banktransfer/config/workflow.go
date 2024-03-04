@@ -14,14 +14,18 @@ var Workflows = struct {
 
 var Messages = struct {
 	GROUP                            string
+	CHECK_BALANCE_ACTION             string
 	CHECK_BALANCE_REQUEST_TOPIC      string
 	CHECK_BALANCE_REPLY_TOPIC        string
+	CREATE_TRANSACTION_ACTION        string
 	CREATE_TRANSACTION_REQUEST_TOPIC string
 	CREATE_TRANSACTION_REPLY_TOPIC   string
 }{
 	GROUP:                            "go_clean",
-	CHECK_BALANCE_REQUEST_TOPIC:      "check-balance-request-topic",      // TODO: Check với Sơn
-	CHECK_BALANCE_REPLY_TOPIC:        "check-balance-reply-topic",        // TODO: Check với Sơn
+	CHECK_BALANCE_ACTION:             "check-balance",
+	CHECK_BALANCE_REQUEST_TOPIC:      "check-balance-request-topic", // TODO: Check với Sơn
+	CHECK_BALANCE_REPLY_TOPIC:        "check-balance-reply-topic",   // TODO: Check với Sơn
+	CREATE_TRANSACTION_ACTION:        "create-transaction-request-topic",
 	CREATE_TRANSACTION_REQUEST_TOPIC: "create-transaction-request-topic", // TODO: Check với Sơn
 	CREATE_TRANSACTION_REPLY_TOPIC:   "create-transaction-reply-topic",   // TODO: Check với Sơn
 }

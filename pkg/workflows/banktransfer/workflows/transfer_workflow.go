@@ -61,7 +61,7 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 
 		if verifiedOtp {
 			// ====================== Activity: CheckBalance ======================
-			var checkBalanceRes *account.BalanceRes
+			var checkBalanceRes *account.CheckBalanceRes
 			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, &checkBalanceRes)
 			if err != nil {
 				return err
