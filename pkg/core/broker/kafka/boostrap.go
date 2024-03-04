@@ -6,8 +6,6 @@ import (
 	"strings"
 
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
-	pkgLogger "github.com/anhgeeky/go-temporal-labs/core/logger"
-	"github.com/anhgeeky/go-temporal-labs/core/logger/logrus"
 )
 
 func ConnectBrokerKafka(brokers string) broker.Broker {
@@ -17,17 +15,17 @@ func ConnectBrokerKafka(brokers string) broker.Broker {
 		Addresses: strings.Split(brokers, ","),
 	}
 
-	cLogger := logrus.NewLogrusLogger(
-		pkgLogger.WithLevel(pkgLogger.InfoLevel),
-	)
+	// cLogger := logrus.NewLogrusLogger(
+	// 	pkgLogger.WithLevel(pkgLogger.InfoLevel),
+	// )
 
 	br, err := GetKafkaBroker(
 		config,
-		broker.WithLogger(cLogger),
+		// broker.WithLogger(cLogger),
 	)
 
 	if err != nil {
-		cLogger.Error(context.TODO(), "Failted to create kafka broker")
+		log.Fatal(context.TODO(), "Failted to create kafka broker")
 		panic(err)
 	}
 

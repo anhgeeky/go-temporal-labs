@@ -17,8 +17,8 @@ func main() {
 	// ======================= BROKER =======================
 
 	workflowID := "BANK_TRANSFER-1709525114"
-	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
-	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
+	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
+	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 
 	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
@@ -38,7 +38,7 @@ func main() {
 			Body: body,
 			Headers: map[string]string{
 				"workflow_id": workflowID,
-				"activity-id": config.Messages.CREATE_TRANSACTION_ACTION,
+				"activity-id": config.Messages.CHECK_BALANCE_ACTION,
 			},
 		}
 
