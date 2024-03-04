@@ -6,9 +6,9 @@ import (
 	"math/rand"
 	"testing"
 
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/logger"
 	"github.com/anhgeeky/go-temporal-labs/core/logger/logrus"
-	"github.com/anhgeeky/go-temporal-labs/core/transport/broker"
 )
 
 func getKafkaBroker() broker.Broker {

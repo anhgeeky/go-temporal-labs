@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/IBM/sarama"
-	"github.com/anhgeeky/go-temporal-labs/core/transport/broker"
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 )
 
 var (

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/IBM/sarama"
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/logger"
-	"github.com/anhgeeky/go-temporal-labs/core/transport/broker"
 )
 
 // consumerGroupHandler is the implementation of sarama.ConsumerGroupHandler

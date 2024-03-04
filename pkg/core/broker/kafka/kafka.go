@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/IBM/sarama"
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/logger"
-	"github.com/anhgeeky/go-temporal-labs/core/transport/broker"
 	"github.com/google/uuid"
 )
 
