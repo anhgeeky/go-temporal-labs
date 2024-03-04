@@ -11,6 +11,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 )
 
+// Temporal: Gửi request từ Temporal -> Nhận request từ Micro
 func main() {
 	// ======================= BROKER =======================
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094")
@@ -41,7 +42,7 @@ func main() {
 	// ======================== GET RESPONSE ========================
 
 	isReceived := false
-	var res account.CreateTransactionRes // TODO: check lại với Sơn
+	var res account.CheckBalanceRes // TODO: check lại với Sơn
 	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
 	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
@@ -61,6 +62,7 @@ func main() {
 						return err // Đúng message + Payload res bị sai struct -> Fail Activity
 					} else {
 						isReceived = true
+						log.Println("TransferActivity: CheckBalance success", res.Balance == 8888) // Check ok
 					}
 				}
 			}

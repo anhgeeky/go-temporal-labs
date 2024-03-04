@@ -33,7 +33,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	// }
 	// ======================== TEST ONLY ========================
 
-	// ======================== SEND REQUEST ========================
+	// ======================== REQUEST: SEND REQUEST ========================
 	req := account.CheckBalanceReq{}
 	body, err := json.Marshal(req)
 	if err != nil {
@@ -49,9 +49,9 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	}
 
 	a.Broker.Publish(requestTopic, &fMsg)
-	// ======================== SEND REQUEST ========================
+	// ======================== REQUEST: SEND REQUEST ========================
 
-	// ======================== GET RESPONSE ========================
+	// ======================== REPLY: GET RESPONSE ========================
 	isReceived := false
 	var res account.CheckBalanceRes
 	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
@@ -88,7 +88,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	if isReceived {
 		logger.Info("TransferActivity: CheckBalance done", res)
 	}
-	// ======================== GET RESPONSE ========================
+	// ======================== REPLY: GET RESPONSE ========================
 
 	return &res, nil
 }
@@ -115,8 +115,8 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
 
-	// ======================== SEND REQUEST ========================
-	req := account.CheckBalanceReq{}
+	// ======================== REQUEST: SEND REQUEST ========================
+	req := account.CreateTransactionReq{}
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -131,9 +131,9 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 	}
 
 	a.Broker.Publish(requestTopic, &fMsg)
-	// ======================== SEND REQUEST ========================
+	// ======================== REQUEST: SEND REQUEST ========================
 
-	// ======================== GET RESPONSE ========================
+	// ======================== REPLY: GET RESPONSE ========================
 
 	isReceived := false
 	var res account.CreateTransactionRes // TODO: check lại với Sơn
@@ -172,7 +172,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 	if isReceived {
 		logger.Info("TransferActivity: CheckBalance done", res)
 	}
-	// ======================== GET RESPONSE ========================
+	// ======================== REPLY: GET RESPONSE ========================
 
 	logger.Info("TransferActivity: CreateTransferTransaction done", res)
 
