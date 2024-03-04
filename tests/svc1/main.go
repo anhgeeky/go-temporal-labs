@@ -6,6 +6,6 @@ import (
 
 func main() {
 	// ======================= BROKER =======================
-	kafka.ConnectBrokerKafka("localhost:9092,localhost:9093,localhost:9094")
+	kafka.ConnectBrokerKafka("localhost:9092")
 	// ======================= BROKER =======================
 }
