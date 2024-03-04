@@ -3,11 +3,13 @@ package account
 import (
 	"time"
 
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/google/uuid"
 )
 
 type Service struct {
 	Repo Repository
+	Broker broker.Broker
 }
 
 // Sample for test only

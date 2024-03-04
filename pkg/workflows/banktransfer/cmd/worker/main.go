@@ -41,13 +41,13 @@ func main() {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	defer c.Close()
-	w := worker.New(c, config.TaskQueues.BANK_TRANSFER_QUEUE, worker.Options{})
+	w := worker.New(c, config.TaskQueues.TRANSFER_QUEUE, worker.Options{})
 
 	// ======================= BROKER =======================
-	kafka.ConnectBrokerKafka()
+	bk := kafka.ConnectBrokerKafka()
 	// ======================= BROKER =======================
 
-	tranFlow.SetupBankTransferWorkflow(w, externalCfg)
+	tranFlow.SetupBankTransferWorkflow(w, externalCfg, bk)
 	notiFlow.SetupNotificationWorkflow(w, externalCfg.NotificationHost)
 
 	err = w.Run(worker.InterruptCh())

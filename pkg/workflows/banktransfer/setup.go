@@ -6,12 +6,14 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"go.temporal.io/sdk/worker"
 )
 
 // Transfer workflow
-func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfig) {
+func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfig, bk broker.Broker) {
 	transferActivity := &activities.TransferActivity{
+		Broker: bk,
 		AccountService: account.AccountService{
 			Host: cfg.AccountHost,
 		},

@@ -2,14 +2,18 @@ package activities
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
+	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"go.temporal.io/sdk/activity"
 )
 
 type TransferActivity struct {
+	Broker               broker.Broker
 	AccountService       account.AccountService
 	MoneyTransferService moneytransfer.MoneyTransferService
 }
@@ -18,12 +22,33 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CheckBalance", msg)
 
-	res, err := a.AccountService.GetBalance()
-	if err != nil {
-		return err
+	// Call REST api
+	// res, err := a.AccountService.GetBalance()
+	// if err != nil {
+	// 	return err
+	// }
+
+	isReceived := false
+	var res account.BalanceRes
+	csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+
+	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
+	// TODO: Trường hợp không tìm thấy được message phù hợp -> Timeout
+	for {
+		a.Broker.Subscribe(config.Messages.REPLY_TOPIC, func(e broker.Event) error {
+			fmt.Printf("Received message from topic %v: \nBody: %v\nHeader: %v\n", config.Messages.REPLY_TOPIC, string(e.Message().Body), e.Message().Headers)
+			// TODO: Nhận response từ API Microservice push vào topic Reply
+			return nil
+		}, csGroupOpt)
+
+		if isReceived {
+			break
+		}
 	}
 
-	logger.Info("TransferActivity: CheckBalance done", res)
+	if isReceived {
+		logger.Info("TransferActivity: CheckBalance done", res)
+	}
 
 	return nil
 }

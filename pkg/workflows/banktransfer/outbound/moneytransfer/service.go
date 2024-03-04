@@ -14,7 +14,6 @@ var (
 
 type MoneyTransferService struct {
 	Host string
-	// Kafka
 }
 
 func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (interface{}, error) {

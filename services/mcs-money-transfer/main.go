@@ -66,10 +66,10 @@ func main() {
 	}))
 
 	// ======================= BROKER =======================
-	kafka.ConnectBrokerKafka()
+	bk := kafka.ConnectBrokerKafka()
 	// ======================= BROKER =======================
 
-	services := modules.SetupServices()
+	services := modules.SetupServices(bk)
 	routes.StartTransferRoute(app, temporal, services)
 
 	log.Println("App is running and listening on port", PORT)

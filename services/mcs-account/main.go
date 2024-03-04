@@ -66,10 +66,10 @@ func main() {
 	}))
 
 	// ======================= BROKER =======================
-	kafka.ConnectBrokerKafka()
+	bk := kafka.ConnectBrokerKafka()
 	// ======================= BROKER =======================
 
-	services := modules.SetupServices()
+	services := modules.SetupServices(bk)
 
 	routes.StartAccountRoute(app, temporal, services)
 	routes.StartVerifyRoute(app, temporal, services)
