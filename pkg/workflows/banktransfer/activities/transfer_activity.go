@@ -24,7 +24,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	logger.Info("TransferActivity: CheckBalance", msg)
 	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
-
+	action := config.Messages.CHECK_BALANCE_ACTION
 	// ======================== TEST ONLY ========================
 	// Call REST api
 	// res, err := a.AccountService.GetBalance()
@@ -44,7 +44,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 		Body: body,
 		Headers: map[string]string{
 			"workflow_id": msg.WorkflowID,
-			"activity-id": config.Messages.CHECK_BALANCE_ACTION,
+			"activity-id": action,
 		},
 	}
 
@@ -65,7 +65,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 			// TODO: Nhận response từ API Microservice push vào topic Reply
 
 			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == config.Messages.CHECK_BALANCE_ACTION { // TODO: check lại với Sơn
+			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == action { // TODO: check lại với Sơn
 				body := string(e.Message().Body)
 				if body != "" {
 					err := json.Unmarshal(e.Message().Body, &res)
@@ -114,6 +114,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 
 	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
+	action := config.Messages.CREATE_TRANSACTION_ACTION
 
 	// ======================== REQUEST: SEND REQUEST ========================
 	req := account.CreateTransactionReq{}
@@ -126,7 +127,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 		Body: body,
 		Headers: map[string]string{
 			"workflow_id": msg.WorkflowID,
-			"activity-id": config.Messages.CREATE_TRANSACTION_ACTION,
+			"activity-id": action,
 		},
 	}
 
@@ -148,7 +149,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 			// TODO: Nhận response từ API Microservice push vào topic Reply
 
 			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == config.Messages.CREATE_TRANSACTION_ACTION { // TODO: check lại với Sơn
+			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == action { // TODO: check lại với Sơn
 				body := string(e.Message().Body)
 				if body != "" {
 					err := json.Unmarshal(e.Message().Body, &res)

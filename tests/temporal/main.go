@@ -18,8 +18,9 @@ func main() {
 	// ======================= BROKER =======================
 
 	workflowID := "BANK_TRANSFER-1709525114"
-	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
-	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
+	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
+	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
+	action := config.Messages.CHECK_BALANCE_ACTION
 
 	// ======================== SEND REQUEST ========================
 	req := account.CheckBalanceReq{}
@@ -32,11 +33,12 @@ func main() {
 		Body: body,
 		Headers: map[string]string{
 			"workflow_id": workflowID,
-			"activity-id": config.Messages.CREATE_TRANSACTION_ACTION,
+			"activity-id": action,
 		},
 	}
 
 	bk.Publish(requestTopic, &fMsg)
+	log.Printf("Temporal: requestTopic: %v, msg %v\n", requestTopic, fMsg)
 	// ======================== SEND REQUEST ========================
 
 	// ======================== GET RESPONSE ========================
@@ -54,7 +56,7 @@ func main() {
 			// TODO: Nhận response từ API Microservice push vào topic Reply
 
 			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == workflowID && headers["activity-id"] == config.Messages.CREATE_TRANSACTION_ACTION { // TODO: check lại với Sơn
+			if headers["workflow_id"] == workflowID && headers["activity-id"] == action { // TODO: check lại với Sơn
 				body := string(e.Message().Body)
 				if body != "" {
 					err := json.Unmarshal(e.Message().Body, &res)
@@ -62,7 +64,7 @@ func main() {
 						return err // Đúng message + Payload res bị sai struct -> Fail Activity
 					} else {
 						isReceived = true
-						log.Println("TransferActivity: CheckBalance success", res.Balance == 8888) // Check ok
+						log.Println("Temporal: CheckBalance success", res.Balance == 8888) // Check ok
 					}
 				}
 			}
@@ -77,6 +79,6 @@ func main() {
 	}
 
 	if isReceived {
-		log.Println("TransferActivity: CheckBalance done", res)
+		log.Println("Temporal: CheckBalance done", res)
 	}
 }
