@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/IBM/sarama"
-	"github.com/anhgeeky/go-temporal-labs/core/broker"
+	"github.com/anhgeeky/go-temporal-labs/core/transport/broker"
 )
 
 type KafkaBrokerConfig struct {
@@ -16,7 +16,6 @@ type KafkaBrokerConfig struct {
 	SASLEnabled   bool
 	SASLUser      string
 	SASLPassword  string
-	SASLHandshake bool
 	SASLAlgorithm string
 
 	TLSEnabled        bool

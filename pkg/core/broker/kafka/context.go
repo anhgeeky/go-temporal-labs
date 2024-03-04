@@ -3,7 +3,7 @@ package kafka
 import (
 	"context"
 
-	"github.com/anhgeeky/go-temporal-labs/core/broker"
+	"github.com/anhgeeky/go-temporal-labs/core/transport/broker"
 )
 
 // setSubscribeOption returns a function to setup a context with given value
