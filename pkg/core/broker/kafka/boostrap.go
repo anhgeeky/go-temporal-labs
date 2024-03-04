@@ -11,7 +11,7 @@ import (
 )
 
 func ConnectBrokerKafka(brokers string) broker.Broker {
-	log.Println("Broker Kafka starting...")
+	log.Println("Broker Kafka starting...", brokers)
 	// ======================= BROKER =======================
 	var config = &KafkaBrokerConfig{
 		Addresses: strings.Split(brokers, ","),
