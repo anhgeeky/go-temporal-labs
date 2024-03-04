@@ -4,7 +4,12 @@ go 1.22.0
 
 replace github.com/anhgeeky/go-temporal-labs/core => ../pkg/core
 
-require github.com/anhgeeky/go-temporal-labs/core v0.0.0-00010101000000-000000000000
+replace github.com/anhgeeky/go-temporal-labs/banktransfer => ../pkg/workflows/banktransfer
+
+require (
+	github.com/anhgeeky/go-temporal-labs/banktransfer v0.0.0-00010101000000-000000000000
+	github.com/anhgeeky/go-temporal-labs/core v0.0.0
+)
 
 require (
 	github.com/IBM/sarama v1.43.0 // indirect
@@ -12,8 +17,9 @@ require (
 	github.com/eapache/go-resiliency v1.6.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
+	github.com/go-resty/resty/v2 v2.11.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.5.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
