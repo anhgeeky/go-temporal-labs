@@ -3,7 +3,6 @@ package activities
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
@@ -19,76 +18,106 @@ type TransferActivity struct {
 	MoneyTransferService moneytransfer.MoneyTransferService
 }
 
+var (
+	workflowIDKey = "workflow_id"
+	activityIDKey = "activity-id"
+)
+
+func (a *TransferActivity) getMsgHeaders(workflowId string, activityId string) map[string]string {
+	return map[string]string{
+		workflowIDKey: workflowId,
+		activityIDKey: activityId,
+	}
+}
+
+func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId string, activityId string) bool {
+	return headers[workflowIDKey] == workflowId && headers[activityIDKey] == activityId
+}
+
 func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transfer) (*account.CheckBalanceRes, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CheckBalance", msg)
+
 	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 	action := config.Messages.CHECK_BALANCE_ACTION
-	// ======================== TEST ONLY ========================
-	// Call REST api
-	// res, err := a.AccountService.GetBalance()
-	// if err != nil {
-	// 	return err
-	// }
-	// ======================== TEST ONLY ========================
 
-	// ======================== REQUEST: SEND REQUEST ========================
 	req := account.CheckBalanceReq{}
-	body, err := json.Marshal(req)
+	reqBody, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 
-	fMsg := broker.Message{
-		Body: body,
-		Headers: map[string]string{
-			"workflow_id": msg.WorkflowID,
-			"activity-id": action,
+	msgRes, err := a.Broker.PublishAndReceive(
+		requestTopic,
+		&broker.Message{
+			Headers: a.getMsgHeaders(msg.WorkflowID, action),
+			Body:    reqBody,
 		},
+		broker.WithPublishReplyToTopic(replyTopic),
+	)
+
+	if err != nil {
+		return nil, err
 	}
 
-	a.Broker.Publish(requestTopic, &fMsg)
-	// ======================== REQUEST: SEND REQUEST ========================
+	var res account.CheckBalanceRes // TODO: check lại với Sơn
 
-	// ======================== REPLY: GET RESPONSE ========================
-	isReceived := false
-	var res account.CheckBalanceRes
-	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
-
-	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
-	// TODO: Trường hợp không tìm thấy được message phù hợp -> Timeout
-	for {
-		a.Broker.Subscribe(replyTopic, func(e broker.Event) error {
-			headers := e.Message().Headers
-			fmt.Printf("Received message from topic %v: Header: %v\n", replyTopic, headers)
-			// TODO: Nhận response từ API Microservice push vào topic Reply
-
-			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == action { // TODO: check lại với Sơn
-				body := string(e.Message().Body)
-				if body != "" {
-					err := json.Unmarshal(e.Message().Body, &res)
-					if err != nil {
-						return err // Đúng message + Payload res bị sai struct -> Fail Activity
-					} else {
-						isReceived = true
-					}
-				}
+	// Kiểm tra theo điều kiện phù hợp
+	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) {
+		if len(msgRes.Body) > 0 {
+			err := json.Unmarshal(msgRes.Body, &res)
+			if err != nil {
+				return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
 			}
-
-			return nil
-		}) //, csGroupOpt)
-
-		if isReceived {
-			break
 		}
 	}
 
-	if isReceived {
-		logger.Info("TransferActivity: CheckBalance done", res)
+	logger.Info("TransferActivity: CheckBalance done", res)
+
+	return &res, nil
+}
+
+func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: CreateTransferTransaction", msg)
+
+	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
+	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
+	action := config.Messages.CREATE_TRANSACTION_ACTION
+
+	req := account.CreateTransactionReq{}
+	reqBody, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
 	}
-	// ======================== REPLY: GET RESPONSE ========================
+
+	msgRes, err := a.Broker.PublishAndReceive(
+		requestTopic,
+		&broker.Message{
+			Headers: a.getMsgHeaders(msg.WorkflowID, action),
+			Body:    reqBody,
+		},
+		broker.WithPublishReplyToTopic(replyTopic),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var res account.CreateTransactionRes // TODO: check lại với Sơn
+
+	// Kiểm tra theo điều kiện phù hợp
+	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) {
+		if len(msgRes.Body) > 0 {
+			err := json.Unmarshal(msgRes.Body, &res)
+			if err != nil {
+				return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
+			}
+		}
+	}
+
+	logger.Info("TransferActivity: CreateTransferTransaction done", res)
 
 	return &res, nil
 }
@@ -98,88 +127,6 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 // 	logger.Info("TransferActivity: CheckTargetAccount", msg)
 // 	return nil
 // }
-
-func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
-	logger := activity.GetLogger(ctx)
-
-	logger.Info("TransferActivity: CreateTransferTransaction", msg)
-
-	// ======================== TEST ONLY ========================
-	// res, err := a.MoneyTransferService.CreateTransferTransaction(msg.WorkflowID)
-	// if err != nil {
-	// 	logger.Error("TransferActivity CreateTransferTransaction failed.", "Error", err)
-	// 	return err
-	// }
-	// ======================== TEST ONLY ========================
-
-	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
-	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
-	action := config.Messages.CREATE_TRANSACTION_ACTION
-
-	// ======================== REQUEST: SEND REQUEST ========================
-	req := account.CreateTransactionReq{}
-	body, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-
-	fMsg := broker.Message{
-		Body: body,
-		Headers: map[string]string{
-			"workflow_id": msg.WorkflowID,
-			"activity-id": action,
-		},
-	}
-
-	a.Broker.Publish(requestTopic, &fMsg)
-	// ======================== REQUEST: SEND REQUEST ========================
-
-	// ======================== REPLY: GET RESPONSE ========================
-
-	isReceived := false
-	var res account.CreateTransactionRes // TODO: check lại với Sơn
-	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
-
-	// Loop -> khi nào có message phù hợp -> Nhận + parse message -> Done activity
-	// TODO: Trường hợp không tìm thấy được message phù hợp -> Timeout
-	for {
-		a.Broker.Subscribe(replyTopic, func(e broker.Event) error {
-			headers := e.Message().Headers
-			fmt.Printf("Received message from topic %v: Header: %v\n", replyTopic, headers)
-			// TODO: Nhận response từ API Microservice push vào topic Reply
-
-			// Kiểm tra theo điều kiện phù hợp
-			if headers["workflow_id"] == msg.WorkflowID && headers["activity-id"] == action { // TODO: check lại với Sơn
-				body := string(e.Message().Body)
-				if body != "" {
-					err := json.Unmarshal(e.Message().Body, &res)
-					if err != nil {
-						return err // Đúng message + Payload res bị sai struct -> Fail Activity
-					} else {
-						isReceived = true
-					}
-				}
-			}
-
-			return nil
-		}) //, csGroupOpt)
-		// }, csGroupOpt)
-
-		if isReceived {
-			break
-		}
-	}
-
-	if isReceived {
-		logger.Info("TransferActivity: CheckBalance done", res)
-	}
-	// ======================== REPLY: GET RESPONSE ========================
-
-	logger.Info("TransferActivity: CreateTransferTransaction done", res)
-
-	return &res, nil
-}
-
 // func (a *TransferActivity) WriteCreditAccount(ctx context.Context, msg messages.Transfer) error {
 // 	logger := activity.GetLogger(ctx)
 // 	// time.Sleep(time.Duration(30) * time.Minute) // TODO: Test chờ 30p

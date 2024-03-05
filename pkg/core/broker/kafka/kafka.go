@@ -298,7 +298,7 @@ func (k *kBroker) PublishAndReceive(topic string, msg *broker.Message, opts ...b
 
 	// Subscribe for reply topic if didn't
 	if _, ok := k.respSubscribers[replyTopic]; !ok {
-		csGroupOpt := broker.WithSubscribeGroup("go_clean")
+		csGroupOpt := broker.WithSubscribeGroup("go_clean") // TODO: Check với Sơn bổ sung consumerGroup
 		replySub, err := k.Subscribe(replyTopic, func(e broker.Event) error {
 			if e.Message() == nil {
 				return broker.EmptyRequestError{}
