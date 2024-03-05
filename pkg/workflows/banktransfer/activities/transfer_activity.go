@@ -3,13 +3,13 @@ package activities
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"os"
+	"errors"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"go.temporal.io/sdk/activity"
 )
@@ -25,27 +25,15 @@ var (
 	activityIDKey = "activity-id"
 )
 
-func (a *TransferActivity) getMsgHeaders(workflowId string, activityId string) map[string]string {
+func (a *TransferActivity) getMsgHeaders(workflowId, activityId string) map[string]string {
 	return map[string]string{
 		workflowIDKey: workflowId,
 		activityIDKey: activityId,
 	}
 }
 
-func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId string, activityId string) bool {
+func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId, activityId string) bool {
 	return headers[workflowIDKey] == workflowId && headers[activityIDKey] == activityId
-}
-
-func (a *TransferActivity) getConsumerGroup(workflowId string, activityId string) string {
-	name, err := os.Hostname()
-
-	// Có lỗi gắn default `::1`
-	if err != nil {
-		name = "::1"
-	}
-
-	// follow: "NEW-MCS-TEMPORAL-GO_WORKER_{HOSTNAME|POD NAME}_WORKFLOW_{WF_ID}_ACTIVITY_{ACT_ID}"
-	return fmt.Sprintf("NEW-MCS-TEMPORAL-GO_WORKER_%s_WORKFLOW_%s_ACTIVITY_%s", name, workflowId, activityId)
 }
 
 func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transfer) (*account.CheckBalanceRes, error) {
@@ -69,28 +57,30 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 			Body:    reqBody,
 		},
 		broker.WithPublishReplyToTopic(replyTopic),
-		broker.WithReplyConsumerGroup(a.getConsumerGroup(msg.WorkflowID, action)),
+		broker.WithReplyConsumerGroup(utils.GetConsumerGroup(msg.WorkflowID, action)),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var res account.CheckBalanceRes // TODO: check lại với Sơn
+	var res *broker.Response[account.CheckBalanceRes] // TODO: check lại với Sơn
 
-	// Kiểm tra theo điều kiện phù hợp
-	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) {
-		if len(msgRes.Body) > 0 {
-			err := json.Unmarshal(msgRes.Body, &res)
-			if err != nil {
-				return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
-			}
+	// Kiểm tra theo điều kiện phù hợp theo Headers -> TODO: Xem lại có sài theo Headers không?
+	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
+		err := json.Unmarshal(msgRes.Body, &res)
+		if err != nil {
+			return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
+		}
+		if res == nil || res.Result.Status != 200 {
+			// Kết quả Status <> 200 -> Return failure activity
+			return nil, errors.New("Error: Invalid data result from Kafka")
 		}
 	}
 
 	logger.Info("TransferActivity: CheckBalance done", res)
 
-	return &res, nil
+	return &res.Data, nil
 }
 
 func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
@@ -114,28 +104,30 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 			Body:    reqBody,
 		},
 		broker.WithPublishReplyToTopic(replyTopic),
-		broker.WithReplyConsumerGroup(a.getConsumerGroup(msg.WorkflowID, action)),
+		broker.WithReplyConsumerGroup(utils.GetConsumerGroup(msg.WorkflowID, action)),
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var res account.CreateTransactionRes // TODO: check lại với Sơn
+	var res *broker.Response[account.CreateTransactionRes] // TODO: check lại với Sơn
 
-	// Kiểm tra theo điều kiện phù hợp
-	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) {
-		if len(msgRes.Body) > 0 {
-			err := json.Unmarshal(msgRes.Body, &res)
-			if err != nil {
-				return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
-			}
+	// Kiểm tra theo điều kiện phù hợp theo Headers -> TODO: Xem lại có sài theo Headers không?
+	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
+		err := json.Unmarshal(msgRes.Body, &res)
+		if err != nil {
+			return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
+		}
+		if res == nil || res.Result.Status != 200 {
+			// Kết quả Status <> 200 -> Return failure activity
+			return nil, errors.New("Error: Invalid data result from Kafka")
 		}
 	}
 
 	logger.Info("TransferActivity: CreateTransferTransaction done", res)
 
-	return &res, nil
+	return &res.Data, nil
 }
 
 // func (a *TransferActivity) CheckTargetAccount(ctx context.Context, msg messages.Transfer) error {

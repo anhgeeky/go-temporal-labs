@@ -6,6 +6,7 @@ import (
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 )
@@ -19,8 +20,10 @@ func main() {
 	workflowID := "BANK_TRANSFER-1709525114"
 	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
+	action := config.Messages.CHECK_BALANCE_ACTION
 
-	csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+	// Gen consumer group theo format
+	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
 
 	bk.Subscribe(requestTopic, func(e broker.Event) error {
 		headers := e.Message().Headers
@@ -37,9 +40,9 @@ func main() {
 		fMsg := broker.Message{
 			Body: body,
 			Headers: map[string]string{
-				"workflow_id":   workflowID,
-				"activity-id":   config.Messages.CHECK_BALANCE_ACTION,
-				"correlationId": headers["correlationId"],
+				"workflow_id": workflowID,
+				"activity-id": config.Messages.CHECK_BALANCE_ACTION,
+				// "correlationId": headers["correlationId"],
 			},
 		}
 
