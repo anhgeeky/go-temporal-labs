@@ -17,7 +17,7 @@ func main() {
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 	// ======================= BROKER =======================
 
-	workflowID := "BANK_TRANSFER-1709525114"
+	workflowID := "BANK_TRANSFER-1709630697"
 	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 	action := config.Messages.CHECK_BALANCE_ACTION
@@ -31,7 +31,12 @@ func main() {
 		// TODO: Nhận response từ API Microservice push vào topic Reply
 
 		// ======================== REPLY: SEND REQUEST ========================
-		req := account.CheckBalanceRes{Balance: 8888}
+		req := broker.Response[account.CheckBalanceRes]{
+			Result: broker.Result{
+				Status: 200, // OK
+			},
+			Data: account.CheckBalanceRes{Balance: 8888},
+		}
 		body, err := json.Marshal(req)
 		if err != nil {
 			panic(err)
@@ -40,9 +45,9 @@ func main() {
 		fMsg := broker.Message{
 			Body: body,
 			Headers: map[string]string{
-				"workflow_id": workflowID,
-				"activity-id": config.Messages.CHECK_BALANCE_ACTION,
-				// "correlationId": headers["correlationId"],
+				"workflow_id":   workflowID,
+				"activity-id":   config.Messages.CHECK_BALANCE_ACTION,
+				"correlationId": headers["correlationId"],
 			},
 		}
 
