@@ -3,12 +3,12 @@ package activities
 import (
 	"context"
 	"fmt"
-	"net/smtp"
 
 	"github.com/anhgeeky/go-temporal-labs/notification/messages"
 	"github.com/anhgeeky/go-temporal-labs/notification/outbound/notification"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
+	gomail "gopkg.in/mail.v2"
 )
 
 type NotificationActivity struct {
@@ -33,22 +33,36 @@ func (a *NotificationActivity) PushEmail(ctx context.Context, msg *messages.Devi
 	logger.Info("NotificationActivity: PushEmail", msg)
 
 	from := "anhnguyen.sogo@gmail.com"
+	to := "anhgeeky@gmail.com"
 	password := "oesb wira pygw ncqe" // test only
 
-	to := []string{
-		"anhgeeky@gmail.com",
-	}
+	m := gomail.NewMessage()
 
-	smtpHost := "smtp.gmail.com"
-	smtpPort := "587"
+	// Set E-Mail sender
+	m.SetHeader("From", from)
 
-	message := []byte("This is a test email message.")
-	auth := smtp.PlainAuth("", from, password, smtpHost)
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
-	if err != nil {
+	// Set E-Mail receivers
+	m.SetHeader("To", to)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Bank Transfer Completed")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	m.SetBody("text/plain", "Transfed done")
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, from, password)
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	// d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
-		return "Failed", err
+		panic(err)
 	}
+
 	fmt.Println("Email Sent!")
 
 	return "OK", nil
