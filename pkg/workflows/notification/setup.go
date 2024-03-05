@@ -15,8 +15,9 @@ func SetupNotificationWorkflow(w worker.Worker, notificationHost string) {
 		},
 	}
 	w.RegisterActivity(notificationActivity.GetDeviceToken)
-	w.RegisterActivity(notificationActivity.PushSMS)
-	w.RegisterActivity(notificationActivity.PushNotification)
-	w.RegisterActivity(notificationActivity.PushInternalApp)
+	w.RegisterActivity(notificationActivity.PushEmail)
+	// w.RegisterActivity(notificationActivity.PushSMS)
+	// w.RegisterActivity(notificationActivity.PushNotification)
+	// w.RegisterActivity(notificationActivity.PushInternalApp)
 	w.RegisterWorkflow(workflows.NotificationWorkflow)
 }
