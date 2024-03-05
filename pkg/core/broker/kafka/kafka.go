@@ -16,7 +16,7 @@ import (
 var (
 	CorrelationIdHeader = "correlationId"
 	ReplyToTopicHeader  = "replyToTopic"
-	RequestReplyTimeout = time.Second * 20
+	RequestReplyTimeout = time.Second * 10
 )
 
 type kBroker struct {
@@ -296,12 +296,20 @@ func (k *kBroker) PublishAndReceive(topic string, msg *broker.Message, opts ...b
 		timeout    = options.Timeout
 	)
 
+	msgChan := make(chan *broker.Message, 1)
+	k.resps[correlationId] = msgChan
+
 	// Subscribe for reply topic if didn't
 	if _, ok := k.respSubscribers[replyTopic]; !ok {
-		csGroupOpt := broker.WithSubscribeGroup("go_clean") // TODO: Check với Sơn bổ sung consumerGroup
+
+		var subOpts = make([]broker.SubscribeOption, 0)
+		if len(options.ReplyConsumerGroup) != 0 {
+			subOpts = append(subOpts, broker.WithSubscribeGroup(options.ReplyConsumerGroup))
+		}
+
 		replySub, err := k.Subscribe(replyTopic, func(e broker.Event) error {
 			if e.Message() == nil {
-				return broker.EmptyRequestError{}
+				return broker.EmptyMessageError{}
 			}
 
 			cId, correlationIdOk := e.Message().Headers[CorrelationIdHeader]
@@ -315,7 +323,7 @@ func (k *kBroker) PublishAndReceive(topic string, msg *broker.Message, opts ...b
 			}
 
 			return nil
-		}, csGroupOpt)
+		}, subOpts...)
 
 		if err != nil {
 			return nil, err
@@ -324,20 +332,18 @@ func (k *kBroker) PublishAndReceive(topic string, msg *broker.Message, opts ...b
 		k.respSubscribers[replyTopic] = replySub
 	}
 
-	k.resps[correlationId] = make(chan *broker.Message, 1)
-
+	// send message to request topic
 	err := k.sendMessage(topic, msg)
 	if err != nil {
 		return nil, err
 	}
 
-	// wait for the response message
-	msgChan := k.resps[correlationId]
 	select {
 	case body := <-msgChan:
 		// remove processed channel
 		delete(k.resps, correlationId)
 		return body, nil
+
 	case <-time.After(timeout):
 		// remove processed channel
 		delete(k.resps, correlationId)
@@ -397,6 +403,7 @@ func (k *kBroker) Subscribe(topic string, handler broker.Handler, opts ...broker
 		kopts:   k.opts,
 		cg:      cg,
 		logger:  k.getLogger(),
+		ready:   make(chan bool),
 	}
 
 	ctx := context.Background()
@@ -414,6 +421,7 @@ func (k *kBroker) Subscribe(topic string, handler broker.Handler, opts ...broker
 				case sarama.ErrClosedConsumerGroup:
 					return
 				case nil:
+					csHandler.ready = make(chan bool)
 					continue
 				default:
 					k.getLogger().Errorf(ctx, "consumer error: %s", err)
@@ -421,6 +429,11 @@ func (k *kBroker) Subscribe(topic string, handler broker.Handler, opts ...broker
 			}
 		}
 	}()
+
+	// wait until consumer group running
+	<-csHandler.ready
+
+	k.getLogger().Infof(ctx, "Subcribed to topic: %s. Consumer group: %s", topic, opt.Group)
 
 	return &subscriber{
 		k:    k,

@@ -39,7 +39,7 @@ type KResponseType struct {
 	Result float64
 }
 
-func BenchmarkKafkaPublishAndReceive(b *testing.B) {
+func BenchmarkKafka(b *testing.B) {
 	var (
 		kBroker      = getKafkaBroker()
 		requestTopic = "go.clean.test.benchmark.request"
@@ -54,7 +54,7 @@ func BenchmarkKafkaPublishAndReceive(b *testing.B) {
 	_, err = kBroker.Subscribe(requestTopic, func(e broker.Event) error {
 		msg := e.Message()
 		if msg == nil {
-			return broker.EmptyRequestError{}
+			return broker.EmptyMessageError{}
 		}
 
 		var req KRequestType
@@ -91,7 +91,7 @@ func BenchmarkKafkaPublishAndReceive(b *testing.B) {
 		b.Error(err)
 	}
 
-	for i := 0; i < 1; i++ {
+	for i := 0; i < b.N; i++ {
 		req := KRequestType{
 			Number: rand.Intn(100),
 		}
@@ -99,13 +99,13 @@ func BenchmarkKafkaPublishAndReceive(b *testing.B) {
 		if err != nil {
 			b.Error(err)
 		}
+
 		_, err = kBroker.PublishAndReceive(requestTopic, &broker.Message{
 			Body: reqByte,
 		}, broker.WithPublishReplyToTopic(replyTopic))
 
 		if err != nil {
 			b.Logf("error: %v", err)
-			b.Error(err)
 		}
 	}
 }

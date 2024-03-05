@@ -3,6 +3,8 @@ package activities
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"os"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
@@ -34,6 +36,18 @@ func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId
 	return headers[workflowIDKey] == workflowId && headers[activityIDKey] == activityId
 }
 
+func (a *TransferActivity) getConsumerGroup(workflowId string, activityId string) string {
+	name, err := os.Hostname()
+
+	// Có lỗi gắn default `::1`
+	if err != nil {
+		name = "::1"
+	}
+
+	// follow: "NEW-MCS-TEMPORAL-GO_WORKER_{HOSTNAME|POD NAME}_WORKFLOW_{WF_ID}_ACTIVITY_{ACT_ID}"
+	return fmt.Sprintf("NEW-MCS-TEMPORAL-GO_WORKER_%s_WORKFLOW_%s_ACTIVITY_%s", name, workflowId, activityId)
+}
+
 func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transfer) (*account.CheckBalanceRes, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CheckBalance", msg)
@@ -55,6 +69,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 			Body:    reqBody,
 		},
 		broker.WithPublishReplyToTopic(replyTopic),
+		broker.WithReplyConsumerGroup(a.getConsumerGroup(msg.WorkflowID, action)),
 	)
 
 	if err != nil {
@@ -99,6 +114,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 			Body:    reqBody,
 		},
 		broker.WithPublishReplyToTopic(replyTopic),
+		broker.WithReplyConsumerGroup(a.getConsumerGroup(msg.WorkflowID, action)),
 	)
 
 	if err != nil {
