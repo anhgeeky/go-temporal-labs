@@ -41,14 +41,16 @@ func main() {
 	// ======================== SEND REQUEST ========================
 
 	// ======================== GET RESPONSE ========================
-	for i := 0; i < 5; i++ {
+	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+	for i := 0; i < 10; i++ {
 		// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 		msg, _ := bk.PublishAndReceive(
 			requestTopic,
 			&fMsg,
-			broker.WithPublishReplyToTopic(replyTopic))
+			broker.WithPublishReplyToTopic(replyTopic),
+		)
 
-		log.Printf("PublishAndReceive: RequestTopic: %v, ReplyTopic: %v, Msg: %v\n", requestTopic, replyTopic, msg)
+		log.Printf("PublishAndReceive Lan %d: RequestTopic: %v, ReplyTopic: %v, Msg: %v\n", i, requestTopic, replyTopic, msg)
 	}
 	// ======================== GET RESPONSE ========================
 	select {}

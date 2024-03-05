@@ -20,7 +20,7 @@ func main() {
 	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 
-	// csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
+	csGroupOpt := broker.WithSubscribeGroup(config.Messages.GROUP)
 
 	bk.Subscribe(requestTopic, func(e broker.Event) error {
 		headers := e.Message().Headers
@@ -37,8 +37,9 @@ func main() {
 		fMsg := broker.Message{
 			Body: body,
 			Headers: map[string]string{
-				"workflow_id": workflowID,
-				"activity-id": config.Messages.CHECK_BALANCE_ACTION,
+				"workflow_id":   workflowID,
+				"activity-id":   config.Messages.CHECK_BALANCE_ACTION,
+				"correlationId": headers["correlationId"],
 			},
 		}
 
@@ -47,8 +48,7 @@ func main() {
 		// ======================== REPLY: SEND REQUEST ========================
 
 		return nil
-		// }, csGroupOpt)
-	})
+	}, csGroupOpt)
 
 	select {}
 

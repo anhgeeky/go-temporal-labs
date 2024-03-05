@@ -16,7 +16,7 @@ import (
 var (
 	CorrelationIdHeader = "correlationId"
 	ReplyToTopicHeader  = "replyToTopic"
-	RequestReplyTimeout = time.Second * 10
+	RequestReplyTimeout = time.Second * 20
 )
 
 type kBroker struct {
@@ -298,6 +298,7 @@ func (k *kBroker) PublishAndReceive(topic string, msg *broker.Message, opts ...b
 
 	// Subscribe for reply topic if didn't
 	if _, ok := k.respSubscribers[replyTopic]; !ok {
+		csGroupOpt := broker.WithSubscribeGroup("go_clean")
 		replySub, err := k.Subscribe(replyTopic, func(e broker.Event) error {
 			if e.Message() == nil {
 				return broker.EmptyRequestError{}
@@ -314,7 +315,7 @@ func (k *kBroker) PublishAndReceive(topic string, msg *broker.Message, opts ...b
 			}
 
 			return nil
-		})
+		}, csGroupOpt)
 
 		if err != nil {
 			return nil, err
