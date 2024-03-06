@@ -16,9 +16,11 @@ type consumerGroupHandler struct {
 	kopts   broker.BrokerOptions
 	cg      sarama.ConsumerGroup
 	sess    sarama.ConsumerGroupSession
+	ready   chan bool
 }
 
-func (*consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
+func (h *consumerGroupHandler) Setup(sarama.ConsumerGroupSession) error {
+	close(h.ready)
 	return nil
 }
 
@@ -33,11 +35,18 @@ func (h *consumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 			ctx := context.Background()
 
 			if !ok {
-				h.logger.Warn(ctx, "[Kafka] message channel was closed")
+				h.logger.Info(ctx, "message channel was closed")
 				return nil
 			}
 
-			var m = broker.Message{}
+			if msg == nil || len(msg.Value) == 0 {
+				continue
+			}
+
+			var m = broker.Message{
+				Headers: make(map[string]string),
+			}
+
 			for _, header := range msg.Headers {
 				m.Headers[string(header.Key)] = string(header.Value)
 			}
@@ -57,7 +66,6 @@ func (h *consumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 					h.logger.Errorf(ctx, "[kafka] subscriber error: %v", err)
 				}
 			}
-
 		case <-session.Context().Done():
 			return nil
 		}
