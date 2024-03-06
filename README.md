@@ -18,13 +18,6 @@
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
 
-- [ ] Đang tìm hiểu EventBus (Kafka) + Temporal
-- [ ] Đang tìm hiểu EventBus (Kafka) <https://github.com/google/go-cloud>
-- [ ] Xây dựng kiến trúc Temporal + microservices
-- [ ] Xây dựng kiến trúc Temporal + microservices + two phase commit
-- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka)
-- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka) + two phase commit
-
 ## Issues
 
 - [ ] 1. chỉnh workflow áp dụng kafka (Database có thể produce vào Request & Response, MService chỉ 1 chiều nhận từ kafka)
@@ -34,26 +27,15 @@
 ## Quickstart
 
 ```bash
-go run ./pkg/banktransfer/cmd/worker/main.go
-go run ./pkg/notification/cmd/worker/main.go
-go run ./serivces/mcs-account/main.go
-go run ./serivces/mcs-money-transfer/main.go
-go run ./serivces/mcs-notification/main.go
+go run ./banktransfer/cmd/worker/main.go
+go run ./notification/cmd/worker/main.go
 # or 
-sh start-all.sh
 sh start-worker.sh
-sh start-api.sh
 ```
 
 ## Saga (Temporal + Kafka + Microservices)
 
 ![Screenshot](/docs/assets/saga-workflows-sample.png)
-
-## Host APIs
-
-- `mcs-account`: `localhost:6001`
-- `mcs-money-transfer`: `localhost:6002`
-- `mcs-notification`: `localhost:6003`
 
 ## Workers
 
@@ -130,4 +112,3 @@ sh start-api.sh
 
 - Temporal for Docker: <https://github.com/temporalio/docker-compose>
 - <https://github.com/temporalio/samples-go>
-- <https://github.com/temporalio/temporal-ecommerce>
