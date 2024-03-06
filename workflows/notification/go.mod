@@ -2,7 +2,7 @@ module github.com/anhgeeky/go-temporal-labs/notification
 
 go 1.21.6
 
-replace github.com/anhgeeky/go-temporal-labs/core => ../../core
+replace github.com/anhgeeky/go-temporal-labs/core => ../../pkg/core
 
 require (
 	github.com/anhgeeky/go-temporal-labs/core v0.0.0
