@@ -16,3 +16,11 @@ type CreateTransactionReq struct {
 type CreateTransactionRes struct {
 	// TODO: Check với Sơn response
 }
+
+type CreateOTPReq struct {
+	// TODO: Check với Sơn response
+}
+
+type CreateOTPRes struct {
+	// TODO: Check với Sơn response
+}
