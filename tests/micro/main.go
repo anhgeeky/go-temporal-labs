@@ -42,7 +42,8 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 	return we.GetID(), nil
 }
 
-func apiVerifyOtp(temporalClient client.Client, workflowID string) error {
+// Signal: Xác thực OTP thành công
+func apiSignalVerifyOtp(temporalClient client.Client, workflowID string) error {
 	item := messages.VerifyOtpReq{
 		FlowId: workflowID,
 		Token:  "token",
@@ -50,10 +51,28 @@ func apiVerifyOtp(temporalClient client.Client, workflowID string) error {
 		Trace:  "trace",
 	}
 
-	update := messages.VerifiedOtpSignal{Route: config.RouteTypes.VERIFY_OTP, Item: item}
+	update := messages.VerifiedOtpSignal{Item: item}
 
-	// Trigger Signal Transfer Flow
-	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", config.SignalChannels.VERIFY_OTP_CHANNEL, update)
+	// Trigger Signal
+	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "VERIFY_OTP_CHANNEL", update)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Signal: Trả về kết quả Tạo giao dịch thành công
+func apiSignalCreateTransaction(temporalClient client.Client, workflowID string) error {
+	item := messages.CreateTransactionReq{
+		FlowId: workflowID,
+		// TODO: Sơn bổ sung Data Response giúp anh -> Gửi email ra
+	}
+
+	update := messages.CreateTransactionSignal{Item: item}
+
+	// Trigger Signal
+	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
 	if err != nil {
 		return err
 	}
@@ -169,7 +188,7 @@ func main() {
 	}
 
 	// 2. Xác thực OTP
-	err = apiVerifyOtp(temporalClient, workflowID)
+	err = apiSignalVerifyOtp(temporalClient, workflowID)
 	if err != nil {
 		log.Fatalln("error apiCreateTransfer", err)
 	}
@@ -190,7 +209,13 @@ func main() {
 		}
 	}()
 
-	// 5. Done 2 activity + 1 activity notification
+	// 5. Trả về kết quả Tạo giao dịch thành công
+	err = apiSignalCreateTransaction(temporalClient, workflowID)
+	if err != nil {
+		log.Fatalln("error apiSignalCreateTransaction", err)
+	}
+
+	// 6. Done 2 activity + 1 activity notification
 
 	select {}
 }
