@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"path/filepath"
 	"runtime"
@@ -68,6 +69,28 @@ func main() {
 	createAndRunWorker(c, taskQueue, VERSION_1_0, &wg, externalCfg, bk)
 	createAndRunWorker(c, taskQueue, VERSION_2_0, &wg, externalCfg, bk)
 	wg.Wait()
+
+	err = updateLatestWorkerBuildId(c, taskQueue, VERSION_1_0, VERSION_2_0)
+	if err != nil {
+		log.Fatalln("Update latest worker build failure", err)
+	}
+}
+
+// FAQ: https://docs.temporal.io/dev-guide/go/versioning
+func updateLatestWorkerBuildId(c client.Client, taskQueue, compatibleBuildID, latestBuildID string) error {
+	ctx := context.Background()
+	// Now, let's update the task queue with a new compatible version:
+	err := c.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
+		TaskQueue: taskQueue,
+		Operation: &client.BuildIDOpAddNewCompatibleVersion{
+			BuildID:                   compatibleBuildID,
+			ExistingCompatibleBuildID: latestBuildID,
+		},
+	})
+	if err != nil {
+		log.Fatalln("Unable to update build id compatability", err)
+	}
+	return err
 }
 
 func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.WaitGroup, externalCfg *config.ExternalConfig, bk broker.Broker) {
