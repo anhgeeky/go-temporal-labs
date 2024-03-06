@@ -87,6 +87,10 @@ sh start-worker.sh
 - [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccountCompensation`): POST `/transfers/:workflowID/debit-accounts/rollback`
 - [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback`
 
+## Transfer Flow Activities
+
+![Screenshot](/docs/assets/OCB-Fund-Transfer-Demo.png)
+
 ## Saga
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
