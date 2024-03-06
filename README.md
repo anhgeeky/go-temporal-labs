@@ -28,6 +28,7 @@
 
 ```bash
 go run ./banktransfer/cmd/worker/main.go
+# or
 go run ./notification/cmd/worker/main.go
 # or 
 sh start-worker.sh
@@ -43,7 +44,7 @@ sh start-worker.sh
 - `notification`
 - `onboarding`
 
-## Bank Transfer Workflow (Implement Saga)
+<!-- ## Bank Transfer Workflow (Implement Saga)
 
 ### Before: Chuyển tiền
 
@@ -71,9 +72,9 @@ sh start-worker.sh
 
 1. Nhận message internal app
 2. Lấy thông tin kết quả chuyển tiền
-3. Reload lại show kết quả `Chuyển tiền Thành công`
+3. Reload lại show kết quả `Chuyển tiền Thành công` -->
 
-## APIs
+<!-- ## APIs
 
 - [x] Lấy DS giao dịch chuyển khoản: GET `/transfers/:workflowID`
 - [x] Kiểm tra số dư: GET `/accounts/:workflowID/balance`
@@ -85,20 +86,20 @@ sh start-worker.sh
 - [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransactionCompensation`): POST `/transfers/:workflowID/transactions/rollback`
 - [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccountCompensation`): POST `/transfers/:workflowID/credit-accounts/rollback`
 - [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccountCompensation`): POST `/transfers/:workflowID/debit-accounts/rollback`
-- [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback`
+- [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback` -->
 
 ## Transfer Flow Activities
 
 ![Screenshot](/docs/assets/OCB-Fund-Transfer-Demo.png)
 
-## Saga
+<!-- ## Saga
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
 
 ## Worker versioning
 
 ![Screenshot](/docs/assets/temporal-worker-versioning-1.png)
-![Screenshot](/docs/assets/temporal-worker-versioning-2.png)
+![Screenshot](/docs/assets/temporal-worker-versioning-2.png) -->
 
 ## Stack
 
