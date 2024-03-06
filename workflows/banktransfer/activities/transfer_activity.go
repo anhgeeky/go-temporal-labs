@@ -148,18 +148,19 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 // 	return nil
 // }
 
-// func (a *TransferActivity) WriteDebitAccount(ctx context.Context, msg messages.Transfer) error {
-// 	logger := activity.GetLogger(ctx)
-// 	// time.Sleep(time.Duration(30) * time.Minute) // TODO: Test chờ 30p
-// 	logger.Info("TransferActivity: WriteDebitAccount", msg)
-// 	res, err := a.MoneyTransferService.WriteDebitAccount(msg.WorkflowID)
-// 	if err != nil {
-// 		logger.Error("TransferActivity WriteDebitAccount failed.", "Error", err)
-// 		return err
-// 	}
-// 	logger.Info("TransferActivity: WriteDebitAccount done", res)
-// 	return nil
-// }
+// TODO: Test workflow V2
+func (a *TransferActivity) WriteDebitAccount(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	// time.Sleep(time.Duration(30) * time.Minute) // TODO: Test chờ 30p
+	logger.Info("TransferActivity: WriteDebitAccount", msg)
+	res, err := a.MoneyTransferService.WriteDebitAccount(msg.WorkflowID)
+	if err != nil {
+		logger.Error("TransferActivity WriteDebitAccount failed.", "Error", err)
+		return err
+	}
+	logger.Info("TransferActivity: WriteDebitAccount done", res)
+	return nil
+}
 
 // func (a *TransferActivity) AddNewActivity(ctx context.Context, msg messages.Transfer) error {
 // 	logger := activity.GetLogger(ctx)
