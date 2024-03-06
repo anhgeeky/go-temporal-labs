@@ -66,13 +66,11 @@ func runCheckBalance(bk broker.Broker, workflowID string) error {
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 	action := config.Messages.CHECK_BALANCE_ACTION
 
-	// Gen consumer group theo format
 	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
 
 	bk.Subscribe(requestTopic, func(e broker.Event) error {
 		headers := e.Message().Headers
 		fmt.Printf("Received message from request topic %v: Header: %v\n", requestTopic, headers)
-		// TODO: Nhận response từ API Microservice push vào topic Reply
 
 		// ======================== REPLY: SEND REQUEST ========================
 		req := broker.Response[account.CheckBalanceRes]{
@@ -110,13 +108,11 @@ func runCreateTransferTransaction(bk broker.Broker, workflowID string) error {
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
 	action := config.Messages.CREATE_TRANSACTION_ACTION
 
-	// Gen consumer group theo format
 	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
 
 	bk.Subscribe(requestTopic, func(e broker.Event) error {
 		headers := e.Message().Headers
 		fmt.Printf("Received message from request topic %v: Header: %v\n", requestTopic, headers)
-		// TODO: Nhận response từ API Microservice push vào topic Reply
 
 		// ======================== REPLY: SEND REQUEST ========================
 		req := broker.Response[account.CreateTransactionRes]{
@@ -153,9 +149,7 @@ func runCreateTransferTransaction(bk broker.Broker, workflowID string) error {
 func main() {
 	_, cancel := context.WithCancel(context.Background())
 	errChan := make(chan error)
-	// ======================= BROKER =======================
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
-	// ======================= BROKER =======================
 
 	temporalClient, err := client.NewLazyClient(client.Options{
 		HostPort:  "localhost:7233",

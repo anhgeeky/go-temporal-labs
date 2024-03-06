@@ -96,12 +96,6 @@ sh start-worker.sh
 ![Screenshot](/docs/assets/temporal-worker-versioning-1.png)
 ![Screenshot](/docs/assets/temporal-worker-versioning-2.png)
 
-## Temporal screenshot
-
-![Screenshot](/docs/assets/bank-transfer-workflows.jpg)
-![Screenshot](/docs/assets/bank-transfer-temporal-admin-log.png)
-![Screenshot](/docs/assets/bank-transfer-sub-workflow-temporal-admin-log.png)
-
 ## Stack
 
 - `fiber`: <https://github.com/gofiber/fiber>
