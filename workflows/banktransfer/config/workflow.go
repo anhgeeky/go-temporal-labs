@@ -19,6 +19,9 @@ var Messages = struct {
 	CREATE_TRANSACTION_ACTION        string
 	CREATE_TRANSACTION_REQUEST_TOPIC string
 	CREATE_TRANSACTION_REPLY_TOPIC   string
+	CREATE_OTP_ACTION                string
+	CREATE_OTP_REQUEST_TOPIC         string
+	CREATE_OTP_REPLY_TOPIC           string
 }{
 	CHECK_BALANCE_ACTION:        "check-balance",               // => activityID
 	CHECK_BALANCE_REQUEST_TOPIC: "check-balance-request-topic", // TODO: Check với Sơn
@@ -27,4 +30,8 @@ var Messages = struct {
 	CREATE_TRANSACTION_ACTION:        "create-transaction",               // => activityID
 	CREATE_TRANSACTION_REQUEST_TOPIC: "create-transaction-request-topic", // TODO: Check với Sơn
 	CREATE_TRANSACTION_REPLY_TOPIC:   "create-transaction-reply-topic",   // TODO: Check với Sơn
+
+	CREATE_OTP_ACTION:        "create-otp",               // => activityID
+	CREATE_OTP_REQUEST_TOPIC: "create-otp-request-topic", // TODO: Check với Sơn
+	CREATE_OTP_REPLY_TOPIC:   "create-otp-reply-topic",   // TODO: Check với Sơn
 }

@@ -28,7 +28,9 @@ func TransferWorkflowV2(ctx workflow.Context, state messages.Transfer) (err erro
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
 	verifyOtpChannel := workflow.GetSignalChannel(ctx, config.SignalChannels.VERIFY_OTP_CHANNEL)
+	createTransactionChannel := workflow.GetSignalChannel(ctx, config.SignalChannels.CREATE_TRANSACTION_CHANNEL)
 	verifiedOtp := false
+	createTransactionSuccess := false
 	completed := false
 
 	var a *activities.TransferActivity
@@ -53,22 +55,41 @@ func TransferWorkflowV2(ctx workflow.Context, state messages.Transfer) (err erro
 		})
 		// ====================== Signal: Verify OTP ======================
 
-		if verifiedOtp {
-			// ====================== Activity: CheckBalance ======================
-			var checkBalanceRes *account.CheckBalanceRes
-			err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, &checkBalanceRes)
+		// ====================== Signal: Trả về kết quả Tạo giao dịch thành công ======================
+		selector.AddReceive(createTransactionChannel, func(c workflow.ReceiveChannel, _ bool) {
+
+			var signal interface{}
+			c.Receive(ctx, &signal)
+
+			var message messages.CreateTransactionSignal
+			err = mapstructure.Decode(signal, &message)
 			if err != nil {
-				return err
+				logger.Error("Invalid signal type %v", err)
+				return
 			}
-			// ====================== Activity: CheckBalance ======================
 
-			// ====================== Activity: CheckTargetAccount ======================
-			// err = workflow.ExecuteActivity(ctx, a.CheckTargetAccount, state).Get(ctx, nil)
-			// if err != nil {
-			// 	return err
-			// }
-			// ====================== Activity: CheckTargetAccount ======================
+			createTransactionSuccess = true
+		})
+		// ====================== Signal: Trả về kết quả Tạo giao dịch thành công ======================
 
+		// ====================== Activity: CheckBalance ======================
+		var checkBalanceRes *account.CheckBalanceRes
+		err = workflow.ExecuteActivity(ctx, a.CheckBalance, state).Get(ctx, &checkBalanceRes)
+		if err != nil {
+			return err
+		}
+		// ====================== Activity: CheckBalance ======================
+
+		// ====================== Activity: CreateOTP ======================
+		var createOTPRes *account.CreateOTPRes
+		err = workflow.ExecuteActivity(ctx, a.CreateOTP, state).Get(ctx, &createOTPRes)
+		if err != nil {
+			return err
+		}
+		// ====================== Activity: CreateOTP ======================
+
+		// Có kết quả tạo OTP thành công + Xác thực OTP thành công
+		if createOTPRes != nil && verifiedOtp {
 			// ====================== Activity: CreateTransferTransaction ======================
 			var createTransactionRes *account.CreateTransactionRes
 			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, &createTransactionRes)
@@ -83,79 +104,37 @@ func TransferWorkflowV2(ctx workflow.Context, state messages.Transfer) (err erro
 			// 	}
 			// }()
 			// // ====================== Activity: CreateTransferTransaction ======================
+		}
 
-			// // ====================== Activity: WriteCreditAccount ======================
-			// err = workflow.ExecuteActivity(ctx, a.WriteCreditAccount, state).Get(ctx, nil)
-			// if err != nil {
-			// 	return err
-			// }
-			// // Compensation
-			// defer func() {
-			// 	if err != nil {
-			// 		errCompensation := workflow.ExecuteActivity(ctx, a.WriteCreditAccountCompensation, state).Get(ctx, nil)
-			// 		err = multierr.Append(err, errCompensation)
-			// 	}
-			// }()
-			// // ====================== Activity: WriteCreditAccount ======================
-
-			// // ====================== Activity: WriteDebitAccount ======================
-			// err = workflow.ExecuteActivity(ctx, a.WriteDebitAccount, state).Get(ctx, nil)
-			// if err != nil {
-			// 	return err
-			// }
-			// // Compensation
-			// defer func() {
-			// 	if err != nil {
-			// 		errCompensation := workflow.ExecuteActivity(ctx, a.WriteDebitAccountCompensation, state).Get(ctx, nil)
-			// 		err = multierr.Append(err, errCompensation)
-			// 	}
-			// }()
-			// // ====================== Activity: WriteDebitAccount ======================
-
-			// // ====================== Activity: AddNewActivity ======================
-			// err = workflow.ExecuteActivity(ctx, a.AddNewActivity, state).Get(ctx, nil)
-			// if err != nil {
-			// 	return err
-			// }
-
-			// // Compensation
-			// defer func() {
-			// 	if err != nil {
-			// 		errCompensation := workflow.ExecuteActivity(ctx, a.AddNewActivityCompensation, state).Get(ctx, nil)
-			// 		err = multierr.Append(err, errCompensation)
-			// 	}
-			// }()
-			// // ====================== Activity: AddNewActivity ======================
-
+		// Tạo giao dịch thành công (Từ Signal) -> Gửi thông báo
+		if createTransactionSuccess && !completed {
 			// Call subflow -> Gửi notification
-			if !completed {
-				// ====================== Subflow: NotificationWorkflow ======================
-				selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
-					execution := workflow.GetInfo(ctx).WorkflowExecution
-					childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
-					cwo := workflow.ChildWorkflowOptions{
-						WorkflowID: childID,
-					}
-					ctx = workflow.WithChildOptions(ctx, cwo)
-					msgNotfication := notiMsg.NotificationMessage{
-						// TODO: Bổ sung payload
-						Token: notiMsg.DeviceToken{
-							FirebaseToken: uuid.New().String(),
-						},
-					}
+			// ====================== Subflow: NotificationWorkflow ======================
+			selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
+				execution := workflow.GetInfo(ctx).WorkflowExecution
+				childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
+				cwo := workflow.ChildWorkflowOptions{
+					WorkflowID: childID,
+				}
+				ctx = workflow.WithChildOptions(ctx, cwo)
+				msgNotfication := notiMsg.NotificationMessage{
+					// TODO: Bổ sung payload
+					Token: notiMsg.DeviceToken{
+						FirebaseToken: uuid.New().String(),
+					},
+				}
 
-					var result string
-					err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
-					if err != nil {
-						logger.Error("Parent execution received child execution failure.", "Error", err)
-						return
-					}
-					logger.Info("Parent execution completed.", "Result", result)
+				var result string
+				err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
+				if err != nil {
+					logger.Error("Parent execution received child execution failure.", "Error", err)
+					return
+				}
+				logger.Info("Parent execution completed.", "Result", result)
 
-					completed = true
-				})
-				// ====================== Subflow: NotificationWorkflow ======================
-			}
+				completed = true
+			})
+			// ====================== Subflow: NotificationWorkflow ======================
 		}
 
 		selector.Select(ctx)

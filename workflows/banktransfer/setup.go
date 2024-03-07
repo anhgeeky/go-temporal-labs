@@ -23,6 +23,7 @@ func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfig, bk b
 	}
 	w.RegisterActivity(transferActivity.CheckBalance)
 	// w.RegisterActivity(transferActivity.CheckTargetAccount)
+	w.RegisterActivity(transferActivity.CreateOTP)
 	w.RegisterActivity(transferActivity.CreateTransferTransaction)
 	// w.RegisterActivity(transferActivity.WriteCreditAccount)
 	// w.RegisterActivity(transferActivity.WriteDebitAccount)
@@ -47,7 +48,7 @@ func SetupBankTransferWorkflowV2(w worker.Worker, cfg *config.ExternalConfig, bk
 		},
 	}
 	w.RegisterActivity(transferActivity.CheckBalance)
-	// w.RegisterActivity(transferActivity.CheckTargetAccount)
+	w.RegisterActivity(transferActivity.CreateOTP)
 	w.RegisterActivity(transferActivity.CreateTransferTransaction)
 	// w.RegisterActivity(transferActivity.WriteCreditAccount)
 	w.RegisterActivity(transferActivity.WriteDebitAccount) // TODO: Test add thêm 1 activity
