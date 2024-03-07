@@ -164,6 +164,48 @@ func runCreateTransferTransaction(bk broker.Broker, workflowID string) error {
 	return nil
 }
 
+func runCreateOTP(bk broker.Broker, workflowID string) error {
+	requestTopic := config.Messages.CREATE_OTP_REQUEST_TOPIC
+	replyTopic := config.Messages.CREATE_OTP_REPLY_TOPIC
+	action := config.Messages.CREATE_OTP_ACTION
+
+	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
+
+	bk.Subscribe(requestTopic, func(e broker.Event) error {
+		headers := e.Message().Headers
+		fmt.Printf("Received message from request topic %v: Header: %v\n", requestTopic, headers)
+
+		// ======================== REPLY: SEND REQUEST ========================
+		req := broker.Response[account.CreateOTPRes]{
+			Result: broker.Result{
+				Status: 200, // OK
+			},
+			Data: account.CreateOTPRes{},
+		}
+		body, err := json.Marshal(req)
+		if err != nil {
+			panic(err)
+		}
+
+		fMsg := broker.Message{
+			Body: body,
+			Headers: map[string]string{
+				"workflow_id":   workflowID,
+				"activity-id":   action,
+				"correlationId": headers["correlationId"],
+			},
+		}
+
+		fmt.Printf("Reply message to reply topic %v: Header: %v\n", replyTopic, headers)
+		bk.Publish(replyTopic, &fMsg)
+		// ======================== REPLY: SEND REQUEST ========================
+
+		return nil
+	}, csGroupOpt)
+
+	return nil
+}
+
 // Micro: Nhận request từ Temporal -> Reply lại Temporal
 func main() {
 	_, cancel := context.WithCancel(context.Background())
@@ -209,13 +251,21 @@ func main() {
 		}
 	}()
 
-	// 5. Trả về kết quả Tạo giao dịch thành công
+	// 5. Nhận message create otp từ Temporal
+	go func() {
+		if err := runCreateOTP(bk, workflowID); err != nil {
+			errChan <- err
+			cancel()
+		}
+	}()
+
+	// 6. Trả về kết quả Tạo giao dịch thành công
 	err = apiSignalCreateTransaction(temporalClient, workflowID)
 	if err != nil {
 		log.Fatalln("error apiSignalCreateTransaction", err)
 	}
 
-	// 6. Done 2 activity + 1 activity notification
+	// 7. Done 2 activity + 1 activity notification
 
 	select {}
 }
