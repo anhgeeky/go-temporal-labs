@@ -1,5 +1,10 @@
 package config
 
+var (
+	VERSION_1_0 = "1.0"
+	VERSION_2_0 = "2.0"
+)
+
 var TaskQueues = struct {
 	TRANSFER_QUEUE string
 }{

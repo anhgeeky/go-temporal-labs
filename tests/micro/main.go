@@ -208,7 +208,8 @@ func runCreateOTP(bk broker.Broker, workflowID string) error {
 
 // Micro: Nhận request từ Temporal -> Reply lại Temporal
 func main() {
-	_, cancel := context.WithCancel(context.Background())
+	ctx := context.Background()
+	_, cancel := context.WithCancel(ctx)
 	errChan := make(chan error)
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 
@@ -219,7 +220,30 @@ func main() {
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
+
 	log.Println("Temporal client connected")
+
+	// // First, let's make the task queue use the build id versioning feature by adding an initial
+	// // default version to the queue:
+	// err = temporalClient.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
+	// 	TaskQueue: config.TaskQueues.TRANSFER_QUEUE,
+	// 	Operation: &client.BuildIDOpAddNewIDInNewDefaultSet{
+	// 		BuildID: config.VERSION_1_0,
+	// 	},
+	// })
+	// time.Sleep(5 * time.Second)
+
+	// // Now, let's update the task queue with a new compatible version:
+	// err = temporalClient.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
+	// 	TaskQueue: config.TaskQueues.TRANSFER_QUEUE,
+	// 	Operation: &client.BuildIDOpAddNewCompatibleVersion{
+	// 		BuildID:                   config.VERSION_2_0,
+	// 		ExistingCompatibleBuildID: config.VERSION_1_0,
+	// 	},
+	// })
+	if err != nil {
+		log.Fatalln("Unable to update build id compatability", err)
+	}
 
 	// workflowID := "BANK_TRANSFER-1709632114"
 
