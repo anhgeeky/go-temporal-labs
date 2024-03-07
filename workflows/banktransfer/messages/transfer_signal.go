@@ -1,13 +1,21 @@
 package messages
 
 type VerifyOtpReq struct {
+	FlowId string `json:"flow_id"` // WorkflowID
 	Token  string `json:"token"`
 	Code   string `json:"code"`
-	FlowId string `json:"flow_id"`
 	Trace  string `json:"trace"`
 }
 
 type VerifiedOtpSignal struct {
-	Route string
-	Item  VerifyOtpReq
+	Item VerifyOtpReq
+}
+
+type CreateTransactionReq struct {
+	FlowId string `json:"flow_id"` // WorkflowID
+	// TODO: Sơn bổ sung Data Response giúp anh -> Gửi email ra
+}
+
+type CreateTransactionSignal struct {
+	Item CreateTransactionReq
 }

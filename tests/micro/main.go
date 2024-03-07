@@ -42,7 +42,8 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 	return we.GetID(), nil
 }
 
-func apiVerifyOtp(temporalClient client.Client, workflowID string) error {
+// Signal: Xác thực OTP thành công
+func apiSignalVerifyOtp(temporalClient client.Client, workflowID string) error {
 	item := messages.VerifyOtpReq{
 		FlowId: workflowID,
 		Token:  "token",
@@ -50,10 +51,28 @@ func apiVerifyOtp(temporalClient client.Client, workflowID string) error {
 		Trace:  "trace",
 	}
 
-	update := messages.VerifiedOtpSignal{Route: config.RouteTypes.VERIFY_OTP, Item: item}
+	update := messages.VerifiedOtpSignal{Item: item}
 
-	// Trigger Signal Transfer Flow
-	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", config.SignalChannels.VERIFY_OTP_CHANNEL, update)
+	// Trigger Signal
+	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "VERIFY_OTP_CHANNEL", update)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Signal: Trả về kết quả Tạo giao dịch thành công
+func apiSignalCreateTransaction(temporalClient client.Client, workflowID string) error {
+	item := messages.CreateTransactionReq{
+		FlowId: workflowID,
+		// TODO: Sơn bổ sung Data Response giúp anh -> Gửi email ra
+	}
+
+	update := messages.CreateTransactionSignal{Item: item}
+
+	// Trigger Signal
+	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
 	if err != nil {
 		return err
 	}
@@ -66,13 +85,11 @@ func runCheckBalance(bk broker.Broker, workflowID string) error {
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 	action := config.Messages.CHECK_BALANCE_ACTION
 
-	// Gen consumer group theo format
 	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
 
 	bk.Subscribe(requestTopic, func(e broker.Event) error {
 		headers := e.Message().Headers
 		fmt.Printf("Received message from request topic %v: Header: %v\n", requestTopic, headers)
-		// TODO: Nhận response từ API Microservice push vào topic Reply
 
 		// ======================== REPLY: SEND REQUEST ========================
 		req := broker.Response[account.CheckBalanceRes]{
@@ -110,13 +127,11 @@ func runCreateTransferTransaction(bk broker.Broker, workflowID string) error {
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
 	action := config.Messages.CREATE_TRANSACTION_ACTION
 
-	// Gen consumer group theo format
 	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
 
 	bk.Subscribe(requestTopic, func(e broker.Event) error {
 		headers := e.Message().Headers
 		fmt.Printf("Received message from request topic %v: Header: %v\n", requestTopic, headers)
-		// TODO: Nhận response từ API Microservice push vào topic Reply
 
 		// ======================== REPLY: SEND REQUEST ========================
 		req := broker.Response[account.CreateTransactionRes]{
@@ -149,13 +164,53 @@ func runCreateTransferTransaction(bk broker.Broker, workflowID string) error {
 	return nil
 }
 
+func runCreateOTP(bk broker.Broker, workflowID string) error {
+	requestTopic := config.Messages.CREATE_OTP_REQUEST_TOPIC
+	replyTopic := config.Messages.CREATE_OTP_REPLY_TOPIC
+	action := config.Messages.CREATE_OTP_ACTION
+
+	csGroupOpt := broker.WithSubscribeGroup(utils.GetConsumerGroup(workflowID, action))
+
+	bk.Subscribe(requestTopic, func(e broker.Event) error {
+		headers := e.Message().Headers
+		fmt.Printf("Received message from request topic %v: Header: %v\n", requestTopic, headers)
+
+		// ======================== REPLY: SEND REQUEST ========================
+		req := broker.Response[account.CreateOTPRes]{
+			Result: broker.Result{
+				Status: 200, // OK
+			},
+			Data: account.CreateOTPRes{},
+		}
+		body, err := json.Marshal(req)
+		if err != nil {
+			panic(err)
+		}
+
+		fMsg := broker.Message{
+			Body: body,
+			Headers: map[string]string{
+				"workflow_id":   workflowID,
+				"activity-id":   action,
+				"correlationId": headers["correlationId"],
+			},
+		}
+
+		fmt.Printf("Reply message to reply topic %v: Header: %v\n", replyTopic, headers)
+		bk.Publish(replyTopic, &fMsg)
+		// ======================== REPLY: SEND REQUEST ========================
+
+		return nil
+	}, csGroupOpt)
+
+	return nil
+}
+
 // Micro: Nhận request từ Temporal -> Reply lại Temporal
 func main() {
 	_, cancel := context.WithCancel(context.Background())
 	errChan := make(chan error)
-	// ======================= BROKER =======================
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
-	// ======================= BROKER =======================
 
 	temporalClient, err := client.NewLazyClient(client.Options{
 		HostPort:  "localhost:7233",
@@ -175,7 +230,7 @@ func main() {
 	}
 
 	// 2. Xác thực OTP
-	err = apiVerifyOtp(temporalClient, workflowID)
+	err = apiSignalVerifyOtp(temporalClient, workflowID)
 	if err != nil {
 		log.Fatalln("error apiCreateTransfer", err)
 	}
@@ -196,7 +251,21 @@ func main() {
 		}
 	}()
 
-	// 5. Done 2 activity + 1 activity notification
+	// 5. Nhận message create otp từ Temporal
+	go func() {
+		if err := runCreateOTP(bk, workflowID); err != nil {
+			errChan <- err
+			cancel()
+		}
+	}()
+
+	// 6. Trả về kết quả Tạo giao dịch thành công
+	err = apiSignalCreateTransaction(temporalClient, workflowID)
+	if err != nil {
+		log.Fatalln("error apiSignalCreateTransaction", err)
+	}
+
+	// 7. Done 2 activity + 1 activity notification
 
 	select {}
 }

@@ -18,13 +18,6 @@
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
 
-- [ ] Đang tìm hiểu EventBus (Kafka) + Temporal
-- [ ] Đang tìm hiểu EventBus (Kafka) <https://github.com/google/go-cloud>
-- [ ] Xây dựng kiến trúc Temporal + microservices
-- [ ] Xây dựng kiến trúc Temporal + microservices + two phase commit
-- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka)
-- [ ] Xây dựng kiến trúc Saga microservices (EventBus + Kafka) + two phase commit
-
 ## Issues
 
 - [ ] 1. chỉnh workflow áp dụng kafka (Database có thể produce vào Request & Response, MService chỉ 1 chiều nhận từ kafka)
@@ -34,26 +27,16 @@
 ## Quickstart
 
 ```bash
-go run ./pkg/banktransfer/cmd/worker/main.go
-go run ./pkg/notification/cmd/worker/main.go
-go run ./serivces/mcs-account/main.go
-go run ./serivces/mcs-money-transfer/main.go
-go run ./serivces/mcs-notification/main.go
+go run ./banktransfer/cmd/worker/main.go
+# or
+go run ./notification/cmd/worker/main.go
 # or 
-sh start-all.sh
 sh start-worker.sh
-sh start-api.sh
 ```
 
 ## Saga (Temporal + Kafka + Microservices)
 
 ![Screenshot](/docs/assets/saga-workflows-sample.png)
-
-## Host APIs
-
-- `mcs-account`: `localhost:6001`
-- `mcs-money-transfer`: `localhost:6002`
-- `mcs-notification`: `localhost:6003`
 
 ## Workers
 
@@ -61,7 +44,7 @@ sh start-api.sh
 - `notification`
 - `onboarding`
 
-## Bank Transfer Workflow (Implement Saga)
+<!-- ## Bank Transfer Workflow (Implement Saga)
 
 ### Before: Chuyển tiền
 
@@ -89,9 +72,9 @@ sh start-api.sh
 
 1. Nhận message internal app
 2. Lấy thông tin kết quả chuyển tiền
-3. Reload lại show kết quả `Chuyển tiền Thành công`
+3. Reload lại show kết quả `Chuyển tiền Thành công` -->
 
-## APIs
+<!-- ## APIs
 
 - [x] Lấy DS giao dịch chuyển khoản: GET `/transfers/:workflowID`
 - [x] Kiểm tra số dư: GET `/accounts/:workflowID/balance`
@@ -103,22 +86,20 @@ sh start-api.sh
 - [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransactionCompensation`): POST `/transfers/:workflowID/transactions/rollback`
 - [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccountCompensation`): POST `/transfers/:workflowID/credit-accounts/rollback`
 - [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccountCompensation`): POST `/transfers/:workflowID/debit-accounts/rollback`
-- [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback`
+- [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback` -->
 
-## Saga
+## Transfer Flow Activities
+
+![Screenshot](/docs/assets/OCB-Fund-Transfer-Demo.png)
+
+<!-- ## Saga
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
 
 ## Worker versioning
 
 ![Screenshot](/docs/assets/temporal-worker-versioning-1.png)
-![Screenshot](/docs/assets/temporal-worker-versioning-2.png)
-
-## Temporal screenshot
-
-![Screenshot](/docs/assets/bank-transfer-workflows.jpg)
-![Screenshot](/docs/assets/bank-transfer-temporal-admin-log.png)
-![Screenshot](/docs/assets/bank-transfer-sub-workflow-temporal-admin-log.png)
+![Screenshot](/docs/assets/temporal-worker-versioning-2.png) -->
 
 ## Stack
 
@@ -130,4 +111,3 @@ sh start-api.sh
 
 - Temporal for Docker: <https://github.com/temporalio/docker-compose>
 - <https://github.com/temporalio/samples-go>
-- <https://github.com/temporalio/temporal-ecommerce>
