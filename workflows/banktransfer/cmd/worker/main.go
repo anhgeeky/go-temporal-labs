@@ -60,7 +60,7 @@ func main() {
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
 
 	wg := sync.WaitGroup{}
-	createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
+	// createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
 	createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
 	wg.Wait()
 
@@ -100,6 +100,7 @@ func main() {
 // }
 
 func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.WaitGroup, externalCfg *config.ExternalConfig, bk broker.Broker) {
+	log.Println("Start worker: ", taskQueue, "Build ID:", buildID)
 	w := worker.New(c, taskQueue, worker.Options{
 		// Both of these options must be set to opt into the feature
 		BuildID:                 buildID,
