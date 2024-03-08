@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
@@ -43,42 +42,42 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 }
 
 // Signal: Xác thực OTP thành công
-func apiSignalVerifyOtp(temporalClient client.Client, workflowID string) error {
-	item := messages.VerifyOtpReq{
-		FlowId: workflowID,
-		Token:  "token",
-		Code:   "code",
-		Trace:  "trace",
-	}
+// func apiSignalVerifyOtp(temporalClient client.Client, workflowID string) error {
+// 	item := messages.VerifyOtpReq{
+// 		FlowId: workflowID,
+// 		Token:  "token",
+// 		Code:   "code",
+// 		Trace:  "trace",
+// 	}
 
-	update := messages.VerifiedOtpSignal{Item: item}
+// 	update := messages.VerifiedOtpSignal{Item: item}
 
-	// Trigger Signal
-	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "VERIFY_OTP_CHANNEL", update)
-	if err != nil {
-		return err
-	}
+// 	// Trigger Signal
+// 	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "VERIFY_OTP_CHANNEL", update)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // Signal: Trả về kết quả Tạo giao dịch thành công
-func apiSignalCreateTransaction(temporalClient client.Client, workflowID string) error {
-	item := messages.CreateTransactionReq{
-		FlowId: workflowID,
-		// TODO: Sơn bổ sung Data Response giúp anh -> Gửi email ra
-	}
+// func apiSignalCreateTransaction(temporalClient client.Client, workflowID string) error {
+// 	item := messages.CreateTransactionReq{
+// 		FlowId: workflowID,
+// 		// TODO: Sơn bổ sung Data Response giúp anh -> Gửi email ra
+// 	}
 
-	update := messages.CreateTransactionSignal{Item: item}
+// 	update := messages.CreateTransactionSignal{Item: item}
 
-	// Trigger Signal
-	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
-	if err != nil {
-		return err
-	}
+// 	// Trigger Signal
+// 	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func runCheckBalance(bk broker.Broker, workflowID string) error {
 	requestTopic := config.Messages.CHECK_BALANCE_REQUEST_TOPIC
@@ -212,28 +211,16 @@ func main() {
 	errChan := make(chan error)
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 
-	temporalClient, err := client.NewLazyClient(client.Options{
-		HostPort:  "localhost:7233",
-		Namespace: "staging",
-	})
-	if err != nil {
-		log.Fatalln("unable to create Temporal client", err)
-	}
-	log.Println("Temporal client connected")
+	// temporalClient, err := client.NewLazyClient(client.Options{
+	// 	HostPort:  "localhost:7233",
+	// 	Namespace: "staging",
+	// })
+	// if err != nil {
+	// 	log.Fatalln("unable to create Temporal client", err)
+	// }
+	// log.Println("Temporal client connected")
 
-	// workflowID := "BANK_TRANSFER-1709632114"
-
-	// 1. Tạo lệnh chuyển tiền
-	workflowID, err := apiCreateTransfer(temporalClient)
-	if err != nil {
-		log.Fatalln("error apiCreateTransfer", err)
-	}
-
-	// 2. Xác thực OTP
-	err = apiSignalVerifyOtp(temporalClient, workflowID)
-	if err != nil {
-		log.Fatalln("error apiCreateTransfer", err)
-	}
+	workflowID := "BANK_TRANSFER-1709632114"
 
 	// 3. Nhận message check balance từ Temporal
 	go func() {
@@ -258,14 +245,6 @@ func main() {
 			cancel()
 		}
 	}()
-
-	// 6. Trả về kết quả Tạo giao dịch thành công
-	err = apiSignalCreateTransaction(temporalClient, workflowID)
-	if err != nil {
-		log.Fatalln("error apiSignalCreateTransaction", err)
-	}
-
-	// 7. Done 2 activity + 1 activity notification
 
 	select {}
 }
