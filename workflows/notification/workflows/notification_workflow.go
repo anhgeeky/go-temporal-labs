@@ -37,10 +37,10 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 	var results []string
 	var token *messages.DeviceToken
 
-	err = workflow.ExecuteActivity(ctx, a.GetDeviceToken).Get(ctx, &token)
-	if err != nil {
-		logger.Error("Failure sending response activity", "error", err)
-	}
+	// err = workflow.ExecuteActivity(ctx, a.GetDeviceToken).Get(ctx, &token)
+	// if err != nil {
+	// 	logger.Error("Failure sending response activity", "error", err)
+	// }
 
 	// Lấy được Device token thì run các activities parallel
 	// Start a goroutine in a workflow safe way

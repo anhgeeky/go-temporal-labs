@@ -7,7 +7,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/pkg/workflows/banktransfer/cmd/worker"
+      "program": "${workspaceFolder}/workflows/banktransfer/cmd/worker"
     },
     // Microservices
     {
