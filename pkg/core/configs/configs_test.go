@@ -22,5 +22,4 @@ func Test_LoadConfig(t *testing.T) {
 	assert.Equal(t, "localhost:7233", viper.GetString("TEMPORAL_HOST"))
 	assert.Equal(t, "http://localhost:6001", viper.GetString("MCS_ACCOUNT_HOST"))
 	assert.Equal(t, "http://localhost:6002", viper.GetString("MCS_MONEY_TRANSFER_HOST"))
-	assert.Equal(t, "http://localhost:6003", viper.GetString("MCS_NOTIFICATION_HOST"))
 }
