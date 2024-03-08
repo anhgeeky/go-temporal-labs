@@ -4,42 +4,38 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
-	"github.com/google/uuid"
-	"go.temporal.io/sdk/client"
 )
 
-func apiCreateTransfer(temporalClient client.Client) (string, error) {
-	workflowID := "BANK_TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
-	options := client.StartWorkflowOptions{
-		ID:        workflowID,
-		TaskQueue: config.TaskQueues.TRANSFER_QUEUE,
-	}
+// func apiCreateTransfer(temporalClient client.Client) (string, error) {
+// 	workflowID := "BANK_TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
+// 	options := client.StartWorkflowOptions{
+// 		ID:        workflowID,
+// 		TaskQueue: config.TaskQueues.TRANSFER_QUEUE,
+// 	}
 
-	now := time.Now()
+// 	now := time.Now()
 
-	msg := messages.Transfer{
-		Id:                   uuid.NewString(),
-		WorkflowID:           workflowID,
-		AccountOriginId:      "123", // Test Only
-		AccountDestinationId: "456", // Test Only
-		CreatedAt:            &now,
-	}
+// 	msg := messages.Transfer{
+// 		Id:                   uuid.NewString(),
+// 		WorkflowID:           workflowID,
+// 		AccountOriginId:      "123", // Test Only
+// 		AccountDestinationId: "456", // Test Only
+// 		CreatedAt:            &now,
+// 	}
 
-	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg)
-	if err != nil {
-		return "", err
-	}
+// 	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg)
+// 	if err != nil {
+// 		return "", err
+// 	}
 
-	return we.GetID(), nil
-}
+// 	return we.GetID(), nil
+// }
 
 // Signal: Xác thực OTP thành công
 // func apiSignalVerifyOtp(temporalClient client.Client, workflowID string) error {
@@ -220,7 +216,7 @@ func main() {
 	// }
 	// log.Println("Temporal client connected")
 
-	workflowID := "BANK_TRANSFER-1709632114"
+	workflowID := "BANK_TRANSFER-1709866403"
 
 	// 3. Nhận message check balance từ Temporal
 	go func() {

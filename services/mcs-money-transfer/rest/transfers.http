@@ -2,7 +2,7 @@
 @port = 6002
 @host = {{hostname}}:{{port}}
 @contentType = application/json
-@workflowID = BANK_TRANSFER-1708937242
+@workflowID = BANK_TRANSFER-1709866403
 
 ### Create transfer
 
@@ -15,14 +15,14 @@ Content-Type: {{contentType}}
   "amount": 5000
 }
 
-### Get transfer
+### Create Transfer Transaction
 
-GET http://{{host}}/transfers/{{workflowID}}
+POST http://{{host}}/transfers/{{workflowID}}/transactions
 Content-Type: {{contentType}}
 
-### Write Debit Account
-
-POST http://{{host}}/transfers/{{workflowID}}/debit-accounts
-Content-Type: {{contentType}}
-
-{}
+{
+  "token": "token",
+  "code": "code",
+  "flow_id": "{{workflowID}}",
+  "trace": "trace"
+}
