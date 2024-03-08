@@ -57,7 +57,6 @@ func main() {
 	bk := kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
 	// ======================= BROKER =======================
 
-<<<<<<< HEAD
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
 
 	wg := sync.WaitGroup{}
@@ -114,11 +113,7 @@ func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.Wai
 	case config.VERSION_2_0:
 		tranFlow.SetupBankTransferWorkflowV2(w, externalCfg, bk)
 	}
-	notiFlow.SetupNotificationWorkflow(w, externalCfg.NotificationHost)
-=======
-	tranFlow.SetupBankTransferWorkflow(w, externalCfg, bk)
 	notiFlow.SetupNotificationWorkflow(w)
->>>>>>> feat/saga-kafka
 
 	wg.Add(1)
 	go func() {

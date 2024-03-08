@@ -176,17 +176,3 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 
 	return &res.Data, nil
 }
-
-// TODO: Test workflow V2
-func (a *TransferActivity) WriteDebitAccount(ctx context.Context, msg messages.Transfer) error {
-	logger := activity.GetLogger(ctx)
-	// time.Sleep(time.Duration(30) * time.Minute) // TODO: Test chờ 30p
-	logger.Info("TransferActivity: WriteDebitAccount", msg)
-	res, err := a.MoneyTransferService.WriteDebitAccount(msg.WorkflowID)
-	if err != nil {
-		logger.Error("TransferActivity WriteDebitAccount failed.", "Error", err)
-		return err
-	}
-	logger.Info("TransferActivity: WriteDebitAccount done", res)
-	return nil
-}

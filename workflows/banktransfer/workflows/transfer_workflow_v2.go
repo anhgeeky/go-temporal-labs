@@ -29,48 +29,11 @@ func TransferWorkflowV2(ctx workflow.Context, state messages.Transfer) (err erro
 
 	verifyOtpChannel := workflow.GetSignalChannel(ctx, config.SignalChannels.VERIFY_OTP_CHANNEL)
 	createTransactionChannel := workflow.GetSignalChannel(ctx, config.SignalChannels.CREATE_TRANSACTION_CHANNEL)
-	verifiedOtp := false
-	createTransactionSuccess := false
 	completed := false
 
 	var a *activities.TransferActivity
 
 	for {
-		selector := workflow.NewSelector(ctx)
-
-		// ====================== Signal: Verify OTP ======================
-		selector.AddReceive(verifyOtpChannel, func(c workflow.ReceiveChannel, _ bool) {
-
-			var signal interface{}
-			c.Receive(ctx, &signal)
-
-			var message messages.VerifiedOtpSignal
-			err = mapstructure.Decode(signal, &message)
-			if err != nil {
-				logger.Error("Invalid signal type %v", err)
-				return
-			}
-
-			verifiedOtp = true
-		})
-		// ====================== Signal: Verify OTP ======================
-
-		// ====================== Signal: Trả về kết quả Tạo giao dịch thành công ======================
-		selector.AddReceive(createTransactionChannel, func(c workflow.ReceiveChannel, _ bool) {
-
-			var signal interface{}
-			c.Receive(ctx, &signal)
-
-			var message messages.CreateTransactionSignal
-			err = mapstructure.Decode(signal, &message)
-			if err != nil {
-				logger.Error("Invalid signal type %v", err)
-				return
-			}
-
-			createTransactionSuccess = true
-		})
-		// ====================== Signal: Trả về kết quả Tạo giao dịch thành công ======================
 
 		// ====================== Activity: CheckBalance ======================
 		var checkBalanceRes *account.CheckBalanceRes
@@ -88,54 +51,80 @@ func TransferWorkflowV2(ctx workflow.Context, state messages.Transfer) (err erro
 		}
 		// ====================== Activity: CreateOTP ======================
 
-		// Có kết quả tạo OTP thành công + Xác thực OTP thành công
-		if createOTPRes != nil && verifiedOtp {
-			// ====================== Activity: CreateTransferTransaction ======================
-			var createTransactionRes *account.CreateTransactionRes
-			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, &createTransactionRes)
+		selector := workflow.NewSelector(ctx)
+
+		// ====================== Signal: Verified OTP ======================
+		selector.AddReceive(verifyOtpChannel, func(c workflow.ReceiveChannel, _ bool) {
+
+			var signal interface{}
+			c.Receive(ctx, &signal)
+
+			var message messages.VerifiedOtpSignal
+			err = mapstructure.Decode(signal, &message)
 			if err != nil {
-				return err
+				logger.Error("Invalid signal type %v", err)
+				return
+			}
+
+			// ====================== Activity: CreateTransaction ======================
+			// Có kết quả tạo OTP thành công + Xác thực OTP thành công
+			var createTransactionRes *account.CreateTransactionRes
+			err = workflow.ExecuteActivity(ctx, a.CreateTransaction, state).Get(ctx, &createTransactionRes)
+			if err != nil {
+				logger.Error("Error execute activity CreateTransaction: %v", err)
+				return
 			}
 			// Compensation
 			// defer func() {
 			// 	if err != nil {
-			// 		errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransferTransactionCompensation, state).Get(ctx, nil)
+			// 		errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransactionCompensation, state).Get(ctx, nil)
 			// 		err = multierr.Append(err, errCompensation)
 			// 	}
 			// }()
-			// // ====================== Activity: CreateTransferTransaction ======================
-		}
+			// // ====================== Activity: CreateTransaction ======================
+		})
+		// ====================== Signal: Verified OTP ======================
 
-		// Tạo giao dịch thành công (Từ Signal) -> Gửi thông báo
-		if createTransactionSuccess && !completed {
-			// Call subflow -> Gửi notification
+		// ====================== Signal: Trả về kết quả Tạo giao dịch thành công ======================
+		selector.AddReceive(createTransactionChannel, func(c workflow.ReceiveChannel, _ bool) {
+
+			var signal interface{}
+			c.Receive(ctx, &signal)
+
+			var message messages.CreateTransactionSignal
+			err = mapstructure.Decode(signal, &message)
+			if err != nil {
+				logger.Error("Invalid signal type %v", err)
+				return
+			}
+
 			// ====================== Subflow: NotificationWorkflow ======================
-			selector.AddFuture(workflow.NewTimer(ctx, transferTimeout), func(f workflow.Future) {
-				execution := workflow.GetInfo(ctx).WorkflowExecution
-				childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
-				cwo := workflow.ChildWorkflowOptions{
-					WorkflowID: childID,
-				}
-				ctx = workflow.WithChildOptions(ctx, cwo)
-				msgNotfication := notiMsg.NotificationMessage{
-					// TODO: Bổ sung payload
-					Token: notiMsg.DeviceToken{
-						FirebaseToken: uuid.New().String(),
-					},
-				}
+			// Tạo giao dịch thành công (Từ Signal) -> Gửi thông báo
+			execution := workflow.GetInfo(ctx).WorkflowExecution
+			childID := fmt.Sprintf("NOTIFICATION: %v", execution.RunID)
+			cwo := workflow.ChildWorkflowOptions{
+				WorkflowID: childID,
+			}
+			ctx = workflow.WithChildOptions(ctx, cwo)
+			msgNotfication := notiMsg.NotificationMessage{
+				// TODO: Bổ sung payload
+				Token: notiMsg.DeviceToken{
+					FirebaseToken: uuid.New().String(),
+				},
+			}
 
-				var result string
-				err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
-				if err != nil {
-					logger.Error("Parent execution received child execution failure.", "Error", err)
-					return
-				}
-				logger.Info("Parent execution completed.", "Result", result)
+			var result string
+			err = workflow.ExecuteChildWorkflow(ctx, notiWorkflows.NotificationWorkflow, msgNotfication).Get(ctx, &result)
+			if err != nil {
+				logger.Error("Parent execution received child execution failure.", "Error", err)
+				return
+			}
+			logger.Info("Parent execution completed.", "Result", result)
 
-				completed = true
-			})
 			// ====================== Subflow: NotificationWorkflow ======================
-		}
+			completed = true
+		})
+		// ====================== Signal: Trả về kết quả Tạo giao dịch thành công ======================
 
 		selector.Select(ctx)
 

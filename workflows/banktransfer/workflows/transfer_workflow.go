@@ -16,10 +16,6 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// var (
-// 	transferTimeout = 5 * time.Second
-// )
-
 func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error) {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
