@@ -1,4 +1,4 @@
-package controllers
+package apis
 
 import (
 	"context"
@@ -7,13 +7,11 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/core/apis/responses"
-	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules/otp"
 	"github.com/gofiber/fiber/v2"
 	"go.temporal.io/sdk/client"
 )
 
 type VerifyController struct {
-	Service        otp.Service
 	TemporalClient client.Client
 }
 

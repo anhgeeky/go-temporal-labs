@@ -1,4 +1,4 @@
-package controllers
+package apis
 
 import (
 	"context"
@@ -11,14 +11,12 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 
 	"github.com/anhgeeky/go-temporal-labs/core/apis/responses"
-	"github.com/anhgeeky/go-temporal-labs/mcs-money-transfer/modules/transaction"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
 
 type TransferController struct {
-	Service        transaction.Service
 	TemporalClient client.Client
 }
 
@@ -56,5 +54,6 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 }
 
 func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
-	return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
+	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
+	return nil
 }

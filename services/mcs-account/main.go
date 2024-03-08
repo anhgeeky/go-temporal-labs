@@ -9,11 +9,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
-	"github.com/anhgeeky/go-temporal-labs/mcs-account/apis/routes"
+	"github.com/anhgeeky/go-temporal-labs/mcs-account/apis"
 	"github.com/anhgeeky/go-temporal-labs/mcs-account/config"
-	"github.com/anhgeeky/go-temporal-labs/mcs-account/modules"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/spf13/viper"
@@ -71,13 +69,10 @@ func main() {
 	if err != nil {
 		log.Fatalln("Could not load `KafkaConfig` configuration", err)
 	}
-	bk := kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
+	// bk := kafka.ConnectBrokerKafka(kafkaCfg.Brokers)
 	// ======================= BROKER =======================
 
-	services := modules.SetupServices(bk)
-
-	routes.StartAccountRoute(app, temporal, services)
-	routes.StartVerifyRoute(app, temporal, services)
+	apis.StartVerifyRoute(app, temporal)
 
 	log.Println("App is running and listening on port", PORT)
 	app.Listen(fmt.Sprintf(":%d", PORT))

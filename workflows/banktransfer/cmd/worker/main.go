@@ -53,7 +53,7 @@ func main() {
 	// ======================= BROKER =======================
 
 	tranFlow.SetupBankTransferWorkflow(w, externalCfg, bk)
-	notiFlow.SetupNotificationWorkflow(w, externalCfg.NotificationHost)
+	notiFlow.SetupNotificationWorkflow(w)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
