@@ -3,7 +3,7 @@
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
-@workflowID = BANK_TRANSFER-1709632114
+@workflowID = BANK_TRANSFER-1709869848
 
 ### Verify OTP
 
@@ -11,8 +11,8 @@ POST http://{{host}}/verifications/otp
 Content-Type: {{contentType}}
 
 {
+  "workflow_id": "{{workflowID}}",
   "token": "token",
   "code": "code",
-  "flow_id": "{{workflowID}}",
   "trace": "trace"
 }

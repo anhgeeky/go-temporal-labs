@@ -9,7 +9,6 @@ import (
 // Notification workflow
 func SetupNotificationWorkflow(w worker.Worker) {
 	notificationActivity := &activities.NotificationActivity{}
-	w.RegisterActivity(notificationActivity.GetDeviceToken)
 	w.RegisterActivity(notificationActivity.PushEmail)
 	w.RegisterWorkflow(workflows.NotificationWorkflow)
 }

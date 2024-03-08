@@ -20,7 +20,7 @@ type TransferController struct {
 	TemporalClient client.Client
 }
 
-// Done
+// 1. Tạo lệnh chuyển tiền
 func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 	workflowID := "BANK_TRANSFER-" + fmt.Sprintf("%d", time.Now().Unix())
 	var req messages.TransferReq
@@ -53,7 +53,20 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 	return responses.SuccessResult[interface{}](c, res)
 }
 
-func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
-	// return responses.SuccessResult(c, transaction.SampleRes{Msg: "OK"})
-	return nil
+// 6. Trả về kết quả Tạo giao dịch thành công
+func (r TransferController) CreateTransaction(c *fiber.Ctx) error {
+	var item messages.CreateTransactionReq
+	json.Unmarshal(c.Body(), &item)
+
+	update := messages.CreateTransactionSignal{Item: item}
+
+	// Trigger Signal Transfer Flow
+	err := r.TemporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
+	if err != nil {
+		return responses.WriteError(c, err)
+	}
+
+	res := make(map[string]interface{})
+	res["ok"] = 1
+	return c.Status(fiber.StatusOK).JSON(res)
 }

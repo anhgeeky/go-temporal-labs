@@ -5,24 +5,11 @@ import (
 	"fmt"
 
 	"github.com/anhgeeky/go-temporal-labs/notification/messages"
-	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
 	gomail "gopkg.in/mail.v2"
 )
 
 type NotificationActivity struct {
-}
-
-func (a *NotificationActivity) GetDeviceToken(ctx context.Context, msg interface{}) (*messages.DeviceToken, error) {
-	logger := activity.GetLogger(ctx)
-
-	logger.Info("NotificationActivity: GetDeviceToken", msg)
-
-	token := messages.DeviceToken{
-		FirebaseToken: uuid.New().String(),
-	}
-
-	return &token, nil
 }
 
 func (a *NotificationActivity) PushEmail(ctx context.Context, msg *messages.DeviceToken) (string, error) {
