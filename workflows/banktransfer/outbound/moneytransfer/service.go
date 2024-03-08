@@ -16,7 +16,7 @@ type MoneyTransferService struct {
 	Host string
 }
 
-func (r MoneyTransferService) CreateTransferTransaction(workflowID string) (interface{}, error) {
+func (r MoneyTransferService) CreateTransaction(workflowID string) (interface{}, error) {
 	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 
@@ -124,7 +124,7 @@ func (r MoneyTransferService) AddNewActivity(workflowID string) (interface{}, er
 // Rollback
 // ========================================
 
-func (r MoneyTransferService) CreateTransferTransactionCompensation(workflowID string) (interface{}, error) {
+func (r MoneyTransferService) CreateTransactionCompensation(workflowID string) (interface{}, error) {
 	endpoint := fmt.Sprintf("%s/%s", r.Host, ROUTE)
 	client := resty.New()
 

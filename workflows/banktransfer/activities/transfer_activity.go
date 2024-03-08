@@ -130,9 +130,9 @@ func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.Transfer)
 	return &res.Data, nil
 }
 
-func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
+func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
 	logger := activity.GetLogger(ctx)
-	logger.Info("TransferActivity: CreateTransferTransaction", msg)
+	logger.Info("TransferActivity: CreateTransaction", msg)
 
 	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
@@ -172,7 +172,7 @@ func (a *TransferActivity) CreateTransferTransaction(ctx context.Context, msg me
 		}
 	}
 
-	logger.Info("TransferActivity: CreateTransferTransaction done", res)
+	logger.Info("TransferActivity: CreateTransaction done", res)
 
 	return &res.Data, nil
 }

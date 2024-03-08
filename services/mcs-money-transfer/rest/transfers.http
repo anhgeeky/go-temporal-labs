@@ -1,0 +1,25 @@
+@hostname = localhost
+@port = 6002
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@workflowID = BANK_TRANSFER-1709869848
+
+### Create transfer
+
+POST http://{{host}}/transfers
+Content-Type: {{contentType}}
+
+{
+  "account_origin_id": "123",
+  "account_destination_id": "456",
+  "amount": 5000
+}
+
+### Create Transfer Transaction
+
+POST http://{{host}}/transfers/{{workflowID}}/transactions
+Content-Type: {{contentType}}
+
+{
+  "workflow_id": "{{workflowID}}"
+}
