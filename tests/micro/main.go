@@ -216,9 +216,9 @@ func main() {
 	// }
 	// log.Println("Temporal client connected")
 
-	workflowID := "BANK_TRANSFER-1709866403"
+	workflowID := "BANK_TRANSFER-1709866997"
 
-	// 3. Nhận message check balance từ Temporal
+	// 1. Nhận message check balance từ Temporal
 	go func() {
 		if err := runCheckBalance(bk, workflowID); err != nil {
 			errChan <- err
@@ -226,17 +226,17 @@ func main() {
 		}
 	}()
 
-	// 4. Nhận message create transaction từ Temporal
+	// 2. Nhận message create otp từ Temporal
 	go func() {
-		if err := runCreateTransferTransaction(bk, workflowID); err != nil {
+		if err := runCreateOTP(bk, workflowID); err != nil {
 			errChan <- err
 			cancel()
 		}
 	}()
 
-	// 5. Nhận message create otp từ Temporal
+	// 3. Nhận message create transaction từ Temporal
 	go func() {
-		if err := runCreateOTP(bk, workflowID); err != nil {
+		if err := runCreateTransferTransaction(bk, workflowID); err != nil {
 			errChan <- err
 			cancel()
 		}

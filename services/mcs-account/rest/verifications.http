@@ -3,7 +3,7 @@
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
-@workflowID = BANK_TRANSFER-1709632114
+@workflowID = BANK_TRANSFER-1709866997
 
 ### Verify OTP
 
