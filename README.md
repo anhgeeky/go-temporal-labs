@@ -58,7 +58,7 @@ sh start-worker.sh
 2. [**Transfer Flow**] Xác thực OTP (`Trigger Signal`)
   - 2.1. Kiểm tra số dư (`CheckBalance`) (`Synchronize`)
   - 2.2. Kiểm tra tra tài khoản đích (`CheckTargetAccount`) (`Synchronize`)
-  - 2.3. Tạo giao dịch chuyển tiền (`CreateTransferTransaction`) (`When step 2.1, 2.2 done -> Continue`)
+  - 2.3. Tạo giao dịch chuyển tiền (`CreateTransaction`) (`When step 2.1, 2.2 done -> Continue`)
   - 2.4. Tạo giao dịch ghi nợ (`WriteCreditAccount`) (`Synchronize`)
   - 2.5. Tạo giao dịch ghi có (`WriteDebitAccount`) (`Synchronize`)
   - 2.6. Transfer done  (`When step 2.4, 2.5 done -> Completed`) (`Trigger [Notification Flow]`)
@@ -79,11 +79,11 @@ sh start-worker.sh
 - [x] Lấy DS giao dịch chuyển khoản: GET `/transfers/:workflowID`
 - [x] Kiểm tra số dư: GET `/accounts/:workflowID/balance`
 - [ ] Kiểm tra tra tài khoản đích (`CheckTargetAccount`)
-- [x] Tạo giao dịch chuyển tiền (`CreateTransferTransaction`): POST `/transfers/:workflowID/transactions`
+- [x] Tạo giao dịch chuyển tiền (`CreateTransaction`): POST `/transfers/:workflowID/transactions`
 - [x] Tạo giao dịch ghi nợ (`WriteCreditAccount`): POST `/transfers/:workflowID/credit-accounts`
 - [x] Tạo giao dịch ghi có (`WriteDebitAccount`): POST `/transfers/:workflowID/debit-accounts`
 - [x] Add new activity for test: POST `/transfers/:workflowID/new-activity`
-- [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransferTransactionCompensation`): POST `/transfers/:workflowID/transactions/rollback`
+- [x] [Rollback] Tạo giao dịch chuyển tiền (`CreateTransactionCompensation`): POST `/transfers/:workflowID/transactions/rollback`
 - [x] [Rollback] Tạo giao dịch ghi nợ (`WriteCreditAccountCompensation`): POST `/transfers/:workflowID/credit-accounts/rollback`
 - [x] [Rollback] Tạo giao dịch ghi có (`WriteDebitAccountCompensation`): POST `/transfers/:workflowID/debit-accounts/rollback`
 - [x] [Rollback] Add new activity for test: POST `/transfers/:workflowID/new-activity/rollback` -->

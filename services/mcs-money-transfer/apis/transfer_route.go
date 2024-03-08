@@ -13,6 +13,6 @@ func StartTransferRoute(app *fiber.App, temporal client.Client) {
 
 	group.Post("/", controller.CreateTransfer)
 	// Actions
-	group.Post("/:workflowID/transactions", controller.CreateTransferTransaction)
+	group.Post("/:workflowID/transactions", controller.CreateTransaction)
 
 }

@@ -70,22 +70,22 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 				return
 			}
 
-			// ====================== Activity: CreateTransferTransaction ======================
+			// ====================== Activity: CreateTransaction ======================
 			// Có kết quả tạo OTP thành công + Xác thực OTP thành công
 			var createTransactionRes *account.CreateTransactionRes
-			err = workflow.ExecuteActivity(ctx, a.CreateTransferTransaction, state).Get(ctx, &createTransactionRes)
+			err = workflow.ExecuteActivity(ctx, a.CreateTransaction, state).Get(ctx, &createTransactionRes)
 			if err != nil {
-				logger.Error("Error execute activity CreateTransferTransaction: %v", err)
+				logger.Error("Error execute activity CreateTransaction: %v", err)
 				return
 			}
 			// Compensation
 			// defer func() {
 			// 	if err != nil {
-			// 		errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransferTransactionCompensation, state).Get(ctx, nil)
+			// 		errCompensation := workflow.ExecuteActivity(ctx, a.CreateTransactionCompensation, state).Get(ctx, nil)
 			// 		err = multierr.Append(err, errCompensation)
 			// 	}
 			// }()
-			// // ====================== Activity: CreateTransferTransaction ======================
+			// // ====================== Activity: CreateTransaction ======================
 		})
 		// ====================== Signal: Verified OTP ======================
 

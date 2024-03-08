@@ -21,5 +21,5 @@ POST http://{{host}}/transfers/{{workflowID}}/transactions
 Content-Type: {{contentType}}
 
 {
-  "flow_id": "{{workflowID}}"
+  "workflow_id": "{{workflowID}}"
 }

@@ -117,7 +117,7 @@ func runCheckBalance(bk broker.Broker, workflowID string) error {
 	return nil
 }
 
-func runCreateTransferTransaction(bk broker.Broker, workflowID string) error {
+func runCreateTransaction(bk broker.Broker, workflowID string) error {
 	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
 	action := config.Messages.CREATE_TRANSACTION_ACTION
@@ -236,7 +236,7 @@ func main() {
 
 	// 3. Nhận message create transaction từ Temporal
 	go func() {
-		if err := runCreateTransferTransaction(bk, workflowID); err != nil {
+		if err := runCreateTransaction(bk, workflowID); err != nil {
 			errChan <- err
 			cancel()
 		}

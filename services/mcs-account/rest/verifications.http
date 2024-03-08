@@ -11,8 +11,8 @@ POST http://{{host}}/verifications/otp
 Content-Type: {{contentType}}
 
 {
+  "workflow_id": "{{workflowID}}",
   "token": "token",
   "code": "code",
-  "flow_id": "{{workflowID}}",
   "trace": "trace"
 }

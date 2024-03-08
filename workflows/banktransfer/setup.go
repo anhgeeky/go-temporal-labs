@@ -23,6 +23,6 @@ func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfig, bk b
 	}
 	w.RegisterActivity(transferActivity.CheckBalance)
 	w.RegisterActivity(transferActivity.CreateOTP)
-	w.RegisterActivity(transferActivity.CreateTransferTransaction)
+	w.RegisterActivity(transferActivity.CreateTransaction)
 	w.RegisterWorkflow(workflows.TransferWorkflow)
 }

@@ -54,7 +54,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 }
 
 // 6. Trả về kết quả Tạo giao dịch thành công
-func (r TransferController) CreateTransferTransaction(c *fiber.Ctx) error {
+func (r TransferController) CreateTransaction(c *fiber.Ctx) error {
 	var item messages.CreateTransactionReq
 	json.Unmarshal(c.Body(), &item)
 
