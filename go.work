@@ -4,3 +4,5 @@ use ./pkg/core
 use ./workflows/banktransfer
 use ./workflows/notification
 use ./workflows/onboarding
+use ./services/mcs-account
+use ./services/mcs-money-transfer

@@ -41,7 +41,7 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
 
-	notiFlow.SetupNotificationWorkflow(w, externalCfg.NotificationHost)
+	notiFlow.SetupNotificationWorkflow(w)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
