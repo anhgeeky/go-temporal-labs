@@ -8,7 +8,6 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"go.temporal.io/sdk/worker"
-	"go.temporal.io/sdk/workflow"
 )
 
 // Transfer workflow
@@ -25,5 +24,5 @@ func SetupBankTransferWorkflow(w worker.Worker, cfg *config.ExternalConfig, bk b
 	w.RegisterActivity(transferActivity.CheckBalance)
 	w.RegisterActivity(transferActivity.CreateOTP)
 	w.RegisterActivity(transferActivity.CreateTransferTransaction)
-	w.RegisterWorkflowWithOptions(workflows.TransferWorkflow, workflow.RegisterOptions{Name: "TransferWorkflow"})
+	w.RegisterWorkflow(workflows.TransferWorkflow)
 }

@@ -216,7 +216,7 @@ func main() {
 	// }
 	// log.Println("Temporal client connected")
 
-	workflowID := "BANK_TRANSFER-1709866997"
+	workflowID := "BANK_TRANSFER-1709869274"
 
 	// 1. Nhận message check balance từ Temporal
 	go func() {

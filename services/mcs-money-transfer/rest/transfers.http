@@ -2,7 +2,7 @@
 @port = 6002
 @host = {{hostname}}:{{port}}
 @contentType = application/json
-@workflowID = BANK_TRANSFER-1709866997
+@workflowID = BANK_TRANSFER-1709869274
 
 ### Create transfer
 
@@ -21,8 +21,5 @@ POST http://{{host}}/transfers/{{workflowID}}/transactions
 Content-Type: {{contentType}}
 
 {
-  "token": "token",
-  "code": "code",
-  "flow_id": "{{workflowID}}",
-  "trace": "trace"
+  "flow_id": "{{workflowID}}"
 }
