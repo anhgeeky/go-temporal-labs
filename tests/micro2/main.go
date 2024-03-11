@@ -208,7 +208,8 @@ func runCreateOTP(bk broker.Broker, workflowID string) error {
 
 // Micro: Nhận request từ Temporal -> Reply lại Temporal
 func main() {
-	_, cancel := context.WithCancel(context.Background())
+	ctx := context.Background()
+	_, cancel := context.WithCancel(ctx)
 	errChan := make(chan error)
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 
@@ -221,7 +222,18 @@ func main() {
 	}
 	log.Println("Temporal client connected")
 
-	// workflowID := "BANK_TRANSFER-1709869848"
+	// err = temporalClient.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
+	// 	TaskQueue: config.TaskQueues.TRANSFER_QUEUE,
+	// 	Operation: &client.BuildIDOpAddNewIDInNewDefaultSet{
+	// 		BuildID: config.VERSION_1_0,
+	// 	},
+	// })
+
+	taskQueue := config.TaskQueues.TRANSFER_QUEUE
+	beforeVersion := config.VERSION_2_0
+	latestVersion := config.VERSION_3_0
+
+	updateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
 
 	// 1. Tạo lệnh chuyển tiền
 	workflowID, err := apiCreateTransfer(temporalClient)
@@ -270,4 +282,16 @@ func main() {
 	}
 
 	select {}
+}
+
+// FAQ: https://docs.temporal.io/dev-guide/go/versioning
+func updateLatestWorkerBuildId(c client.Client, taskQueue, compatibleBuildID, latestBuildID string) {
+	ctx := context.Background()
+	c.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
+		TaskQueue: taskQueue,
+		Operation: &client.BuildIDOpAddNewCompatibleVersion{
+			BuildID:                   latestBuildID,
+			ExistingCompatibleBuildID: compatibleBuildID,
+		},
+	})
 }

@@ -43,3 +43,21 @@ func SetupBankTransferWorkflowV2(w worker.Worker, cfg *config.ExternalConfig, bk
 	w.RegisterActivity(transferActivity.CreateTransaction)
 	w.RegisterWorkflow(workflows.TransferWorkflow)
 }
+
+// Transfer workflow V3
+func SetupBankTransferWorkflowV3(w worker.Worker, cfg *config.ExternalConfig, bk broker.Broker) {
+	transferActivity := &activities.TransferActivity{
+		Broker: bk,
+		AccountService: account.AccountService{
+			Host: cfg.AccountHost,
+		},
+		MoneyTransferService: moneytransfer.MoneyTransferService{
+			Host: cfg.MoneyTransferHost,
+		},
+	}
+	w.RegisterActivity(transferActivity.CheckBalance)
+	w.RegisterActivity(transferActivity.CreateOTP)
+	w.RegisterActivity(transferActivity.CreateTransaction)
+	w.RegisterActivity(transferActivity.NewActivityForTest1)
+	w.RegisterWorkflow(workflows.TransferWorkflow)
+}

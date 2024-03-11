@@ -62,42 +62,9 @@ func main() {
 	wg := sync.WaitGroup{}
 	// createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
 	createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
+	createAndRunWorker(c, taskQueue, config.VERSION_3_0, &wg, externalCfg, bk)
 	wg.Wait()
-
-	// First, let's make the task queue use the build id versioning feature by adding an initial
-	// default version to the queue:
-	// err = c.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
-	// 	TaskQueue: taskQueue,
-	// 	Operation: &client.BuildIDOpAddNewIDInNewDefaultSet{
-	// 		BuildID: config.VERSION_1_0,
-	// 	},
-	// })
-
-	// time.Sleep(5 * time.Second)
-
-	// go func() {
-	// 	if err := updateLatestWorkerBuildId(c, taskQueue, config.VERSION_1_0, config.VERSION_2_0); err != nil {
-	// 		log.Fatalln("Update latest worker build failure", err)
-	// 	}
-	// }()
 }
-
-// FAQ: https://docs.temporal.io/dev-guide/go/versioning
-// func updateLatestWorkerBuildId(c client.Client, taskQueue, compatibleBuildID, latestBuildID string) error {
-// 	ctx := context.Background()
-// 	// Now, let's update the task queue with a new compatible version:
-// 	err := c.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
-// 		TaskQueue: taskQueue,
-// 		Operation: &client.BuildIDOpAddNewCompatibleVersion{
-// 			BuildID:                   compatibleBuildID,
-// 			ExistingCompatibleBuildID: latestBuildID,
-// 		},
-// 	})
-// 	if err != nil {
-// 		log.Fatalln("Unable to update build id compatability", err)
-// 	}
-// 	return err
-// }
 
 func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.WaitGroup, externalCfg *config.ExternalConfig, bk broker.Broker) {
 	log.Println("Start worker: ", taskQueue, "Build ID:", buildID)
@@ -112,6 +79,8 @@ func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.Wai
 		tranFlow.SetupBankTransferWorkflow(w, externalCfg, bk)
 	case config.VERSION_2_0:
 		tranFlow.SetupBankTransferWorkflowV2(w, externalCfg, bk)
+	case config.VERSION_3_0:
+		tranFlow.SetupBankTransferWorkflowV3(w, externalCfg, bk)
 	}
 	notiFlow.SetupNotificationWorkflow(w)
 

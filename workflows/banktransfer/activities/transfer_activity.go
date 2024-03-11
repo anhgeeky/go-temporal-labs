@@ -176,3 +176,10 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 
 	return &res.Data, nil
 }
+
+func (a *TransferActivity) NewActivityForTest1(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: CreateTransaction", msg)
+	logger.Info("TransferActivity: CreateTransaction done")
+	return nil
+}

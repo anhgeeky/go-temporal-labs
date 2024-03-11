@@ -92,6 +92,11 @@ sh start-worker.sh
 
 ![Screenshot](/docs/assets/OCB-Fund-Transfer-Demo.png)
 
+## Temporal Versioning
+
+- Issue downgrade `2.0` -> `1.0` -> Error all workflows
+![Screenshot](/docs/assets/temporal-worker-versioning-error-downgrade-version.jpg)
+
 <!-- ## Saga
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
