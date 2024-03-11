@@ -23,7 +23,9 @@ func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error)
 	ao := workflow.ActivityOptions{
 		StartToCloseTimeout: 2 * time.Minute,
 		HeartbeatTimeout:    10 * time.Second,
-		RetryPolicy:         cw.WorkflowConfigs.RetryPolicy,
+		// StartToCloseTimeout: 60 * time.Minute,
+		// HeartbeatTimeout:    60 * time.Minute,
+		RetryPolicy: cw.WorkflowConfigs.RetryPolicy,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
