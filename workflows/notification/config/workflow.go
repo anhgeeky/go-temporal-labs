@@ -7,7 +7,7 @@ var TaskQueues = struct {
 }
 
 var Workflows = struct {
-	NOTIFICATION string
+	NotificationName string
 }{
-	NOTIFICATION: "NOTIFICATION",
+	NotificationName: "NotificationWorkflow",
 }

@@ -14,9 +14,9 @@ var TaskQueues = struct {
 }
 
 var Workflows = struct {
-	TRANSFER string
+	TransferName string
 }{
-	TRANSFER: "TRANSFER",
+	TransferName: "TransferWorkflow",
 }
 
 var Messages = struct {

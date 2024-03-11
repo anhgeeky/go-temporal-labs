@@ -6,8 +6,9 @@ import (
 	"runtime"
 
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
-	notiFlow "github.com/anhgeeky/go-temporal-labs/notification"
+	notiPkg "github.com/anhgeeky/go-temporal-labs/notification"
 	"github.com/anhgeeky/go-temporal-labs/notification/config"
+	notiWorkflow "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/spf13/viper"
 
 	"go.temporal.io/sdk/client"
@@ -41,7 +42,7 @@ func main() {
 	defer c.Close()
 	w := worker.New(c, config.TaskQueues.NOTIFICATION_QUEUE, worker.Options{})
 
-	notiFlow.SetupNotificationWorkflow(w)
+	notiPkg.SetupNotificationWorkflow(w, notiWorkflow.NotificationWorkflow)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
