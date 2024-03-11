@@ -13,6 +13,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
+	"github.com/anhgeeky/go-temporal-labs/core/workflow"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
@@ -222,18 +223,11 @@ func main() {
 	}
 	log.Println("Temporal client connected")
 
-	// err = temporalClient.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
-	// 	TaskQueue: config.TaskQueues.TRANSFER_QUEUE,
-	// 	Operation: &client.BuildIDOpAddNewIDInNewDefaultSet{
-	// 		BuildID: config.VERSION_1_0,
-	// 	},
-	// })
-
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
-	beforeVersion := config.VERSION_2_0
-	latestVersion := config.VERSION_3_0
+	beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
+	latestVersion := config.VERSION_3_0 // Version mới nhất
 
-	updateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
+	workflow.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
 
 	// 1. Tạo lệnh chuyển tiền
 	workflowID, err := apiCreateTransfer(temporalClient)
