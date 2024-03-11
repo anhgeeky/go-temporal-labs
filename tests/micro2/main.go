@@ -35,7 +35,7 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 		CreatedAt:            &now,
 	}
 
-	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg)
+	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflowV4", msg) // TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 	if err != nil {
 		return "", err
 	}
@@ -224,8 +224,11 @@ func main() {
 	log.Println("Temporal client connected")
 
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
-	beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
-	latestVersion := config.VERSION_3_0 // Version mới nhất
+	// beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
+	beforeVersion := config.VERSION_3_0 // Version trước đó -> Vẫn còn tương thích
+	latestVersion := config.VERSION_4_0 // Version mới nhất
+
+	// TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 
 	workflow.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
 

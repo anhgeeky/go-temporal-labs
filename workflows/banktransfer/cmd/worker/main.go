@@ -61,8 +61,9 @@ func main() {
 
 	wg := sync.WaitGroup{}
 	// createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
-	createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
+	// createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
 	createAndRunWorker(c, taskQueue, config.VERSION_3_0, &wg, externalCfg, bk)
+	createAndRunWorker(c, taskQueue, config.VERSION_4_0, &wg, externalCfg, bk)
 	wg.Wait()
 }
 
@@ -81,6 +82,8 @@ func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.Wai
 		tranFlow.SetupBankTransferWorkflowV2(w, externalCfg, bk)
 	case config.VERSION_3_0:
 		tranFlow.SetupBankTransferWorkflowV3(w, externalCfg, bk)
+	case config.VERSION_4_0:
+		tranFlow.SetupBankTransferWorkflowV4(w, externalCfg, bk)
 	}
 	notiFlow.SetupNotificationWorkflow(w)
 

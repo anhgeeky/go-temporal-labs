@@ -4,6 +4,7 @@ var (
 	VERSION_1_0 = "1.0"
 	VERSION_2_0 = "2.0"
 	VERSION_3_0 = "3.0"
+	VERSION_4_0 = "4.0"
 )
 
 var TaskQueues = struct {
