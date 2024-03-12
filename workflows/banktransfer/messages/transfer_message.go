@@ -1,15 +1,13 @@
 package messages
 
-import "time"
-
 type TransferMessage struct {
 	// Id          string     `json:"id"`
-	WorkflowID  string     `json:"workflowId"`
-	FromAccount string     `json:"fromAccount"`
-	ToAccount   string     `json:"toAccount"`
-	CRefNum     string     `json:"cRefNum"`
-	Amount      float64    `json:"amount"`
-	CreatedAt   *time.Time `json:"createdAt"`
+	WorkflowID  string  `json:"workflowId"`
+	FromAccount string  `json:"fromAccount"`
+	ToAccount   string  `json:"toAccount"`
+	CRefNum     string  `json:"cRefNum"`
+	Amount      float64 `json:"amount"`
+	CreatedAt   string  `json:"createdAt"`
 }
 
 type TransferReq struct {

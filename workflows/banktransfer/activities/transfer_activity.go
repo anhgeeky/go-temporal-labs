@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
@@ -12,7 +11,6 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
-	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
 )
 
@@ -34,9 +32,9 @@ func (a *TransferActivity) getMsgHeaders(workflowId, activityId string) map[stri
 	}
 }
 
-func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId, activityId string) bool {
-	return headers[workflowIDKey] == workflowId && headers[activityIDKey] == activityId
-}
+// func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId, activityId string) bool {
+// 	return headers[workflowIDKey] == workflowId && headers[activityIDKey] == activityId
+// }
 
 func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.TransferMessage) (*account.CheckBalanceRes, error) {
 	logger := activity.GetLogger(ctx)
@@ -47,7 +45,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	action := config.Messages.CHECK_BALANCE_ACTION
 
 	req := account.CheckBalanceReq{
-		Account: "0347885267", // TODO: Test only
+		Account: msg.FromAccount,
 	}
 	reqBody, err := json.Marshal(req)
 	if err != nil {
@@ -95,12 +93,8 @@ func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.TransferM
 	replyTopic := config.Messages.CREATE_OTP_REPLY_TOPIC
 	action := config.Messages.CREATE_OTP_ACTION
 
-	refNum := uuid.NewString()
-
-	fmt.Println("TRACE: ", refNum)
-
 	req := account.CreateOTPReq{
-		CRefNum: refNum,
+		CRefNum: msg.CRefNum,
 	}
 	reqBody, err := json.Marshal(req)
 	if err != nil {
@@ -147,11 +141,9 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
 	action := config.Messages.CREATE_TRANSACTION_ACTION
-	refNum := uuid.NewString()
 
-	fmt.Println("TRACE: ", refNum)
 	req := account.CreateTransactionReq{
-		CRefNum: refNum,
+		CRefNum: msg.CRefNum,
 	}
 	reqBody, err := json.Marshal(req)
 	if err != nil {

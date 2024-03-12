@@ -1,7 +1,5 @@
 package messages
 
-import "time"
-
 type VerifyOtpReq struct {
 	FlowId string `json:"workflow_id"` // WorkflowID
 	Token  string `json:"token"`
@@ -10,15 +8,15 @@ type VerifyOtpReq struct {
 }
 
 type VerifiedOtpSignal struct {
-	WorkflowID  string     `json:"workflowId"`
-	FromAccount string     `json:"fromAccount"`
-	ToAccount   string     `json:"toAccount"`
-	CRefNum     string     `json:"cRefNum"`
-	Amount      float64    `json:"amount"`
-	CreatedAt   *time.Time `json:"createdAt"`
-	TransferAt  *time.Time `json:"transferAt"`
-	TransNo     string     `json:"transNo"`
-	Status      int        `json:"status"`
+	WorkflowID  string  `json:"workflowId"`
+	FromAccount string  `json:"fromAccount"`
+	ToAccount   string  `json:"toAccount"`
+	CRefNum     string  `json:"cRefNum"`
+	Amount      float64 `json:"amount"`
+	CreatedAt   string  `json:"createdAt"`
+	TransferAt  string  `json:"transferAt"`
+	TransNo     string  `json:"transNo"`
+	Status      int     `json:"status"`
 }
 
 type CreateTransactionReq struct {
@@ -26,13 +24,13 @@ type CreateTransactionReq struct {
 }
 
 type CreateTransactionSignal struct {
-	WorkflowID  string     `json:"workflowId"`
-	FromAccount string     `json:"fromAccount"`
-	ToAccount   string     `json:"toAccount"`
-	CRefNum     string     `json:"cRefNum"`
-	Amount      float64    `json:"amount"`
-	CreatedAt   *time.Time `json:"createdAt"`
-	TransferAt  *time.Time `json:"transferAt"`
-	TransNo     string     `json:"transNo"`
-	Status      int        `json:"status"`
+	WorkflowID  string  `json:"workflowId"`
+	FromAccount string  `json:"fromAccount"`
+	ToAccount   string  `json:"toAccount"`
+	CRefNum     string  `json:"cRefNum"`
+	Amount      float64 `json:"amount"`
+	CreatedAt   string  `json:"createdAt"`
+	TransferAt  string  `json:"transferAt"`
+	TransNo     string  `json:"transNo"`
+	Status      int     `json:"status"`
 }
