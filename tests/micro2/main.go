@@ -13,7 +13,6 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
-	"github.com/anhgeeky/go-temporal-labs/core/workflow"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )

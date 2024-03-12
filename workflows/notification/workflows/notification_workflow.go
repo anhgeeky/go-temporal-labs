@@ -3,7 +3,7 @@ package workflows
 import (
 	"time"
 
-	cw "github.com/anhgeeky/go-temporal-labs/core/workflow"
+	cw "github.com/anhgeeky/go-temporal-labs/core/temporal"
 	"github.com/anhgeeky/go-temporal-labs/notification/activities"
 	"github.com/anhgeeky/go-temporal-labs/notification/messages"
 	"go.temporal.io/sdk/workflow"

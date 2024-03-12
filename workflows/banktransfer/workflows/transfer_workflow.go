@@ -8,7 +8,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
-	cw "github.com/anhgeeky/go-temporal-labs/core/workflow"
+	cw "github.com/anhgeeky/go-temporal-labs/core/temporal"
 	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
 	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/google/uuid"
@@ -16,7 +16,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error) {
+func TransferWorkflow(ctx workflow.Context, state ...messages.Transfer) (err error) {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
 

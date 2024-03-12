@@ -7,11 +7,16 @@ import (
 	"sync"
 
 	tranPkg "github.com/anhgeeky/go-temporal-labs/banktransfer"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
+	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
 	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
+	"github.com/anhgeeky/go-temporal-labs/core/temporal"
 	notiPkg "github.com/anhgeeky/go-temporal-labs/notification"
 	notiWorkflow "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/spf13/viper"
@@ -60,12 +65,31 @@ func main() {
 	// ======================= BROKER =======================
 
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
+	workflowName := config.Workflows.TransferName
+
+	transferActivity := &activities.TransferActivity{
+		Broker: bk,
+		AccountService: account.AccountService{
+			Host: externalCfg.AccountHost,
+		},
+		MoneyTransferService: moneytransfer.MoneyTransferService{
+			Host: externalCfg.MoneyTransferHost,
+		},
+	}
 
 	wg := sync.WaitGroup{}
-	createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
-	createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
-	createAndRunWorker(c, taskQueue, config.VERSION_3_0, &wg, externalCfg, bk)
-	createAndRunWorker(c, taskQueue, config.VERSION_4_0, &wg, externalCfg, bk)
+	// createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
+	// createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
+	// createAndRunWorker(c, taskQueue, config.VERSION_3_0, &wg, externalCfg, bk)
+	// createAndRunWorker(c, taskQueue, config.VERSION_4_0, &wg, externalCfg, bk)
+	temporal.CreateNewWorker[messages.Transfer](
+		c, &wg, workflowName, taskQueue, config.VERSION_1_0,
+		// Register workflows
+		tranFlow.TransferWorkflow,
+		transferActivity.CheckBalance,
+		transferActivity.CreateOTP,
+		transferActivity.CreateTransaction,
+	)
 	wg.Wait()
 }
 
