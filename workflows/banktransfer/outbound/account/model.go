@@ -5,12 +5,12 @@ type CheckBalanceReq struct {
 }
 
 type CheckBalanceRes struct {
-	Balance float64 `json:"balance"`
-	// TODO: Check với Sơn response
+	Balance  float64 `json:"balance"`
+	Currency string  `json:"currency"`
 }
 
 type CreateTransactionReq struct {
-	// TODO: Check với Sơn response
+	CRefNum string `json:"cRefNum"`
 }
 
 type CreateTransactionRes struct {
@@ -18,9 +18,8 @@ type CreateTransactionRes struct {
 }
 
 type CreateOTPReq struct {
-	// TODO: Check với Sơn response
+	CRefNum string `json:"cRefNum"`
 }
 
 type CreateOTPRes struct {
-	// TODO: Check với Sơn response
 }

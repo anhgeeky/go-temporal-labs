@@ -2,19 +2,20 @@ package messages
 
 import "time"
 
-type Transfer struct {
-	Id                   string     `json:"id"`
-	WorkflowID           string     `json:"workflow_id"`
-	AccountOriginId      string     `json:"account_origin_id"`
-	AccountDestinationId string     `json:"account_destination_id"`
-	Amount               float64    `json:"amount"`
-	CreatedAt            *time.Time `json:"created_at"`
+type TransferMessage struct {
+	// Id          string     `json:"id"`
+	WorkflowID  string     `json:"worflowId"`
+	FromAccount string     `json:"fromAccount"`
+	ToAccount   string     `json:"toAccount"`
+	CRefNum     string     `json:"cRefNum"`
+	Amount      float64    `json:"amount"`
+	CreatedAt   *time.Time `json:"createdAt"`
 }
 
 type TransferReq struct {
-	AccountOriginId      string  `json:"account_origin_id"`
-	AccountDestinationId string  `json:"account_destination_id"`
-	Amount               float64 `json:"amount"`
+	FromAccount string  `json:"fromAccount"`
+	ToAccount   string  `json:"toAccount"`
+	Amount      float64 `json:"amount"`
 }
 
 type TransferResult struct {

@@ -36,7 +36,7 @@ func (a *TransferActivity) checkMsgHeaders(headers map[string]string, workflowId
 	return headers[workflowIDKey] == workflowId && headers[activityIDKey] == activityId
 }
 
-func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transfer) (*account.CheckBalanceRes, error) {
+func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.TransferMessage) (*account.CheckBalanceRes, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CheckBalance", msg)
 
@@ -83,7 +83,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	return &res.Data, nil
 }
 
-func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.Transfer) (*account.CreateOTPRes, error) {
+func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.TransferMessage) (*account.CreateOTPRes, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CreateOTP", msg)
 
@@ -130,7 +130,7 @@ func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.Transfer)
 	return &res.Data, nil
 }
 
-func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.Transfer) (*account.CreateTransactionRes, error) {
+func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.TransferMessage) (*account.CreateTransactionRes, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("TransferActivity: CreateTransaction", msg)
 

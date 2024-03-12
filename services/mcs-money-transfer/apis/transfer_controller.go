@@ -12,7 +12,6 @@ import (
 
 	"github.com/anhgeeky/go-temporal-labs/core/apis/responses"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
 
@@ -33,12 +32,12 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 
 	now := time.Now()
 
-	msg := messages.Transfer{
-		Id:                   uuid.NewString(),
-		WorkflowID:           workflowID,
-		AccountOriginId:      req.AccountOriginId,
-		AccountDestinationId: req.AccountDestinationId,
-		CreatedAt:            &now,
+	msg := messages.TransferMessage{
+		// Id:          uuid.NewString(),
+		WorkflowID:  workflowID,
+		FromAccount: req.FromAccount,
+		ToAccount:   req.ToAccount,
+		CreatedAt:   &now,
 	}
 
 	we, err := r.TemporalClient.ExecuteWorkflow(context.Background(), options, workflows.TransferWorkflow, msg)
@@ -58,10 +57,10 @@ func (r TransferController) CreateTransaction(c *fiber.Ctx) error {
 	var item messages.CreateTransactionReq
 	json.Unmarshal(c.Body(), &item)
 
-	update := messages.CreateTransactionSignal{Item: item}
+	update := messages.CreateTransactionSignal{} // TODO: Merge properties of CreateTransactionReq
 
 	// Trigger Signal Transfer Flow
-	err := r.TemporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
+	err := r.TemporalClient.SignalWorkflow(context.Background(), update.WorkflowID, "", "CREATE_TRANSACTION_CHANNEL", update)
 	if err != nil {
 		return responses.WriteError(c, err)
 	}

@@ -13,7 +13,6 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
-	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
 
@@ -26,12 +25,12 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 
 	now := time.Now()
 
-	msg := messages.Transfer{
-		Id:                   uuid.NewString(),
-		WorkflowID:           workflowID,
-		AccountOriginId:      "123", // Test Only
-		AccountDestinationId: "456", // Test Only
-		CreatedAt:            &now,
+	msg := messages.TransferMessage{
+		// Id:          uuid.NewString(),
+		WorkflowID:  workflowID,
+		FromAccount: "123",
+		ToAccount:   "456",
+		CreatedAt:   &now,
 	}
 
 	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg)
@@ -51,7 +50,7 @@ func apiSignalVerifyOtp(temporalClient client.Client, workflowID string) error {
 		Trace:  "trace",
 	}
 
-	update := messages.VerifiedOtpSignal{Item: item}
+	update := messages.VerifiedOtpSignal{}
 
 	// Trigger Signal
 	err := temporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "VERIFY_OTP_CHANNEL", update)

@@ -19,10 +19,10 @@ func (r VerifyController) VerifyOtp(c *fiber.Ctx) error {
 	var item messages.VerifyOtpReq
 	json.Unmarshal(c.Body(), &item)
 
-	update := messages.VerifiedOtpSignal{Item: item}
+	update := messages.VerifiedOtpSignal{} // TODO: Merge properties of CreateTransactionReq
 
 	// Trigger Signal Transfer Flow
-	err := r.TemporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "VERIFY_OTP_CHANNEL", update)
+	err := r.TemporalClient.SignalWorkflow(context.Background(), update.WorkflowID, "", "VERIFY_OTP_CHANNEL", update)
 	if err != nil {
 		return responses.WriteError(c, err)
 	}

@@ -1,5 +1,7 @@
 package messages
 
+import "time"
+
 type VerifyOtpReq struct {
 	FlowId string `json:"workflow_id"` // WorkflowID
 	Token  string `json:"token"`
@@ -8,14 +10,29 @@ type VerifyOtpReq struct {
 }
 
 type VerifiedOtpSignal struct {
-	Item VerifyOtpReq
+	WorkflowID  string     `json:"worflowId"`
+	FromAccount string     `json:"fromAccount"`
+	ToAccount   string     `json:"toAccount"`
+	CRefNum     string     `json:"cRefNum"`
+	Amount      float64    `json:"amount"`
+	CreatedAt   *time.Time `json:"createdAt"`
+	TransferAt  *time.Time `json:"transferAt"`
+	TransNo     string     `json:"transNo"`
+	Status      int        `json:"status"`
 }
 
 type CreateTransactionReq struct {
-	FlowId string `json:"workflow_id"` // WorkflowID
-	// TODO: Sơn bổ sung Data Response giúp anh -> Gửi email ra
+	CRefNum string `json:"cRefNum"`
 }
 
 type CreateTransactionSignal struct {
-	Item CreateTransactionReq
+	WorkflowID  string     `json:"worflowId"`
+	FromAccount string     `json:"fromAccount"`
+	ToAccount   string     `json:"toAccount"`
+	CRefNum     string     `json:"cRefNum"`
+	Amount      float64    `json:"amount"`
+	CreatedAt   *time.Time `json:"createdAt"`
+	TransferAt  *time.Time `json:"transferAt"`
+	TransNo     string     `json:"transNo"`
+	Status      int        `json:"status"`
 }
