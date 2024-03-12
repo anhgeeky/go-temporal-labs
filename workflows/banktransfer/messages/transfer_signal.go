@@ -10,7 +10,7 @@ type VerifyOtpReq struct {
 }
 
 type VerifiedOtpSignal struct {
-	WorkflowID  string     `json:"worflowId"`
+	WorkflowID  string     `json:"workflowId"`
 	FromAccount string     `json:"fromAccount"`
 	ToAccount   string     `json:"toAccount"`
 	CRefNum     string     `json:"cRefNum"`
@@ -26,7 +26,7 @@ type CreateTransactionReq struct {
 }
 
 type CreateTransactionSignal struct {
-	WorkflowID  string     `json:"worflowId"`
+	WorkflowID  string     `json:"workflowId"`
 	FromAccount string     `json:"fromAccount"`
 	ToAccount   string     `json:"toAccount"`
 	CRefNum     string     `json:"cRefNum"`

@@ -78,7 +78,7 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	}
 	if res == nil || res.Result.Status != 200 {
 		// Kết quả Status <> 200 -> Return failure activity
-		return nil, errors.New("Error: Invalid data result from Kafka")
+		return nil, errors.New("Error: Invalid data result from Kafka. Trace: " + res.Result.Message)
 	}
 	// }
 
@@ -131,7 +131,7 @@ func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.TransferM
 	}
 	if res == nil || res.Result.Status != 200 {
 		// Kết quả Status <> 200 -> Return failure activity
-		return nil, errors.New("Error: Invalid data result from Kafka")
+		return nil, errors.New("Error: Invalid data result from Kafka. Trace: " + res.Result.Message)
 	}
 	// }
 
@@ -182,7 +182,7 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 	}
 	if res == nil || res.Result.Status != 200 {
 		// Kết quả Status <> 200 -> Return failure activity
-		return nil, errors.New("Error: Invalid data result from Kafka")
+		return nil, errors.New("Error: Invalid data result from Kafka. Trace: " + res.Result.Message)
 	}
 	// }
 
