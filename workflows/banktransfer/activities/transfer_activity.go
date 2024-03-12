@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
@@ -11,6 +12,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
+	"github.com/google/uuid"
 	"go.temporal.io/sdk/activity"
 )
 
@@ -44,7 +46,9 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	replyTopic := config.Messages.CHECK_BALANCE_REPLY_TOPIC
 	action := config.Messages.CHECK_BALANCE_ACTION
 
-	req := account.CheckBalanceReq{}
+	req := account.CheckBalanceReq{
+		Account: "0347885267", // TODO: Test only
+	}
 	reqBody, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -67,16 +71,16 @@ func (a *TransferActivity) CheckBalance(ctx context.Context, msg messages.Transf
 	var res *broker.Response[account.CheckBalanceRes] // TODO: check lại với Sơn
 
 	// Kiểm tra theo điều kiện phù hợp theo Headers -> TODO: Xem lại có sài theo Headers không?
-	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
-		err := json.Unmarshal(msgRes.Body, &res)
-		if err != nil {
-			return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
-		}
-		if res == nil || res.Result.Status != 200 {
-			// Kết quả Status <> 200 -> Return failure activity
-			return nil, errors.New("Error: Invalid data result from Kafka")
-		}
+	// if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
+	err = json.Unmarshal(msgRes.Body, &res)
+	if err != nil {
+		return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
 	}
+	if res == nil || res.Result.Status != 200 {
+		// Kết quả Status <> 200 -> Return failure activity
+		return nil, errors.New("Error: Invalid data result from Kafka")
+	}
+	// }
 
 	logger.Info("TransferActivity: CheckBalance done", res)
 
@@ -91,7 +95,13 @@ func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.TransferM
 	replyTopic := config.Messages.CREATE_OTP_REPLY_TOPIC
 	action := config.Messages.CREATE_OTP_ACTION
 
-	req := account.CheckBalanceReq{}
+	refNum := uuid.NewString()
+
+	fmt.Println("TRACE: ", refNum)
+
+	req := account.CreateOTPReq{
+		CRefNum: refNum,
+	}
 	reqBody, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -114,16 +124,16 @@ func (a *TransferActivity) CreateOTP(ctx context.Context, msg messages.TransferM
 	var res *broker.Response[account.CreateOTPRes] // TODO: check lại với Sơn
 
 	// Kiểm tra theo điều kiện phù hợp theo Headers -> TODO: Xem lại có sài theo Headers không?
-	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
-		err := json.Unmarshal(msgRes.Body, &res)
-		if err != nil {
-			return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
-		}
-		if res == nil || res.Result.Status != 200 {
-			// Kết quả Status <> 200 -> Return failure activity
-			return nil, errors.New("Error: Invalid data result from Kafka")
-		}
+	// if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
+	err = json.Unmarshal(msgRes.Body, &res)
+	if err != nil {
+		return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
 	}
+	if res == nil || res.Result.Status != 200 {
+		// Kết quả Status <> 200 -> Return failure activity
+		return nil, errors.New("Error: Invalid data result from Kafka")
+	}
+	// }
 
 	logger.Info("TransferActivity: CreateOTP done", res)
 
@@ -137,8 +147,12 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 	requestTopic := config.Messages.CREATE_TRANSACTION_REQUEST_TOPIC
 	replyTopic := config.Messages.CREATE_TRANSACTION_REPLY_TOPIC
 	action := config.Messages.CREATE_TRANSACTION_ACTION
+	refNum := uuid.NewString()
 
-	req := account.CreateTransactionReq{}
+	fmt.Println("TRACE: ", refNum)
+	req := account.CreateTransactionReq{
+		CRefNum: refNum,
+	}
 	reqBody, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -161,16 +175,16 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 	var res *broker.Response[account.CreateTransactionRes] // TODO: check lại với Sơn
 
 	// Kiểm tra theo điều kiện phù hợp theo Headers -> TODO: Xem lại có sài theo Headers không?
-	if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
-		err := json.Unmarshal(msgRes.Body, &res)
-		if err != nil {
-			return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
-		}
-		if res == nil || res.Result.Status != 200 {
-			// Kết quả Status <> 200 -> Return failure activity
-			return nil, errors.New("Error: Invalid data result from Kafka")
-		}
+	// if a.checkMsgHeaders(msgRes.Headers, msg.WorkflowID, action) && len(msgRes.Body) > 0 {
+	err = json.Unmarshal(msgRes.Body, &res)
+	if err != nil {
+		return nil, err // Đúng message + Payload res bị sai struct -> Fail Activity
 	}
+	if res == nil || res.Result.Status != 200 {
+		// Kết quả Status <> 200 -> Return failure activity
+		return nil, errors.New("Error: Invalid data result from Kafka")
+	}
+	// }
 
 	logger.Info("TransferActivity: CreateTransaction done", res)
 

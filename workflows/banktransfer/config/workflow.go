@@ -3,13 +3,13 @@ package config
 var TaskQueues = struct {
 	TRANSFER_QUEUE string
 }{
-	TRANSFER_QUEUE: "TRANSFER_QUEUE",
+	TRANSFER_QUEUE: "TransferTaskQueue",
 }
 
 var Workflows = struct {
-	TRANSFER string
+	TransferWorkflow string
 }{
-	TRANSFER: "TRANSFER",
+	TransferWorkflow: "TransferWorkflow",
 }
 
 var Messages = struct {

@@ -1,7 +1,7 @@
 package account
 
 type CheckBalanceReq struct {
-	// TODO: Check với Sơn response
+	Account string `json:"account"`
 }
 
 type CheckBalanceRes struct {
