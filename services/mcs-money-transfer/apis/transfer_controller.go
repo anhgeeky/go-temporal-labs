@@ -37,7 +37,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 		WorkflowID:  workflowID,
 		FromAccount: req.FromAccount,
 		ToAccount:   req.ToAccount,
-		CreatedAt:   &now,
+		CreatedAt:   now.String(),
 	}
 
 	we, err := r.TemporalClient.ExecuteWorkflow(context.Background(), options, workflows.TransferWorkflow, msg)
