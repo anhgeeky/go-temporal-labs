@@ -80,3 +80,5 @@ func (w *Worker) Close(_ context.Context) error {
 	w.w.Stop()
 	return nil
 }
+
+func (w *Worker) New()

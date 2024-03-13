@@ -64,6 +64,7 @@ type PlatformConfig struct {
 type config struct {
 	name                       string
 	taskQueue                  string
+	buildID                    string
 	backgroundAcitivityContext context.Context
 	interceptors               []interceptor.WorkerInterceptor
 	onFatalError               func(error)
@@ -87,6 +88,12 @@ func WithName(name string) Option {
 func WithTaskQueue(taskQueue string) Option {
 	return func(c *config) {
 		c.taskQueue = taskQueue
+	}
+}
+
+func WithBuildID(buildID string) Option {
+	return func(c *config) {
+		c.buildID = buildID
 	}
 }
 

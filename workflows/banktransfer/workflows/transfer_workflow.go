@@ -16,7 +16,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func TransferWorkflow(ctx workflow.Context, state ...messages.Transfer) (err error) {
+func TransferWorkflow(ctx workflow.Context, state messages.Transfer) (err error) {
 	// https://docs.temporal.io/docs/concepts/workflows/#workflows-have-options
 	logger := workflow.GetLogger(ctx)
 
