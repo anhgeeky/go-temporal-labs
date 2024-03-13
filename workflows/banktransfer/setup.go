@@ -18,7 +18,7 @@ func TransferWorkflowRegisterV1(w worker.Registry, transferActivity activities.T
 
 // Transfer workflow V2
 func TransferWorkflowRegisterV2(w worker.Registry, transferActivity activities.TransferActivity) {
-	w.RegisterWorkflowWithOptions(workflows.TransferWorkflow, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
+	w.RegisterWorkflowWithOptions(workflows.TransferWorkflowV2, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
 	w.RegisterActivity(transferActivity.CheckBalance)
 	w.RegisterActivity(transferActivity.CreateOTP)
 	w.RegisterActivity(transferActivity.CreateTransaction)
@@ -27,7 +27,7 @@ func TransferWorkflowRegisterV2(w worker.Registry, transferActivity activities.T
 
 // Transfer workflow V3
 func TransferWorkflowRegisterV3(w worker.Registry, transferActivity activities.TransferActivity) {
-	w.RegisterWorkflowWithOptions(workflows.TransferWorkflow, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
+	w.RegisterWorkflowWithOptions(workflows.TransferWorkflowV3, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
 	w.RegisterActivity(transferActivity.CheckBalance)
 	w.RegisterActivity(transferActivity.CreateOTP)
 	w.RegisterActivity(transferActivity.CreateTransaction)
@@ -36,7 +36,7 @@ func TransferWorkflowRegisterV3(w worker.Registry, transferActivity activities.T
 
 // Transfer workflow V4
 func TransferWorkflowRegisterV4(w worker.Registry, transferActivity activities.TransferActivity) {
-	w.RegisterWorkflowWithOptions(workflows.TransferWorkflow, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
+	w.RegisterWorkflowWithOptions(workflows.TransferWorkflowV4, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
 	w.RegisterActivity(transferActivity.CheckBalance)
 	w.RegisterActivity(transferActivity.CreateOTP)
 	w.RegisterActivity(transferActivity.CreateTransaction)

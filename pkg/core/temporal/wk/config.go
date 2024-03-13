@@ -1,36 +1,11 @@
 package wk
 
 import (
-	"bytes"
 	"context"
-	"errors"
-	"fmt"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/interceptor"
-	"go.temporal.io/sdk/worker"
 )
-
-type WorkflowPanicPolicy worker.WorkflowPanicPolicy
-
-var (
-	workflowPanicPolicyBlock = []byte("block")
-	workflowPanicPolicyFail  = []byte("fail")
-
-	ErrUnknownWorkflowPanicPolicy = errors.New("unknown workflow panic policy")
-)
-
-func (w *WorkflowPanicPolicy) UnmarshalText(text []byte) error {
-	switch {
-	case bytes.Equal(text, workflowPanicPolicyBlock):
-		*w = WorkflowPanicPolicy(worker.BlockWorkflow)
-	case bytes.Equal(text, workflowPanicPolicyFail):
-		*w = WorkflowPanicPolicy(worker.FailWorkflow)
-	default:
-		return fmt.Errorf("%w: %s", ErrUnknownWorkflowPanicPolicy, text)
-	}
-	return nil
-}
 
 type config struct {
 	name                       string

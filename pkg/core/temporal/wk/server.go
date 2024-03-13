@@ -15,8 +15,9 @@ var (
 
 // Worker is a services.Server that is able to initialize and manage the temporal Worker together with the
 type Worker struct {
-	name string
-	w    worker.Worker
+	name    string
+	buildID string
+	w       worker.Worker
 }
 
 // NewWorker implements
@@ -37,8 +38,9 @@ func NewWorker(registerer Registerer, options ...Option) (Worker, error) {
 	})
 	registerer.Register(w)
 	return Worker{
-		name: opts.name,
-		w:    w,
+		name:    opts.name,
+		buildID: opts.buildID,
+		w:       w,
 	}, nil
 }
 
@@ -63,9 +65,10 @@ func (w *Worker) RunWithGroup(wg *sync.WaitGroup) error {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
+		log.Printf("%s worker buildID started: %v", w.name, w.buildID)
 		err := w.w.Run(worker.InterruptCh())
 		if err != nil {
-			log.Fatalf("Unable to start %s worker: %v", w.name, err)
+			log.Fatalf("Unable to start %s worker, buildID %s: %v", w.name, w.buildID, err)
 		}
 	}()
 
