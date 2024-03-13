@@ -14,14 +14,13 @@ var (
 )
 
 // Worker is a services.Server that is able to initialize and manage the temporal Worker together with the
-// github.com/jamillosantos/application.
 type Worker struct {
 	name string
 	w    worker.Worker
 }
 
 // NewWorker implements
-func NewWorker(registerer Registerer, cfg PlatformConfig, options ...Option) (Worker, error) {
+func NewWorker(registerer Registerer, options ...Option) (Worker, error) {
 	opts := defaultOpts()
 	for _, opt := range options {
 		opt(&opts)
@@ -30,34 +29,11 @@ func NewWorker(registerer Registerer, cfg PlatformConfig, options ...Option) (Wo
 		return Worker{}, ErrClientRequired
 	}
 	w := worker.New(opts.client, opts.taskQueue, worker.Options{
-		MaxConcurrentActivityExecutionSize:      cfg.MaxConcurrentActivityExecutionSize,
-		WorkerActivitiesPerSecond:               cfg.WorkerActivitiesPerSecond,
-		MaxConcurrentLocalActivityExecutionSize: cfg.MaxConcurrentLocalActivityExecutionSize,
-		WorkerLocalActivitiesPerSecond:          cfg.WorkerLocalActivitiesPerSecond,
-		TaskQueueActivitiesPerSecond:            cfg.TaskQueueActivitiesPerSecond,
-		MaxConcurrentActivityTaskPollers:        cfg.MaxConcurrentActivityTaskPollers,
-		MaxConcurrentWorkflowTaskExecutionSize:  cfg.MaxConcurrentWorkflowTaskExecutionSize,
-		MaxConcurrentWorkflowTaskPollers:        cfg.MaxConcurrentWorkflowTaskPollers,
-		EnableLoggingInReplay:                   cfg.EnableLoggingInReplay,
-		StickyScheduleToStartTimeout:            cfg.StickyScheduleToStartTimeout,
-		BackgroundActivityContext:               opts.backgroundAcitivityContext,
-		WorkflowPanicPolicy:                     worker.WorkflowPanicPolicy(cfg.WorkflowPanicPolicy),
-		WorkerStopTimeout:                       cfg.WorkerStopTimeout,
-		EnableSessionWorker:                     cfg.EnableSessionWorker,
-		MaxConcurrentSessionExecutionSize:       cfg.MaxConcurrentSessionExecutionSize,
-		DisableWorkflowWorker:                   cfg.DisableWorkflowWorker,
-		LocalActivityWorkerOnly:                 cfg.LocalActivityWorkerOnly,
-		Identity:                                cfg.Identity,
-		DeadlockDetectionTimeout:                cfg.DeadlockDetectionTimeout,
-		MaxHeartbeatThrottleInterval:            cfg.MaxHeartbeatThrottleInterval,
-		DefaultHeartbeatThrottleInterval:        cfg.DefaultHeartbeatThrottleInterval,
-		Interceptors:                            opts.interceptors,
-		OnFatalError:                            opts.onFatalError,
-		DisableEagerActivities:                  cfg.DisableEagerActivities,
-		MaxConcurrentEagerActivityExecutionSize: cfg.MaxConcurrentEagerActivityExecutionSize,
-		DisableRegistrationAliasing:             cfg.DisableRegistrationAliasing,
-		BuildID:                                 cfg.BuildID,
-		UseBuildIDForVersioning:                 cfg.UseBuildIDForVersioning,
+		BackgroundActivityContext: opts.backgroundAcitivityContext,
+		Interceptors:              opts.interceptors,
+		OnFatalError:              opts.onFatalError,
+		BuildID:                   opts.buildID,
+		UseBuildIDForVersioning:   opts.useBuildIDForVersioning,
 	})
 	registerer.Register(w)
 	return Worker{

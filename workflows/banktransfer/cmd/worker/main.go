@@ -58,14 +58,14 @@ func main() {
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
 	wg := sync.WaitGroup{}
 	// ======================= WORKER 1 =======================
-	w1, _ := wk.NewWorker(workers.TransferWorkerV1{Broker: bk, Config: *externalCfg}, wk.PlatformConfig{},
+	w1, _ := wk.NewWorker(workers.TransferWorkerV1{Broker: bk, Config: *externalCfg},
 		wk.WithClient(c),
 		wk.WithTaskQueue(taskQueue),
 		wk.WithBuildID(config.VERSION_1_0),
 	)
 	w1.RunWithGroup(&wg)
 	// ======================= WORKER 2 =======================
-	w2, _ := wk.NewWorker(workers.TransferWorkerV2{Broker: bk, Config: *externalCfg}, wk.PlatformConfig{},
+	w2, _ := wk.NewWorker(workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},
 		wk.WithClient(c),
 		wk.WithTaskQueue(taskQueue),
 		wk.WithBuildID(config.VERSION_2_0),

@@ -230,7 +230,9 @@ func main() {
 
 	// TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 
+	time.Sleep(3 * time.Second)
 	temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
+	time.Sleep(3 * time.Second)
 
 	// 1. Tạo lệnh chuyển tiền
 	workflowID, err := apiCreateTransfer(temporalClient)

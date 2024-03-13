@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/interceptor"
@@ -31,34 +30,6 @@ func (w *WorkflowPanicPolicy) UnmarshalText(text []byte) error {
 		return fmt.Errorf("%w: %s", ErrUnknownWorkflowPanicPolicy, text)
 	}
 	return nil
-}
-
-type PlatformConfig struct {
-	MaxConcurrentActivityExecutionSize      int                 `config:"max_concurrent_activity_execution_size"`
-	WorkerActivitiesPerSecond               float64             `config:"worker_activities_per_second"`
-	MaxConcurrentLocalActivityExecutionSize int                 `config:"max_concurrent_local_activity_execution_size"`
-	WorkerLocalActivitiesPerSecond          float64             `config:"worker_local_activities_per_second"`
-	TaskQueueActivitiesPerSecond            float64             `config:"task_queue_activities_per_second"`
-	MaxConcurrentActivityTaskPollers        int                 `config:"max_concurrent_activity_task_pollers"`
-	MaxConcurrentWorkflowTaskExecutionSize  int                 `config:"max_concurrent_workflow_task_execution_size"`
-	MaxConcurrentWorkflowTaskPollers        int                 `config:"max_concurrent_workflow_task_pollers"`
-	EnableLoggingInReplay                   bool                `config:"enable_logging_in_replay"`
-	StickyScheduleToStartTimeout            time.Duration       `config:"sticky_schedule_to_start_timeout"`
-	WorkflowPanicPolicy                     WorkflowPanicPolicy `config:"workflow_panic_policy"`
-	WorkerStopTimeout                       time.Duration       `config:"worker_stop_timeout"`
-	EnableSessionWorker                     bool                `config:"enable_session_worker"`
-	MaxConcurrentSessionExecutionSize       int                 `config:"max_concurrent_session_execution_size"`
-	DisableWorkflowWorker                   bool                `config:"disable_workflow_worker"`
-	LocalActivityWorkerOnly                 bool                `config:"local_activity_worker_only"`
-	Identity                                string              `config:"identity"`
-	DeadlockDetectionTimeout                time.Duration       `config:"deadlock_detection_timeout"`
-	MaxHeartbeatThrottleInterval            time.Duration       `config:"max_heartbeat_throttle_interval"`
-	DefaultHeartbeatThrottleInterval        time.Duration       `config:"default_heartbeat_throttle_interval"`
-	DisableEagerActivities                  bool                `config:"disable_eager_activities"`
-	MaxConcurrentEagerActivityExecutionSize int                 `config:"max_concurrent_eager_activity_execution_size"`
-	DisableRegistrationAliasing             bool                `config:"disable_registration_aliasing"`
-	BuildID                                 string              `config:"build_id"`
-	UseBuildIDForVersioning                 bool                `config:"use_build_id_for_versioning"`
 }
 
 type config struct {
