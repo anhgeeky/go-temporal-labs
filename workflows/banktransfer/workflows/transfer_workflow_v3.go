@@ -76,9 +76,9 @@ func TransferWorkflowV3(ctx workflow.Context, state messages.Transfer) (err erro
 			}
 
 			// TODO: Test only
-			err = workflow.ExecuteActivity(ctx, a.NewActivityForTest1, state).Get(ctx, nil)
+			err = workflow.ExecuteActivity(ctx, a.NewActivityForV3, state).Get(ctx, nil)
 			if err != nil {
-				logger.Error("Error execute activity NewActivityForTest1: %v", err)
+				logger.Error("Error execute activity NewActivityForV3: %v", err)
 				return
 			}
 			// Compensation

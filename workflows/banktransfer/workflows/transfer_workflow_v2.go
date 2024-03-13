@@ -74,6 +74,13 @@ func TransferWorkflowV2(ctx workflow.Context, state messages.Transfer) (err erro
 				logger.Error("Error execute activity CreateTransaction: %v", err)
 				return
 			}
+
+			// TODO: Test only
+			err = workflow.ExecuteActivity(ctx, a.NewActivityForV2, state).Get(ctx, nil)
+			if err != nil {
+				logger.Error("Error execute activity NewActivityForV2: %v", err)
+				return
+			}
 			// Compensation
 			// defer func() {
 			// 	if err != nil {

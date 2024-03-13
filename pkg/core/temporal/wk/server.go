@@ -3,6 +3,8 @@ package wk
 import (
 	"context"
 	"errors"
+	"log"
+	"sync"
 
 	"go.temporal.io/sdk/worker"
 )
@@ -81,4 +83,15 @@ func (w *Worker) Close(_ context.Context) error {
 	return nil
 }
 
-func (w *Worker) New()
+func (w *Worker) RunWithGroup(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := w.w.Run(worker.InterruptCh())
+		if err != nil {
+			log.Fatalf("Unable to start %s worker: %v", w.name, err)
+		}
+	}()
+
+	return nil
+}

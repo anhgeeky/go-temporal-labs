@@ -65,6 +65,7 @@ type config struct {
 	name                       string
 	taskQueue                  string
 	buildID                    string
+	useBuildIDForVersioning    bool
 	backgroundAcitivityContext context.Context
 	interceptors               []interceptor.WorkerInterceptor
 	onFatalError               func(error)
@@ -94,6 +95,7 @@ func WithTaskQueue(taskQueue string) Option {
 func WithBuildID(buildID string) Option {
 	return func(c *config) {
 		c.buildID = buildID
+		c.useBuildIDForVersioning = true
 	}
 }
 

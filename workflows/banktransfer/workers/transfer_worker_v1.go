@@ -1,14 +1,14 @@
 package workers
 
 import (
+	"github.com/anhgeeky/go-temporal-labs/banktransfer"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/activities"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/account"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/outbound/moneytransfer"
-	tranFlow "github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
+	"github.com/anhgeeky/go-temporal-labs/notification"
 	"go.temporal.io/sdk/worker"
-	"go.temporal.io/sdk/workflow"
 )
 
 type TransferWorkerV1 struct {
@@ -27,8 +27,6 @@ func (r TransferWorkerV1) Register(register worker.Registry) {
 		},
 	}
 
-	register.RegisterWorkflowWithOptions(tranFlow.TransferWorkflow, workflow.RegisterOptions{Name: config.Workflows.TransferWorkflow})
-	register.RegisterActivity(transferActivity.CheckBalance)
-	register.RegisterActivity(transferActivity.CreateOTP)
-	register.RegisterActivity(transferActivity.CreateTransaction)
+	banktransfer.TransferWorkflowRegisterV1(register, *transferActivity)
+	notification.NotificationWorkflowRegister(register)
 }

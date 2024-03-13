@@ -177,16 +177,23 @@ func (a *TransferActivity) CreateTransaction(ctx context.Context, msg messages.T
 	return &res.Data, nil
 }
 
-func (a *TransferActivity) NewActivityForTest1(ctx context.Context, msg messages.Transfer) error {
+func (a *TransferActivity) NewActivityForV2(ctx context.Context, msg messages.Transfer) error {
 	logger := activity.GetLogger(ctx)
-	logger.Info("TransferActivity: NewActivityForTest1", msg)
-	logger.Info("TransferActivity: NewActivityForTest1 done")
+	logger.Info("TransferActivity: NewActivityForV2", msg)
+	logger.Info("TransferActivity: NewActivityForV2 done")
 	return nil
 }
 
-func (a *TransferActivity) NewActivityForTest22(ctx context.Context, msg messages.Transfer) error {
+func (a *TransferActivity) NewActivityForV3(ctx context.Context, msg messages.Transfer) error {
 	logger := activity.GetLogger(ctx)
-	logger.Info("TransferActivity: NewActivityForTest22", msg)
-	logger.Info("TransferActivity: NewActivityForTest22 done")
+	logger.Info("TransferActivity: NewActivityForV3", msg)
+	logger.Info("TransferActivity: NewActivityForV3 done")
+	return nil
+}
+
+func (a *TransferActivity) NewActivityForV4(ctx context.Context, msg messages.Transfer) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("TransferActivity: NewActivityForV4", msg)
+	logger.Info("TransferActivity: NewActivityForV4 done")
 	return nil
 }
