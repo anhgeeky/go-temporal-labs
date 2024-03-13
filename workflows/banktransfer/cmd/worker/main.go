@@ -17,6 +17,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
 	"github.com/anhgeeky/go-temporal-labs/core/configs"
 	"github.com/anhgeeky/go-temporal-labs/core/temporal"
+	"github.com/anhgeeky/go-temporal-labs/core/temporal/wk"
 	notiPkg "github.com/anhgeeky/go-temporal-labs/notification"
 	notiWorkflow "github.com/anhgeeky/go-temporal-labs/notification/workflows"
 	"github.com/spf13/viper"
@@ -82,7 +83,7 @@ func main() {
 	// createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
 	// createAndRunWorker(c, taskQueue, config.VERSION_3_0, &wg, externalCfg, bk)
 	// createAndRunWorker(c, taskQueue, config.VERSION_4_0, &wg, externalCfg, bk)
-	temporal.CreateNewWorker[messages.Transfer](
+	wk.CreateNewWorker[messages.Transfer](
 		c, &wg, workflowName, taskQueue, config.VERSION_1_0,
 		// Register workflows
 		tranFlow.TransferWorkflow,

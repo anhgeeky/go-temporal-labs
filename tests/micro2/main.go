@@ -13,6 +13,7 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
+	"github.com/anhgeeky/go-temporal-labs/core/temporal"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
@@ -229,7 +230,7 @@ func main() {
 
 	// TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 
-	workflow.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
+	temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
 
 	// 1. Tạo lệnh chuyển tiền
 	workflowID, err := apiCreateTransfer(temporalClient)
