@@ -14,19 +14,16 @@ var (
 	ErrClientRequired = errors.New("client required: use WithClient to set the client")
 )
 
-// Registerer is the entity that registers workflows and activities.
 type Registerer interface {
 	Register(worker.Registry)
 }
 
-// Worker is a services.Server that is able to initialize and manage the temporal Worker together with the
 type Worker struct {
 	name    string
 	buildID string
 	w       worker.Worker
 }
 
-// NewWorker implements
 func NewWorker(registerer Registerer, options ...Option) (Worker, error) {
 	opts := defaultOpts()
 	for _, opt := range options {
@@ -50,7 +47,6 @@ func NewWorker(registerer Registerer, options ...Option) (Worker, error) {
 	}, nil
 }
 
-// RunAsNewWorkerVersioning implements
 func RunAsNewWorkerVersioning(c client.Client, wg *sync.WaitGroup, name, taskQueue, buildID string, registerer Registerer, options ...Option) (Worker, error) {
 	opts := defaultOpts()
 	for _, opt := range options {

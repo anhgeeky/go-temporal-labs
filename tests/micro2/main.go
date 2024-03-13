@@ -34,7 +34,7 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 		CreatedAt:            &now,
 	}
 
-	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg) // TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
+	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg)
 	if err != nil {
 		return "", err
 	}
@@ -221,31 +221,6 @@ func main() {
 		log.Fatalln("unable to create Temporal client", err)
 	}
 	log.Println("Temporal client connected")
-
-	// taskQueue := config.TaskQueues.TRANSFER_QUEUE
-	// // // beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
-	// beforeVersion := config.VERSION_1_0 // Version trước đó -> Vẫn còn tương thích
-	// latestVersion := config.VERSION_2_0 // Version mới nhất
-
-	// TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
-
-	// err = temporalClient.UpdateWorkerBuildIdCompatibility(ctx, &client.UpdateWorkerBuildIdCompatibilityOptions{
-	// 	TaskQueue: taskQueue,
-	// 	Operation: &client.BuildIDOpAddNewIDInNewDefaultSet{
-	// 		BuildID: config.VERSION_1_0,
-	// 	},
-	// })
-	// if err != nil {
-	// 	log.Fatalln("Unable to update worker build id compatibility", err)
-	// }
-
-	// temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
-
-	// time.Sleep(5 * time.Second)
-
-	// time.Sleep(3 * time.Second)
-	// temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
-	// time.Sleep(3 * time.Second)
 
 	// 1. Tạo lệnh chuyển tiền
 	workflowID, err := apiCreateTransfer(temporalClient)

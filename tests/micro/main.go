@@ -145,15 +145,6 @@ func main() {
 	errChan := make(chan error)
 	bk := kafka.ConnectBrokerKafka("127.0.0.1:9092")
 
-	// temporalClient, err := client.NewLazyClient(client.Options{
-	// 	HostPort:  "localhost:7233",
-	// 	Namespace: "staging",
-	// })
-	// if err != nil {
-	// 	log.Fatalln("unable to create Temporal client", err)
-	// }
-	// log.Println("Temporal client connected")
-
 	workflowID := "BANK_TRANSFER-1710141239"
 
 	// 1. Nhận message check balance từ Temporal
