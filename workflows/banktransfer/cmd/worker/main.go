@@ -59,12 +59,12 @@ func main() {
 
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
 	wg := sync.WaitGroup{}
-	// // ======================= WORKER 1 =======================
+	// ======================= WORKER 1 =======================
 	wk.RunAsNewWorkerVersioning(
 		c, &wg, workerName, taskQueue, config.VERSION_1_0,
 		workers.TransferWorkerV1{Broker: bk, Config: *externalCfg},
 	)
-	// // ======================= WORKER 2 =======================
+	// ======================= WORKER 2 =======================
 	wk.RunAsNewWorkerVersioning(
 		c, &wg, workerName, taskQueue, config.VERSION_2_0,
 		workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},

@@ -8,7 +8,6 @@ import (
 
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/config"
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/messages"
-	"github.com/anhgeeky/go-temporal-labs/banktransfer/workflows"
 
 	"github.com/anhgeeky/go-temporal-labs/core/apis/responses"
 	"github.com/gofiber/fiber/v2"
@@ -41,7 +40,7 @@ func (r TransferController) CreateTransfer(c *fiber.Ctx) error {
 		CreatedAt:            &now,
 	}
 
-	we, err := r.TemporalClient.ExecuteWorkflow(context.Background(), options, workflows.TransferWorkflow, msg)
+	we, err := r.TemporalClient.ExecuteWorkflow(context.Background(), options, config.Workflows.TransferWorkflow, msg)
 	if err != nil {
 		return responses.WriteError(c, err)
 	}
@@ -61,7 +60,7 @@ func (r TransferController) CreateTransaction(c *fiber.Ctx) error {
 	update := messages.CreateTransactionSignal{Item: item}
 
 	// Trigger Signal Transfer Flow
-	err := r.TemporalClient.SignalWorkflow(context.Background(), item.FlowId, "", "CREATE_TRANSACTION_CHANNEL", update)
+	err := r.TemporalClient.SignalWorkflow(context.Background(), item.FlowId, "", config.SignalChannels.CREATE_TRANSACTION_CHANNEL, update)
 	if err != nil {
 		return responses.WriteError(c, err)
 	}

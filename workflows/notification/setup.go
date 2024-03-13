@@ -8,7 +8,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func NotificationWorkflowRegister(w worker.Registry) {
+func RegisterNotificationWorkflow(w worker.Registry) {
 	notificationActivity := &activities.NotificationActivity{}
 	w.RegisterWorkflowWithOptions(workflows.NotificationWorkflow, workflow.RegisterOptions{Name: config.Workflows.NotificationName})
 	w.RegisterActivity(notificationActivity.PushEmail)

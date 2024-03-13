@@ -27,6 +27,6 @@ func (r TransferWorkerV1) Register(register worker.Registry) {
 		},
 	}
 
-	banktransfer.TransferWorkflowRegisterV1(register, *transferActivity)
-	notification.NotificationWorkflowRegister(register)
+	banktransfer.RegisterTransferWorkflowV1(register, *transferActivity)
+	notification.RegisterNotificationWorkflow(register)
 }
