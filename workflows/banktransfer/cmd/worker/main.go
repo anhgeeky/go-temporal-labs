@@ -75,5 +75,7 @@ func main() {
 		wk.WithBuildID(config.VERSION_2_0),
 	)
 	w2.RunWithGroup(&wg)
+	// Auto update latest worker BuildIds
+	wk.UpdateLatestWorkerBuildIDs(c, &wg, config.TaskQueues.TRANSFER_QUEUE, config.VERSION_1_0, config.VERSION_2_0)
 	wg.Wait()
 }

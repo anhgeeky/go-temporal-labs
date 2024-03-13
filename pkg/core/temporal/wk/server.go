@@ -13,6 +13,11 @@ var (
 	ErrClientRequired = errors.New("client required: use WithClient to set the client")
 )
 
+// Registerer is the entity that registers workflows and activities.
+type Registerer interface {
+	Register(worker.Registry)
+}
+
 // Worker is a services.Server that is able to initialize and manage the temporal Worker together with the
 type Worker struct {
 	name    string

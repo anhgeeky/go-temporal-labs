@@ -13,7 +13,6 @@ import (
 	"github.com/anhgeeky/go-temporal-labs/banktransfer/utils"
 	"github.com/anhgeeky/go-temporal-labs/core/broker"
 	"github.com/anhgeeky/go-temporal-labs/core/broker/kafka"
-	"github.com/anhgeeky/go-temporal-labs/core/temporal"
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 )
@@ -223,10 +222,10 @@ func main() {
 	}
 	log.Println("Temporal client connected")
 
-	taskQueue := config.TaskQueues.TRANSFER_QUEUE
-	// // beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
-	beforeVersion := config.VERSION_1_0 // Version trước đó -> Vẫn còn tương thích
-	latestVersion := config.VERSION_2_0 // Version mới nhất
+	// taskQueue := config.TaskQueues.TRANSFER_QUEUE
+	// // // beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
+	// beforeVersion := config.VERSION_1_0 // Version trước đó -> Vẫn còn tương thích
+	// latestVersion := config.VERSION_2_0 // Version mới nhất
 
 	// TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 
@@ -240,9 +239,9 @@ func main() {
 	// 	log.Fatalln("Unable to update worker build id compatibility", err)
 	// }
 
-	temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
+	// temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
 
-	time.Sleep(5 * time.Second)
+	// time.Sleep(5 * time.Second)
 
 	// time.Sleep(3 * time.Second)
 	// temporal.UpdateLatestWorkerBuildId(temporalClient, taskQueue, beforeVersion, latestVersion)
