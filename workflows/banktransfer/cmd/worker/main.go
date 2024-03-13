@@ -59,23 +59,39 @@ func main() {
 
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
 	wg := sync.WaitGroup{}
-	// ======================= WORKER 1 =======================
-	w1, _ := wk.NewWorker(workers.TransferWorkerV1{Broker: bk, Config: *externalCfg},
+	// // ======================= WORKER 1 =======================
+	// w1, _ := wk.NewWorker(workers.TransferWorkerV1{Broker: bk, Config: *externalCfg},
+	// 	wk.WithName(workerName),
+	// 	wk.WithClient(c),
+	// 	wk.WithTaskQueue(taskQueue),
+	// 	wk.WithBuildID(config.VERSION_1_0),
+	// )
+	// w1.RunWithGroup(&wg)
+	// // ======================= WORKER 2 =======================
+	// w2, _ := wk.NewWorker(workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},
+	// 	wk.WithName(workerName),
+	// 	wk.WithClient(c),
+	// 	wk.WithTaskQueue(taskQueue),
+	// 	wk.WithBuildID(config.VERSION_2_0),
+	// )
+	// w2.RunWithGroup(&wg)
+	// ======================= WORKER 3 =======================
+	w3, _ := wk.NewWorker(workers.TransferWorkerV3{Broker: bk, Config: *externalCfg},
 		wk.WithName(workerName),
 		wk.WithClient(c),
 		wk.WithTaskQueue(taskQueue),
-		wk.WithBuildID(config.VERSION_1_0),
+		wk.WithBuildID(config.VERSION_3_0),
 	)
-	w1.RunWithGroup(&wg)
-	// ======================= WORKER 2 =======================
-	w2, _ := wk.NewWorker(workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},
+	w3.RunWithGroup(&wg)
+	// ======================= WORKER 4 =======================
+	w4, _ := wk.NewWorker(workers.TransferWorkerV4{Broker: bk, Config: *externalCfg},
 		wk.WithName(workerName),
 		wk.WithClient(c),
 		wk.WithTaskQueue(taskQueue),
-		wk.WithBuildID(config.VERSION_2_0),
+		wk.WithBuildID(config.VERSION_4_0),
 	)
-	w2.RunWithGroup(&wg)
+	w4.RunWithGroup(&wg)
 	// Auto update latest worker BuildIds
-	wk.UpdateLatestWorkerBuildIDs(c, &wg, config.TaskQueues.TRANSFER_QUEUE, config.VERSION_1_0, config.VERSION_2_0)
+	wk.UpdateLatestWorkerBuildIDs(c, &wg, config.TaskQueues.TRANSFER_QUEUE, config.VERSION_1_0, config.VERSION_4_0)
 	wg.Wait()
 }
