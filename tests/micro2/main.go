@@ -225,8 +225,8 @@ func main() {
 
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
 	// beforeVersion := config.VERSION_2_0 // Version trước đó -> Vẫn còn tương thích
-	beforeVersion := config.VERSION_3_0 // Version trước đó -> Vẫn còn tương thích
-	latestVersion := config.VERSION_4_0 // Version mới nhất
+	beforeVersion := config.VERSION_1_0 // Version trước đó -> Vẫn còn tương thích
+	latestVersion := config.VERSION_2_0 // Version mới nhất
 
 	// TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 
