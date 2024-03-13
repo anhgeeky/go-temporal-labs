@@ -68,12 +68,12 @@ func main() {
 	)
 	w1.RunWithGroup(&wg)
 	// ======================= WORKER 2 =======================
-	// w2, _ := wk.NewWorker(workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},
-	// 	wk.WithName(workerName),
-	// 	wk.WithClient(c),
-	// 	wk.WithTaskQueue(taskQueue),
-	// 	wk.WithBuildID(config.VERSION_2_0),
-	// )
-	// w2.RunWithGroup(&wg)
+	w2, _ := wk.NewWorker(workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},
+		wk.WithName(workerName),
+		wk.WithClient(c),
+		wk.WithTaskQueue(taskQueue),
+		wk.WithBuildID(config.VERSION_2_0),
+	)
+	w2.RunWithGroup(&wg)
 	wg.Wait()
 }
