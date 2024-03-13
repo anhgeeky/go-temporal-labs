@@ -35,7 +35,7 @@ func apiCreateTransfer(temporalClient client.Client) (string, error) {
 		CreatedAt:            &now,
 	}
 
-	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflowV4", msg) // TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
+	we, err := temporalClient.ExecuteWorkflow(context.Background(), options, "TransferWorkflow", msg) // TODO: Check lại không đổi tên Workflow[Version] có ảnh hưởng gì đến workflow hiện tại không?
 	if err != nil {
 		return "", err
 	}

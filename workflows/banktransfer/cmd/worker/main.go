@@ -56,67 +56,12 @@ func main() {
 	// ======================= BROKER =======================
 
 	taskQueue := config.TaskQueues.TRANSFER_QUEUE
-	// workflowName := config.Workflows.TransferWorkflow
-
-	// transferActivity := &activities.TransferActivity{
-	// 	Broker: bk,
-	// 	AccountService: account.AccountService{
-	// 		Host: externalCfg.AccountHost,
-	// 	},
-	// 	MoneyTransferService: moneytransfer.MoneyTransferService{
-	// 		Host: externalCfg.MoneyTransferHost,
-	// 	},
-	// }
-
 	wg := sync.WaitGroup{}
-	// ctx := context.Background()
-	w, _ := wk.NewWorker(workers.TransferWorkerV1{
-		Broker: bk,
-		Config: *externalCfg,
-	}, wk.PlatformConfig{},
+	w, _ := wk.NewWorker(workers.TransferWorkerV1{Broker: bk, Config: *externalCfg}, wk.PlatformConfig{},
 		wk.WithClient(c),
 		wk.WithTaskQueue(taskQueue),
 		wk.WithBuildID(config.VERSION_1_0),
 	)
 	w.RunWithGroup(&wg)
-
-	// createAndRunWorker(c, taskQueue, config.VERSION_1_0, &wg, externalCfg, bk)
-	// createAndRunWorker(c, taskQueue, config.VERSION_2_0, &wg, externalCfg, bk)
-	// createAndRunWorker(c, taskQueue, config.VERSION_3_0, &wg, externalCfg, bk)
-	// createAndRunWorker(c, taskQueue, config.VERSION_4_0, &wg, externalCfg, bk)
-	// wk.CreateNewWorker[messages.Transfer](
-	// 	c, &wg, workflowName, taskQueue, config.VERSION_1_0,
-	// 	// Register workflows
-	// 	tranFlow.TransferWorkflow,
-	// 	transferActivity.CheckBalance,
-	// 	transferActivity.CreateOTP,
-	// 	transferActivity.CreateTransaction,
-	// )
 	wg.Wait()
 }
-
-// func createAndRunWorker(c client.Client, taskQueue, buildID string, wg *sync.WaitGroup, externalCfg *config.ExternalConfig, bk broker.Broker) {
-// 	log.Println("Start worker: ", taskQueue, "Build ID:", buildID)
-// 	w := worker.New(c, taskQueue, worker.Options{
-// 		// Both of these options must be set to opt into the feature
-// 		BuildID:                 buildID,
-// 		UseBuildIDForVersioning: true,
-// 	})
-
-// 	// TODO: Implement Worker for build ID
-
-// 	// tranPkg.SetupBankTransferWorkflow(w, tranFlow.TransferWorkflow, externalCfg, bk)
-// 	// tranPkg.SetupBankTransferWorkflowV2(w, tranFlow.TransferWorkflowV2, externalCfg, bk)
-// 	// tranPkg.SetupBankTransferWorkflowV3(w, tranFlow.TransferWorkflowV3, externalCfg, bk)
-// 	// tranPkg.SetupBankTransferWorkflowV4(w, tranFlow.TransferWorkflowV4, externalCfg, bk)
-// 	// notiPkg.SetupNotificationWorkflow(w, notiWorkflow.NotificationWorkflow)
-
-// 	wg.Add(1)
-// 	go func() {
-// 		defer wg.Done()
-// 		err := w.Run(worker.InterruptCh())
-// 		if err != nil {
-// 			log.Fatalf("Unable to start %s worker: %v", buildID, err)
-// 		}
-// 	}()
-// }
