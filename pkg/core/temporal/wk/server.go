@@ -6,6 +6,7 @@ import (
 	"log"
 	"sync"
 
+	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 )
 
@@ -47,6 +48,34 @@ func NewWorker(registerer Registerer, options ...Option) (Worker, error) {
 		buildID: opts.buildID,
 		w:       w,
 	}, nil
+}
+
+// RunAsNewWorkerVersioning implements
+func RunAsNewWorkerVersioning(c client.Client, wg *sync.WaitGroup, name, taskQueue, buildID string, registerer Registerer, options ...Option) (Worker, error) {
+	opts := defaultOpts()
+	for _, opt := range options {
+		opt(&opts)
+	}
+	if c == nil {
+		return Worker{}, ErrClientRequired
+	}
+	w := worker.New(c, taskQueue, worker.Options{
+		BackgroundActivityContext: opts.backgroundAcitivityContext,
+		Interceptors:              opts.interceptors,
+		OnFatalError:              opts.onFatalError,
+		BuildID:                   buildID,
+		UseBuildIDForVersioning:   true,
+	})
+	registerer.Register(w)
+	newWorker := Worker{
+		name:    name,
+		buildID: buildID,
+		w:       w,
+	}
+
+	newWorker.RunWithGroup(wg)
+
+	return newWorker, nil
 }
 
 func (w *Worker) Name() string {
