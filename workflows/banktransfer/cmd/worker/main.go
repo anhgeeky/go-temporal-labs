@@ -69,7 +69,7 @@ func main() {
 		c, &wg, workerName, taskQueue, config.VERSION_2_0,
 		workers.TransferWorkerV2{Broker: bk, Config: *externalCfg},
 	)
-	// ======================= WORKER 3 =======================
+	// // ======================= WORKER 3 =======================
 	wk.RunAsNewWorkerVersioning(
 		c, &wg, workerName, taskQueue, config.VERSION_3_0,
 		workers.TransferWorkerV3{Broker: bk, Config: *externalCfg},
@@ -80,6 +80,7 @@ func main() {
 		workers.TransferWorkerV4{Broker: bk, Config: *externalCfg},
 	)
 	// Auto update latest worker BuildIds
+	// wk.UpdateWorkerBuildID(c, &wg, config.TaskQueues.TRANSFER_QUEUE, config.VERSION_1_0)
 	wk.UpdateLatestWorkerBuildIDs(c, &wg, config.TaskQueues.TRANSFER_QUEUE, config.VERSION_1_0, config.VERSION_4_0)
 	wg.Wait()
 }

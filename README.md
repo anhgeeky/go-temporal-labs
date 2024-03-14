@@ -100,11 +100,14 @@ sh start-worker.sh
 <!-- ## Saga
 
 ![Screenshot](/docs/assets/bank-transfer-saga-pattern-log.png)
+-->
 
 ## Worker versioning
 
-![Screenshot](/docs/assets/temporal-worker-versioning-1.png)
-![Screenshot](/docs/assets/temporal-worker-versioning-2.png) -->
+![Screenshot](/docs/assets/temporal-versioning-1.0.png)
+![Screenshot](/docs/assets/temporal-versioning-2.0.png)
+![Screenshot](/docs/assets/temporal-versioning-3.0.png)
+![Screenshot](/docs/assets/temporal-versioning-4.0.png)
 
 ## Stack
 
