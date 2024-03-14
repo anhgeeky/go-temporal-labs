@@ -104,6 +104,8 @@ sh start-worker.sh
 
 ## Worker versioning
 
+- Video tham khảo: <https://www.youtube.com/watch?v=kkP899WxgzY>
+
 ![Screenshot](/docs/assets/temporal-versioning-1.0.png)
 ![Screenshot](/docs/assets/temporal-versioning-2.0.png)
 ![Screenshot](/docs/assets/temporal-versioning-3.0.png)
