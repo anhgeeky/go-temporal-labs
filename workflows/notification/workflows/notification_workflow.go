@@ -35,7 +35,6 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 
 	var a *activities.NotificationActivity
 	var results []string
-	var token *messages.DeviceToken
 
 	// err = workflow.ExecuteActivity(ctx, a.GetDeviceToken).Get(ctx, &token)
 	// if err != nil {
@@ -65,7 +64,7 @@ func NotificationWorkflow(ctx workflow.Context, state messages.NotificationMessa
 		// results = append(results, result1, result2, result3)
 
 		var result1 string
-		err = workflow.ExecuteActivity(gCtx, a.PushEmail, token).Get(gCtx, &result1)
+		err = workflow.ExecuteActivity(gCtx, a.PushEmail, state).Get(gCtx, &result1)
 		if err != nil {
 			return
 		}

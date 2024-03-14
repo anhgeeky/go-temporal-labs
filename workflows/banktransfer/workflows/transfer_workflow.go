@@ -11,7 +11,6 @@ import (
 	cw "github.com/anhgeeky/go-temporal-labs/core/workflow"
 	notiMsg "github.com/anhgeeky/go-temporal-labs/notification/messages"
 	notiWorkflows "github.com/anhgeeky/go-temporal-labs/notification/workflows"
-	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/workflow"
 )
@@ -113,10 +112,14 @@ func TransferWorkflow(ctx workflow.Context, state messages.TransferMessage) (err
 			}
 			ctx = workflow.WithChildOptions(ctx, cwo)
 			msgNotfication := notiMsg.NotificationMessage{
-				// TODO: Bổ sung payload
-				Token: notiMsg.DeviceToken{
-					FirebaseToken: uuid.New().String(),
-				},
+				WorflowId:   message.WorkflowID,
+				FromAccount: message.FromAccount,
+				ToAccount:   message.ToAccount,
+				Amount:      message.Amount,
+				CRefNum:     message.CRefNum,
+				CreatedAt:   message.CreatedAt,
+				TransferAt:  message.TransferAt,
+				TransNo:     message.TransNo,
 			}
 
 			var result string

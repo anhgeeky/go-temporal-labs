@@ -4,30 +4,28 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/anhgeeky/go-temporal-labs/notification/config"
 	"github.com/anhgeeky/go-temporal-labs/notification/messages"
 	"go.temporal.io/sdk/activity"
 	gomail "gopkg.in/mail.v2"
 )
 
 type NotificationActivity struct {
+	Config *config.EmailConfig
 }
 
-func (a *NotificationActivity) PushEmail(ctx context.Context, msg *messages.DeviceToken) (string, error) {
+func (a *NotificationActivity) PushEmail(ctx context.Context, msg *messages.NotificationMessage) (string, error) {
 	logger := activity.GetLogger(ctx)
 
 	logger.Info("NotificationActivity: PushEmail", msg)
 
-	from := "anhnguyen.sogo@gmail.com"
-	to := "anhgeeky@gmail.com"
-	password := "oesb wira pygw ncqe" // test only
-
 	m := gomail.NewMessage()
 
 	// Set E-Mail sender
-	m.SetHeader("From", from)
+	m.SetHeader("From", a.Config.EmailFrom)
 
 	// Set E-Mail receivers
-	m.SetHeader("To", to)
+	m.SetHeader("To", a.Config.EmailTo)
 
 	// Set E-Mail subject
 	m.SetHeader("Subject", "Bank Transfer Completed")
@@ -36,7 +34,7 @@ func (a *NotificationActivity) PushEmail(ctx context.Context, msg *messages.Devi
 	m.SetBody("text/plain", "Transfed done")
 
 	// Settings for SMTP server
-	d := gomail.NewDialer("smtp.gmail.com", 587, from, password)
+	d := gomail.NewDialer(a.Config.SmtpHost, a.Config.SmtpPort, a.Config.SmtpAccount, a.Config.SmtpPassword)
 
 	// This is only needed when SSL/TLS certificate is not valid on server.
 	// In production this should be set to false.
