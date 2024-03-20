@@ -10,10 +10,10 @@
   - [x] Chia nhỏ submodule cho `workflow`, `api`
   - [x] Config `namespace` for temporal
   - [x] Bổ sung thêm các features chung cho `workflow` core
-- [ ] Saga for Temporal
+- [x] Saga for Temporal
   - [x] Saga sample with `REST Api`
-  - [ ] Saga sample with `Kafka Event Driven`
-- [ ] Add or Remove 1 activity
+  - [x] Saga sample with `Kafka`
+- [x] Add or Remove 1 activity (`Versioning`)
   - Follow: <https://community.temporal.io/t/update-activity-and-or-workflow-inputs/4972/5>
   - Temporal chỉ chạy từng activity, có `STOP` cluster, khi chạy lại vẫn còn `Running` thì sẽ chạy lại
   - Nếu có add or remove 1 activity thì sẽ load lại các activity đã update (add, remove, update) -> Chạy tiếp tục
